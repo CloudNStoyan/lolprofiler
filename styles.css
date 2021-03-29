@@ -1,0 +1,79 @@
+
+html, body {
+    height: 100%;
+    font-family: 'Noto Sans TC', sans-serif;
+}
+
+.header {
+    grid-area: header;
+    text-align: center;
+}
+
+.aside {
+    grid-area: aside;
+    padding-left: 100px;
+}
+
+.main {
+    grid-area: main;
+    margin-left: 20px;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 300px auto;
+    grid-template-rows: 50px 100%;
+    grid-template-areas: 
+    "header header"
+    "aside main";
+    height: 100%;
+}
+
+.profile-name {
+    margin-top: 0;
+}
+
+.profile-footer {
+    position: absolute;
+    bottom: 5px;
+    background-color: white;
+    width: 100%;
+    opacity: 0.5;
+    text-align: center;
+}
+
+.profile-icon {
+    position: relative;
+}
+
+.profile-level {
+    color: #333;
+    font-weight: bold;
+}
+
+.rank-wrapper {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.rank-text, .rank-queue {
+    font-size: 12px;
+}
+
+.rank-info {
+    text-align: center;
+}
+
+.section-title {
+    width: 20%;
+    color: gray;
+    text-transform: uppercase;
+    font-size: 12px;
+}
+
+.section-line {
+    display: inline-block;
+    border: 1px solid #ebebeb;
+    border-radius:1px;
+    width: 78%;
+}

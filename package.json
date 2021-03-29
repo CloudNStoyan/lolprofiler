@@ -1,0 +1,16 @@
+{
+  "name": "lol-profiler",
+  "version": "0.1.0",
+  "author": "Stoyan",
+  "description": "My LoL Profiler app",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^12.0.2"
+  }
+}
