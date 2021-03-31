@@ -1,6 +1,16 @@
 const fs = require('fs');
 const path = require('path');
 
-let key = fs.readFileSync(path.resolve(__dirname, 'key.txt'));
+const { contextBridge } = require('electron')
 
-window.addEventListener('load', () => document.body.setAttribute('data-api-key', key));
+contextBridge.exposeInMainWorld(
+  'lol',
+  {
+    api: {
+        key: fs.readFileSync(path.resolve(__dirname, 'key.txt')).toString()
+    },
+    ddragon: {
+        champion: JSON.parse(fs.readFileSync(path.resolve(__dirname, 'ddragon/champion.json')))
+    }
+  }
+)

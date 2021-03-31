@@ -7,13 +7,7 @@ let queueNames = {
     'RANKED_FLEX_SR': 'Flex',
 }
 
-let apiKey;
-
 function fetchProfile() {
-    if (!apiKey) {
-        apiKey = document.body.getAttribute('data-api-key');
-    }
-
     let name = document.querySelector('#input-name').value;
 
     fetch(Endpoints.SummonerV4ByName(name))
@@ -60,49 +54,84 @@ function fetchProfile() {
                 .then(matchList => {
                     let matchesWrapper = document.querySelector('.matches-wrapper');
 
+                    let fetchArr = [];
                     matchList.matches.forEach(async function(match) {
-                        let game = await fetch(Endpoints.MatchV4MatchById(match.gameId)).then(response => response.json())
-                        let participantIdentity = game.participantIdentities.find(identity => identity.player.summonerId == summoner.id);
-                        let participant = game.participants.find(identity => identity.participantId == participantIdentity.participantId);
-                        let team = game.teams.find(team => team.teamId == participant.teamId);
+                        fetchArr.push(fetch(Endpoints.MatchV4MatchById(match.gameId)).then(response => response.json()));
+                    });
 
-                        console.log('-GAME-');
-                        console.log(game);
-                        console.log(participantIdentity);
-                        console.log(participant);
-                        console.log(team);
-                        console.log('-/GAME-');
-                        
-                        let matchDiv = document.createElement('div');
-                        matchDiv.className = 'match';
-                        matchesWrapper.appendChild(matchDiv);
+                    Promise.all(fetchArr).then(matches => {
+                        matches.sort((a, b) => (a.gameCreation > b.gameCreation) ? -1 : 1)
 
-                        matchDiv.innerHTML =
-                        `
-                        <span>${team.win}</span>
-                        `
+                        matches.forEach(game => {
+                            console.log(game);
+
+                            let participantIdentity = game.participantIdentities.find(identity => identity.player.summonerId == summoner.id);
+                            let participant = game.participants.find(identity => identity.participantId == participantIdentity.participantId);
+                            let team = game.teams.find(team => team.teamId == participant.teamId);
+                            let champion = lol.ddragon.champion.find(champ => champ.key == participant.championId);
+                            console.log(champion);
+                            
+                            matchesWrapper.appendChild(
+                                new Game(
+                                    team.win == 'Win',
+                                    champion,
+                                    {
+                                        kills: participant.stats.kills,
+                                        deaths: participant.stats.deaths,
+                                        assists: participant.stats.assists
+                                    },
+                                    `${Math.floor((game.gameDuration / 60))}m ${(game.gameDuration % 60)}s`
+                                    ).ToNode()
+                            );
+                        })
                     });
                 });
         });
 }
 
+class Game {
+    constructor(isWin, champion, kda, gameLength) {
+        this.isWin = isWin;
+        this.champion = champion;
+        this.kda = kda;
+        this.gameLength = gameLength;
+    }
+
+    ToNode() {
+        let match = document.createElement('div');
+        match.className = 'match';
+
+        match.innerHTML = 
+        `
+        <span>${this.isWin ? 'Victory' : 'Defeat'}</span>
+        <span>${this.champion.name}</span>
+        <span>${this.kda.kills} / <span class="deaths">${this.kda.deaths}</span> / ${this.kda.assists}</span>
+        <span>${this.gameLength}</span>
+        `;
+
+        return match;
+    }
+}
+
 class Endpoints {
+    static ApiKey = lol.api.key;
+
     static baseUrl = 'https://eun1.api.riotgames.com/lol';
 
     static SummonerV4ByName(summonerName) {
-        return `${this.baseUrl}/summoner/v4/summoners/by-name/${summonerName}?api_key=${apiKey}`;
+        return `${this.baseUrl}/summoner/v4/summoners/by-name/${summonerName}?api_key=${Endpoints.ApiKey}`;
     }
 
     static LeagueV4BySummoner(summonerId) {
-        return `${this.baseUrl}/league/v4/entries/by-summoner/${summonerId}?api_key=${apiKey}`;
+        return `${this.baseUrl}/league/v4/entries/by-summoner/${summonerId}?api_key=${Endpoints.ApiKey}`;
     }
 
     static MatchV4Matchlist(accountId) {
-        return `${this.baseUrl}/match/v4/matchlists/by-account/${accountId}?endIndex=10&begindIndex=0&api_key=${apiKey}`;
+        return `${this.baseUrl}/match/v4/matchlists/by-account/${accountId}?endIndex=10&begindIndex=0&api_key=${Endpoints.ApiKey}`;
     }
 
     static MatchV4MatchById(gameId) {
-        return `${this.baseUrl}/match/v4/matches/${gameId}?api_key=${apiKey}`;
+        return `${this.baseUrl}/match/v4/matches/${gameId}?api_key=${Endpoints.ApiKey}`;
     }
 
     static DDragonProfileIcon(profileIconId) {

@@ -78,8 +78,17 @@ html, body {
     border: 1px solid #ebebeb;
     border-radius:1px;
     width: 78%;
+    vertical-align: middle;
 }
 
 .section {
     margin-top: 10px;
+}
+
+.match {
+    display: flex;
+    flex-flow: column wrap;
+    border-bottom: 1px solid lightgray;
+    margin-top: 5px;
+    padding-bottom: 5px;
 }
