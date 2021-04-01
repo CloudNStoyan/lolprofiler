@@ -1,3 +1,10 @@
+:root {
+    --color-blue: #5b89fc;
+    --color-darkblue: #1961FB;
+    --color-red: #FF635C;
+    --color-darkred: #FF3C31;
+}
+
 html, body {
     height: 100%;
     font-family: 'Noto Sans TC', sans-serif;
@@ -91,4 +98,25 @@ html, body {
     border-bottom: 1px solid lightgray;
     margin-top: 5px;
     padding-bottom: 5px;
+}
+
+.matches-wrapper {
+    height: 350px;
+    overflow: scroll;
+    overflow-x: hidden;
+    box-shadow: 0 4px 2px -2px lightgrey;
+}
+
+.match-status {
+    color: #fff;
+    padding-left: 10px;
+    font-weight: bold;
+}
+
+.match.victory .match-status {
+    background-color: var(--color-blue);
+}
+
+.match.defeat .match-status {
+    background-color: var(--color-red);
 }

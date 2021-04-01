@@ -1,4 +1,13 @@
 let searchBtn = document.querySelector('#search-btn');
+let nameInput = document.querySelector('#input-name');
+
+nameInput.addEventListener("keyup", (e) => {
+    if (e.keyCode === 13) {
+      e.preventDefault();
+      
+      fetchProfile();
+    }
+  });
 
 searchBtn.addEventListener('click', fetchProfile);
 
@@ -8,7 +17,7 @@ let queueNames = {
 }
 
 function fetchProfile() {
-    let name = document.querySelector('#input-name').value;
+    let name = nameInput.value;
 
     fetch(Endpoints.SummonerV4ByName(name))
         .then(response => response.json())
@@ -99,11 +108,11 @@ class Game {
 
     ToNode() {
         let match = document.createElement('div');
-        match.className = 'match';
+        match.className = `match ${this.isWin ? 'victory' : 'defeat'}`;
 
         match.innerHTML = 
         `
-        <span>${this.isWin ? 'Victory' : 'Defeat'}</span>
+        <span class="match-status">${this.isWin ? 'Victory' : 'Defeat'}</span>
         <span>${this.champion.name}</span>
         <span>${this.kda.kills} / <span class="deaths">${this.kda.deaths}</span> / ${this.kda.assists}</span>
         <span>${this.gameLength}</span>
