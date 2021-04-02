@@ -5,94 +5,95 @@ nameInput.addEventListener("keyup", (e) => {
     if (e.keyCode === 13) {
       e.preventDefault();
       
-      fetchProfile();
+      fetchProfile(nameInput.value);
     }
   });
 
-searchBtn.addEventListener('click', fetchProfile);
+searchBtn.addEventListener('click', () => fetchProfile(nameInput.value));
 
-let queueNames = {
-    'RANKED_SOLO_5x5': 'Solo/Duo',
-    'RANKED_FLEX_SR': 'Flex',
+function fillSummonerInfo(summoner) {
+    document.querySelector('.profile-name').innerText = summoner.name;
+    document.querySelector('.profile-level').innerText = summoner.summonerLevel;
+    document.querySelector('.profile-icon img').src = Endpoints.DDragonProfileIcon(summoner.profileIconId)
 }
 
-function fetchProfile() {
-    let name = nameInput.value;
+function fillSummonerRank(queues) {
+    let rankedWrapper = document.querySelector('.rank-wrapper')
+    rankedWrapper.innerHTML = '';
 
-    fetch(Endpoints.SummonerV4ByName(name))
+    if (queues.length == 0) {
+        let rankedInfo = document.createElement('div');
+        rankedInfo.className = 'rank-info';
+        rankedWrapper.appendChild(rankedInfo);
+        
+        rankedInfo.innerHTML = 
+        `
+        <img width="100" height="100" src="${Endpoints.OPGGTierImageDefault}"/>
+        <div class="rank-text">UNRANKED</div>
+        `;
+    }
+                    
+    queues.forEach((queue) => {
+        let rankedInfo = document.createElement('div');
+        rankedInfo.className = 'rank-info';
+        rankedInfo.innerHTML = 
+        `
+        <div class="rank-queue">${queueNames[queue.queueType]}</div>
+        <img width="100" height="100" src="${Endpoints.OPGGTierImage(queue.tier.toLowerCase())}"/>
+        <div class="rank-text">${queue.tier} ${queue.rank}</div>
+        `;
+        rankedWrapper.appendChild(rankedInfo);
+    })
+}
+
+function fillSummonerMatches(matches, summoner) {
+    let matchesWrapper = document.querySelector('.matches-wrapper');
+                        
+    matches.sort((a, b) => (a.gameCreation > b.gameCreation) ? -1 : 1)
+
+    console.log(matches[0]);
+
+    matches.forEach(game => {
+        let participantIdentity = game.participantIdentities.find(identity => identity.player.summonerId == summoner.id);
+        let participant = game.participants.find(identity => identity.participantId == participantIdentity.participantId);
+        let team = game.teams.find(team => team.teamId == participant.teamId);
+        let champion = Object.values(lol.ddragon.champion.data).find(champ => champ.key == participant.championId);
+
+        matchesWrapper.appendChild(
+            new Game(
+                team.win == 'Win',
+                champion,
+                {
+                    kills: participant.stats.kills,
+                    deaths: participant.stats.deaths,
+                    assists: participant.stats.assists
+                },
+                `${Math.floor((game.gameDuration / 60))}m ${(game.gameDuration % 60)}s`
+                ).ToNode()
+        );
+    })
+}
+
+function fetchProfile(summonerName) {
+    fetch(Endpoints.SummonerV4ByName(summonerName))
         .then(response => response.json())
         .then(summoner => {
-            document.querySelector('.profile-name').innerText = summoner.name;
-            document.querySelector('.profile-level').innerText = summoner.summonerLevel;
-            document.querySelector('.profile-icon img').src = Endpoints.DDragonProfileIcon(summoner.profileIconId)
+            fillSummonerInfo(summoner);
 
             fetch(Endpoints.LeagueV4BySummoner(summoner.id))
                 .then(response => response.json())
                 .then(queues => {
-                    let rankedWrapper = document.querySelector('.rank-wrapper')
-                    rankedWrapper.innerHTML = '';
-
-                    if (queues.length == 0) {
-                        let rankedInfo = document.createElement('div');
-                        rankedInfo.className = 'rank-info';
-                        rankedWrapper.appendChild(rankedInfo);
-
-                        rankedInfo.innerHTML = 
-                        `
-                        <img width="100" height="100" src="${Endpoints.OPGGTierImageDefault}"/>
-                        <div class="rank-text">UNRANKED</div>
-                        `;
-                    }
-                    
-                    queues.forEach((queue) => {
-                        let rankedInfo = document.createElement('div');
-                        rankedInfo.className = 'rank-info';
-                        rankedWrapper.appendChild(rankedInfo);
-
-                        rankedInfo.innerHTML = 
-                        `
-                        <div class="rank-queue">${queueNames[queue.queueType]}</div>
-                        <img width="100" height="100" src="${Endpoints.OPGGTierImage(queue.tier.toLowerCase())}"/>
-                        <div class="rank-text">${queue.tier} ${queue.rank}</div>
-                        `;
-                    })
+                    fillSummonerRank(queues);
                 });
             
             fetch(Endpoints.MatchV4Matchlist(summoner.accountId))
                 .then(response => response.json())
                 .then(matchList => {
-                    let matchesWrapper = document.querySelector('.matches-wrapper');
+                    let matchRequests = [];
+                    matchList.matches.forEach((match) => matchRequests.push(fetch(Endpoints.MatchV4MatchById(match.gameId)).then(response => response.json())));
 
-                    let fetchArr = [];
-                    matchList.matches.forEach(async function(match) {
-                        fetchArr.push(fetch(Endpoints.MatchV4MatchById(match.gameId)).then(response => response.json()));
-                    });
-
-                    Promise.all(fetchArr).then(matches => {
-                        matches.sort((a, b) => (a.gameCreation > b.gameCreation) ? -1 : 1)
-
-                        matches.forEach(game => {
-                            console.log(game);
-
-                            let participantIdentity = game.participantIdentities.find(identity => identity.player.summonerId == summoner.id);
-                            let participant = game.participants.find(identity => identity.participantId == participantIdentity.participantId);
-                            let team = game.teams.find(team => team.teamId == participant.teamId);
-                            let champion = lol.ddragon.champion.find(champ => champ.key == participant.championId);
-                            console.log(champion);
-                            
-                            matchesWrapper.appendChild(
-                                new Game(
-                                    team.win == 'Win',
-                                    champion,
-                                    {
-                                        kills: participant.stats.kills,
-                                        deaths: participant.stats.deaths,
-                                        assists: participant.stats.assists
-                                    },
-                                    `${Math.floor((game.gameDuration / 60))}m ${(game.gameDuration % 60)}s`
-                                    ).ToNode()
-                            );
-                        })
+                    Promise.all(matchRequests).then(matches => {
+                        fillSummonerMatches(matches, summoner);
                     });
                 });
         });
