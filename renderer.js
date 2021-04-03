@@ -14,7 +14,7 @@ searchBtn.addEventListener('click', () => fetchProfile(nameInput.value));
 function fillSummonerInfo(summoner) {
     document.querySelector('.profile-name').innerText = summoner.name;
     document.querySelector('.profile-level').innerText = summoner.summonerLevel;
-    document.querySelector('.profile-icon img').src = Endpoints.DDragonProfileIcon(summoner.profileIconId)
+    document.querySelector('.profile-icon img').src = Endpoints.DDragon.Image.ProfileIcon(summoner.profileIconId)
 }
 
 function fillSummonerRank(queues) {
@@ -28,8 +28,7 @@ function fillSummonerRank(queues) {
         
         rankedInfo.innerHTML = 
         `
-        <img width="100" height="100" src="${Endpoints.OPGGTierImageDefault}"/>
-        <div class="rank-text">UNRANKED</div>
+        <h1 class="rank-text unranked">UNRANKED</h1>
         `;
     }
                     
@@ -39,7 +38,7 @@ function fillSummonerRank(queues) {
         rankedInfo.innerHTML = 
         `
         <div class="rank-queue">${queueNames[queue.queueType]}</div>
-        <img width="100" height="100" src="${Endpoints.OPGGTierImage(queue.tier.toLowerCase())}"/>
+        <img width="100" height="100" src="${Endpoints.DDragon.Image.RankedEmblem(queue.tier[0] + queue.tier.substring(1).toLowerCase())}"/>
         <div class="rank-text">${queue.tier} ${queue.rank}</div>
         `;
         rankedWrapper.appendChild(rankedInfo);
@@ -57,7 +56,37 @@ function fillSummonerMatches(matches, summoner) {
         let participantIdentity = game.participantIdentities.find(identity => identity.player.summonerId == summoner.id);
         let participant = game.participants.find(identity => identity.participantId == participantIdentity.participantId);
         let team = game.teams.find(team => team.teamId == participant.teamId);
+
         let champion = Object.values(lol.ddragon.champion.data).find(champ => champ.key == participant.championId);
+        let queue = lol.ddragon.queues.find(q => q.queueId == game.queueId);
+
+        let teamKills = 0;
+
+        game.participants.forEach((player) => {
+            if (player.teamId == team.teamId) {
+                teamKills += player.stats.kills;
+            }
+        })
+
+        let summonerSpells = Object.values(lol.ddragon.summoner.data);
+        
+        let secondaryRunePath = lol.ddragon.runesReforged.find(runePath => runePath.id == participant.stats.perkSubStyle);
+        console.log(secondaryRunePath)
+        let keystone = lol.ddragon.runesReforged
+        .find(runePath => runePath.id == participant.stats.perkPrimaryStyle).slots[0].runes
+        .find(rune => rune.id == participant.stats.perk0);
+
+        let stats = {
+            level: participant.stats.champLevel,
+            creepScore: participant.stats.totalMinionsKilled,
+            killPercentage: Math.round(((participant.stats.kills + participant.stats.assists) / teamKills) * 100),
+            summonerSpell1: summonerSpells.find(spell => spell.key == participant.spell1Id),
+            summonerSpell2: summonerSpells.find(spell => spell.key == participant.spell2Id),
+            keystone: keystone,
+            secondaryKeystone: secondaryRunePath
+        }
+
+        console.log(participant)
 
         matchesWrapper.appendChild(
             new Game(
@@ -68,7 +97,10 @@ function fillSummonerMatches(matches, summoner) {
                     deaths: participant.stats.deaths,
                     assists: participant.stats.assists
                 },
-                `${Math.floor((game.gameDuration / 60))}m ${(game.gameDuration % 60)}s`
+                `${Math.floor((game.gameDuration / 60))}m ${(game.gameDuration % 60)}s`,
+                queue,
+                null,
+                stats
                 ).ToNode()
         );
     })
@@ -100,23 +132,55 @@ function fetchProfile(summonerName) {
 }
 
 class Game {
-    constructor(isWin, champion, kda, gameLength) {
+    constructor(isWin, champion, kda, gameLength, queue, longAgo, stats) {
         this.isWin = isWin;
         this.champion = champion;
         this.kda = kda;
         this.gameLength = gameLength;
+        this.queue = queue;
+        this.longAgo = longAgo;
+        this.stats = stats;
     }
 
     ToNode() {
+        let winText = this.isWin ? 'Victory' : 'Defeat';
         let match = document.createElement('div');
-        match.className = `match ${this.isWin ? 'victory' : 'defeat'}`;
+        match.className = 'match ' + winText.toLowerCase();
 
         match.innerHTML = 
         `
-        <span class="match-status">${this.isWin ? 'Victory' : 'Defeat'}</span>
-        <span>${this.champion.name}</span>
-        <span>${this.kda.kills} / <span class="deaths">${this.kda.deaths}</span> / ${this.kda.assists}</span>
-        <span>${this.gameLength}</span>
+        <div class="match-info">
+            <div>${this.queue.description.replace('games','').trim()}</div>
+            <div></div>
+            <div class="seperator"></div>
+            <div>${winText}</div>
+            <div>${this.gameLength}</div>
+        </div>
+        <div class="setup">
+            <div class="champion-image">
+                <img src="${Endpoints.DDragon.Image.ChampionSquare(this.champion.image.full)}" width="64" height="64"/>
+            </div>
+            <div class="additional-info">
+                <div class="summoner-spells"></div>
+                <div class="runes">
+                    <div class="keystone"><img src="${Endpoints.DDragon.Image.Rune(this.stats.keystone.icon)}" width="16" height="16"/></div>
+                    <div class="rune-path"><img src="${Endpoints.DDragon.Image.Rune(this.stats.secondaryKeystone.icon)}" width="16" height="16"/></div>
+                </div>
+            </div>
+            <div class="champion-name">${this.champion.name}</div>
+        </div>
+        <div class="score">
+            <div>${this.kda.kills} / <span class="deaths">${this.kda.deaths}</span> / ${this.kda.assists}</div>
+            <div>${this.kda.deaths == 0 ? 'Perfect KDA' : `${((this.kda.kills + this.kda.assists) / this.kda.deaths).toFixed(2)}:1 KDA`}</div>
+            <div class="flairs"></div>
+        </div>
+        <div class="stats">
+            <div>Level ${this.stats.level}</div>
+            <div>${this.stats.creepScore} CS</div>
+            <div>P/Kill ${this.stats.killPercentage}%</div>
+        </div>
+        <div class="items"></div>
+        <div class="players"></div>
         `;
 
         return match;
@@ -144,13 +208,23 @@ class Endpoints {
         return `${this.baseUrl}/match/v4/matches/${gameId}?api_key=${Endpoints.ApiKey}`;
     }
 
-    static DDragonProfileIcon(profileIconId) {
-        return `http://ddragon.leagueoflegends.com/cdn/11.6.1/img/profileicon/${profileIconId}.png`;
+    static DDragon = {
+        Image: {
+            ProfileIcon(profileIconId) {
+                return `http://ddragon.leagueoflegends.com/cdn/11.6.1/img/profileicon/${profileIconId}.png`;
+            },
+            ChampionSquare(imageName) {
+                return 'http://ddragon.leagueoflegends.com/cdn/11.7.1/img/champion/' + imageName;
+            },
+            SummonerSpell(imageName) {
+                return 'http://ddragon.leagueoflegends.com/cdn/11.7.1/img/spell/' + imageName;
+            },
+            Rune(imageName) {
+                return './ddragon/img/' + imageName;
+            },
+            RankedEmblem(tier) {
+                return `./ddragon/img/ranked-emblems/Emblem_${tier}.png`;
+            }
+        }
     }
-
-    static OPGGTierImage(tier) {
-        return `https://opgg-static.akamaized.net/images/medals/${tier}_1.png`;
-    }
-
-    static OPGGTierImageDefault = 'https://opgg-static.akamaized.net/images/medals/default.png';
 }

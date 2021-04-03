@@ -69,6 +69,10 @@ html, body {
     font-size: 12px;
 }
 
+.rank-text.unranked {
+    font-size: 16px;
+}
+
 .rank-info {
     text-align: center;
 }
@@ -94,10 +98,14 @@ html, body {
 
 .match {
     display: flex;
-    flex-flow: column wrap;
+    flex-flow: row wrap;
     border-bottom: 1px solid lightgray;
     margin-top: 5px;
     padding-bottom: 5px;
+}
+
+.match > *:not(:first-child) {
+    margin-left: 10px;
 }
 
 .matches-wrapper {
