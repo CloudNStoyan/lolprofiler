@@ -50,9 +50,8 @@ function fillSummonerMatches(matches, summoner) {
                         
     matches.sort((a, b) => (a.gameCreation > b.gameCreation) ? -1 : 1)
 
-    console.log(matches[0]);
-
     matches.forEach(game => {
+        console.log(game);
         let participantIdentity = game.participantIdentities.find(identity => identity.player.summonerId == summoner.id);
         let participant = game.participants.find(identity => identity.participantId == participantIdentity.participantId);
         let team = game.teams.find(team => team.teamId == participant.teamId);
@@ -71,7 +70,6 @@ function fillSummonerMatches(matches, summoner) {
         let summonerSpells = Object.values(lol.ddragon.summoner.data);
         
         let secondaryRunePath = lol.ddragon.runesReforged.find(runePath => runePath.id == participant.stats.perkSubStyle);
-        console.log(secondaryRunePath)
         let keystone = lol.ddragon.runesReforged
         .find(runePath => runePath.id == participant.stats.perkPrimaryStyle).slots[0].runes
         .find(rune => rune.id == participant.stats.perk0);
@@ -85,8 +83,6 @@ function fillSummonerMatches(matches, summoner) {
             keystone: keystone,
             secondaryKeystone: secondaryRunePath
         }
-
-        console.log(participant)
 
         matchesWrapper.appendChild(
             new Game(
@@ -147,24 +143,31 @@ class Game {
         let match = document.createElement('div');
         match.className = 'match ' + winText.toLowerCase();
 
+        let gameType = lol.constants.queues.find(q => q.id == this.queue.queueId);
+
         match.innerHTML = 
         `
         <div class="match-info">
-            <div>${this.queue.description.replace('games','').trim()}</div>
+            <div>${gameType.name}</div>
             <div></div>
             <div class="seperator"></div>
-            <div>${winText}</div>
+            <div class="result">${winText}</div>
             <div>${this.gameLength}</div>
         </div>
         <div class="setup">
-            <div class="champion-image">
-                <img src="${Endpoints.DDragon.Image.ChampionSquare(this.champion.image.full)}" width="64" height="64"/>
-            </div>
             <div class="additional-info">
-                <div class="summoner-spells"></div>
-                <div class="runes">
-                    <div class="keystone"><img src="${Endpoints.DDragon.Image.Rune(this.stats.keystone.icon)}" width="16" height="16"/></div>
-                    <div class="rune-path"><img src="${Endpoints.DDragon.Image.Rune(this.stats.secondaryKeystone.icon)}" width="16" height="16"/></div>
+                <div class="champion-image">
+                    <img src="${Endpoints.DDragon.Image.ChampionSquare(this.champion.image.full)}"/>
+                </div>
+                <div class="masteries">
+                    <div class="summoner-spells">
+                        <img src="${Endpoints.DDragon.Image.SummonerSpell(this.stats.summonerSpell2.image.full)}"/>
+                        <img src="${Endpoints.DDragon.Image.SummonerSpell(this.stats.summonerSpell1.image.full)}"/>
+                    </div>
+                    <div class="runes">
+                        <img src="${Endpoints.DDragon.Image.Rune(this.stats.keystone.icon)}"/>
+                        <img src="${Endpoints.DDragon.Image.Rune(this.stats.secondaryKeystone.icon)}"/>
+                    </div>
                 </div>
             </div>
             <div class="champion-name">${this.champion.name}</div>

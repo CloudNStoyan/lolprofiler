@@ -102,10 +102,27 @@ html, body {
     border-bottom: 1px solid lightgray;
     margin-top: 5px;
     padding-bottom: 5px;
+    text-align: center;
 }
 
 .match > *:not(:first-child) {
     margin-left: 10px;
+}
+
+.score .deaths {
+    color: red;
+}
+
+.match.victory .result {
+    color: var(--color-blue);
+}
+
+.match.defeat .result {
+    color: var(--color-red);
+}
+
+.match-info {
+    width: 70px;
 }
 
 .matches-wrapper {
@@ -127,4 +144,27 @@ html, body {
 
 .match.defeat .match-status {
     background-color: var(--color-red);
+}
+
+.champion-image, .masteries, .spell, .keystone, .rune-path {
+    display: inline-block;
+}
+
+.champion-image img {
+    width: 64px;
+    height: 64px;
+}
+
+.summoner-spells img, .runes img {
+    width: 32px;
+    height: 32px;
+    display: inline-block;
+}
+
+.additional-info img {
+    display: block;
+}
+
+.summoner-spells, .runes {
+    display: inline-block;
 }

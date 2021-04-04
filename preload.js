@@ -3,21 +3,28 @@ const path = require('path');
 
 const { contextBridge } = require('electron');
 
-function ddragonJson(fileName) {
-  return JSON.parse(fs.readFileSync(path.resolve(__dirname, 'ddragon/' + fileName)))
+function readJson(filePath) {
+  return JSON.parse(fs.readFileSync(path.resolve(__dirname, filePath)))
+}
+
+function readText(filePath) {
+  return fs.readFileSync(path.resolve(__dirname, filePath)).toString();
 }
 
 contextBridge.exposeInMainWorld(
   'lol',
   {
     api: {
-        key: fs.readFileSync(path.resolve(__dirname, 'key.txt')).toString()
+      key: readText('key.txt')
     },
     ddragon: {
-        champion: ddragonJson('champion.json'),
-        queues: ddragonJson('queues.json'),
-        summoner: ddragonJson('summoner.json'),
-        runesReforged: ddragonJson('runesReforged.json')
-    }
+      champion: readJson('ddragon/champion.json'),
+      queues: readJson('ddragon/queues.json'),
+      summoner: readJson('ddragon/summoner.json'),
+      runesReforged: readJson('ddragon/runesReforged.json')
+    },
+    constants: {
+      queues: readJson('constants/queues.json')
+    },
   }
 )
