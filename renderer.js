@@ -74,6 +74,8 @@ function fillSummonerMatches(matches, summoner) {
         .find(runePath => runePath.id == participant.stats.perkPrimaryStyle).slots[0].runes
         .find(rune => rune.id == participant.stats.perk0);
 
+        var items = [participant.stats.item0, participant.stats.item1, participant.stats.item2, participant.stats.item6, participant.stats.item3, participant.stats.item4, participant.stats.item5];
+
         let stats = {
             level: participant.stats.champLevel,
             creepScore: participant.stats.totalMinionsKilled,
@@ -81,7 +83,8 @@ function fillSummonerMatches(matches, summoner) {
             summonerSpell1: summonerSpells.find(spell => spell.key == participant.spell1Id),
             summonerSpell2: summonerSpells.find(spell => spell.key == participant.spell2Id),
             keystone: keystone,
-            secondaryKeystone: secondaryRunePath
+            secondaryKeystone: secondaryRunePath,
+            items: items
         }
 
         matchesWrapper.appendChild(
@@ -139,6 +142,17 @@ class Game {
     }
 
     ToNode() {
+        let itemsString = '';
+
+        this.stats.items.forEach((item) => {
+            if (item != 0) {
+                itemsString += `<img src="${Endpoints.DDragon.Image.Item(item)}" />`;   
+            } else {
+                itemsString += '<img class="no-image" />'
+            }
+        });
+
+
         let winText = this.isWin ? 'Victory' : 'Defeat';
         let match = document.createElement('div');
         match.className = 'match ' + winText.toLowerCase();
@@ -161,8 +175,8 @@ class Game {
                 </div>
                 <div class="masteries">
                     <div class="summoner-spells">
-                        <img src="${Endpoints.DDragon.Image.SummonerSpell(this.stats.summonerSpell2.image.full)}"/>
                         <img src="${Endpoints.DDragon.Image.SummonerSpell(this.stats.summonerSpell1.image.full)}"/>
+                        <img src="${Endpoints.DDragon.Image.SummonerSpell(this.stats.summonerSpell2.image.full)}"/>
                     </div>
                     <div class="runes">
                         <img src="${Endpoints.DDragon.Image.Rune(this.stats.keystone.icon)}"/>
@@ -182,7 +196,9 @@ class Game {
             <div>${this.stats.creepScore} CS</div>
             <div>P/Kill ${this.stats.killPercentage}%</div>
         </div>
-        <div class="items"></div>
+        <div class="items">
+            ${itemsString}
+        </div>
         <div class="players"></div>
         `;
 
@@ -227,6 +243,9 @@ class Endpoints {
             },
             RankedEmblem(tier) {
                 return `./ddragon/img/ranked-emblems/Emblem_${tier}.png`;
+            },
+            Item(itemId) {
+                return `http://ddragon.leagueoflegends.com/cdn/11.7.1/img/item/${itemId}.png`
             }
         }
     }

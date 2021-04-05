@@ -153,12 +153,20 @@ html, body {
 .champion-image img {
     width: 64px;
     height: 64px;
+    border: 0;
+    border-radius: 3px;
 }
 
 .summoner-spells img, .runes img {
     width: 32px;
     height: 32px;
     display: inline-block;
+    border: 0;
+    border-radius: 3px;
+}
+
+.summoner-spells img:last-child {
+    margin-top: 1px;
 }
 
 .additional-info img {
@@ -167,4 +175,24 @@ html, body {
 
 .summoner-spells, .runes {
     display: inline-block;
+}
+
+.items {
+    display: flex;
+    flex-flow: row wrap;
+    width: 140px;
+    align-content: start;
+}
+
+.items img {
+    display: block;
+    width: 32px;
+    height: 32px;
+    margin: 1px;
+    border: 0;
+    border-radius: 3px;
+}
+
+.items img.no-image {
+    border: 1px solid lightgray;
 }
