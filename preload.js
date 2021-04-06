@@ -21,7 +21,8 @@ contextBridge.exposeInMainWorld(
       champion: readJson('ddragon/champion.json'),
       queues: readJson('ddragon/queues.json'),
       summoner: readJson('ddragon/summoner.json'),
-      runesReforged: readJson('ddragon/runesReforged.json')
+      runesReforged: readJson('ddragon/runesReforged.json'),
+      item: readJson('ddragon/item.json')
     },
     constants: {
       queues: readJson('constants/queues.json')

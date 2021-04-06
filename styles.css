@@ -193,6 +193,33 @@ html, body {
     border-radius: 3px;
 }
 
+.items > div {
+    position: relative;
+    cursor: pointer;
+}
+
+.items span {
+    display: none;
+}
+
+.items > div:hover span {
+    position: absolute;
+    display: block;
+    width: 100px;
+    bottom: -45px;
+    padding: 10px;
+    background-color: #333;
+    color: #fff;
+    border: 0;
+    border-radius: 3px;
+    z-index: 100;
+}
+
+.items img:hover:after {
+    content: attr(title);
+    color: red;
+}
+
 .items img.no-image {
     border: 1px solid lightgray;
 }

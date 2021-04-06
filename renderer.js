@@ -146,7 +146,7 @@ class Game {
 
         this.stats.items.forEach((item) => {
             if (item != 0) {
-                itemsString += `<img src="${Endpoints.DDragon.Image.Item(item)}" />`;   
+                itemsString += `<div><img src="${Endpoints.DDragon.Image.Item(item)}" /><span>${lol.ddragon.item.data[item].name}</span></div>`;
             } else {
                 itemsString += '<img class="no-image" />'
             }
