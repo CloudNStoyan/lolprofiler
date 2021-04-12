@@ -45,16 +45,40 @@ function fillSummonerRank(queues) {
     })
 }
 
+function fillOverall(overall) {
+    let overallWrapper = document.querySelector('.overall');
+
+    overallWrapper.innerHTML = `
+    <div>Total: ${overall.total}</div>
+    <div>Wins: ${overall.wins}</div>
+    <div>Loses: ${overall.loses}</div>
+    `
+}
+
 function fillSummonerMatches(matches, summoner) {
     let matchesWrapper = document.querySelector('.matches-wrapper');
                         
     matches.sort((a, b) => (a.gameCreation > b.gameCreation) ? -1 : 1)
+
+    let overall = {
+        wins: 0,
+        loses: 0,
+        total: 0
+    }
 
     matches.forEach(game => {
         console.log(game);
         let participantIdentity = game.participantIdentities.find(identity => identity.player.summonerId == summoner.id);
         let participant = game.participants.find(identity => identity.participantId == participantIdentity.participantId);
         let team = game.teams.find(team => team.teamId == participant.teamId);
+
+        if (team.win == "Win") {
+            overall.wins += 1
+        } else {
+            overall.loses += 1
+        }
+
+        overall.total += 1;
 
         let champion = Object.values(lol.ddragon.champion.data).find(champ => champ.key == participant.championId);
         let queue = lol.ddragon.queues.find(q => q.queueId == game.queueId);
@@ -102,7 +126,9 @@ function fillSummonerMatches(matches, summoner) {
                 stats
                 ).ToNode()
         );
-    })
+    });
+
+    fillOverall(overall);
 }
 
 function fetchProfile(summonerName) {
