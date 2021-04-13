@@ -63,7 +63,7 @@ function fillSummonerMatches(matches, summoner) {
     let overall = {
         wins: 0,
         loses: 0,
-        total: 0
+        total: matches.length
     }
 
     matches.forEach(game => {
@@ -77,8 +77,6 @@ function fillSummonerMatches(matches, summoner) {
         } else {
             overall.loses += 1
         }
-
-        overall.total += 1;
 
         let champion = Object.values(lol.ddragon.champion.data).find(champ => champ.key == participant.championId);
         let queue = lol.ddragon.queues.find(q => q.queueId == game.queueId);

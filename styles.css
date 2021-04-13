@@ -70,13 +70,18 @@ html, body {
     margin-right: 20px;
 }
 
+.footer {
+    grid-area: footer;
+}
+
 .container {
     display: grid;
     grid-template-columns: 300px auto;
-    grid-template-rows: 70px 100%;
+    grid-template-rows: 70px auto 70px;
     grid-template-areas: 
     "header header"
-    "aside main";
+    "aside main"
+    "footer footer";
     height: 100%;
 }
 
@@ -195,7 +200,7 @@ html, body {
 }
 
 .matches-wrapper {
-    height: 400px;
+    height: 300px;
     overflow: scroll;
     overflow-x: hidden;
     box-shadow: 0 4px 2px -2px lightgrey;
@@ -317,4 +322,16 @@ html, body {
 .btn:hover {
     background-color: #fff;
     color: var(--secondary-color);
+}
+
+.section-content.matches-wrapper::-webkit-scrollbar {
+    width: 10px;
+}
+
+.section-content.matches-wrapper::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.section-content.matches-wrapper::-webkit-scrollbar-thumb {
+    background: #888;
 }
