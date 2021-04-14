@@ -72,6 +72,13 @@ function fillSummonerMatches(matches, summoner) {
         let participant = game.participants.find(identity => identity.participantId == participantIdentity.participantId);
         let team = game.teams.find(team => team.teamId == participant.teamId);
 
+        let teams = {
+            Blue: game.participants.filter((p) => p.teamId == 100).map((p) => game.participantIdentities.find(identity => identity.participantId == p.participantId)),
+            Red: game.participants.filter((p) => p.teamId == 200).map((p) => game.participantIdentities.find(identity => identity.participantId == p.participantId))
+        };
+
+        console.log(teams)
+
         if (team.win == "Win") {
             overall.wins += 1
         } else {
@@ -121,7 +128,8 @@ function fillSummonerMatches(matches, summoner) {
                 `${Math.floor((game.gameDuration / 60))}m ${(game.gameDuration % 60)}s`,
                 queue,
                 null,
-                stats
+                stats,
+                teams
                 ).ToNode()
         );
     });
@@ -155,7 +163,7 @@ function fetchProfile(summonerName) {
 }
 
 class Game {
-    constructor(isWin, champion, kda, gameLength, queue, longAgo, stats) {
+    constructor(isWin, champion, kda, gameLength, queue, longAgo, stats, teams) {
         this.isWin = isWin;
         this.champion = champion;
         this.kda = kda;
@@ -163,6 +171,7 @@ class Game {
         this.queue = queue;
         this.longAgo = longAgo;
         this.stats = stats;
+        this.teams = teams;
     }
 
     ToNode() {
@@ -223,7 +232,14 @@ class Game {
         <div class="items">
             ${itemsString}
         </div>
-        <div class="players"></div>
+        <div class="players">
+            <div class="blue-team">
+            ${this.teams.Blue.map((p) => p.player.summonerName).join(" ")}
+            </div>
+            <div class="red-team">
+            ${this.teams.Red.map((p) => p.player.summonerName).join(" ")}
+            </div>
+        </div>
         `;
 
         return match;
