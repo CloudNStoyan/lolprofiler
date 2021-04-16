@@ -335,3 +335,19 @@ html, body {
 .section-content.matches-wrapper::-webkit-scrollbar-thumb {
     background: #888;
 }
+
+.players {
+    display: flex;
+    flex-flow: row wrap;
+    font-size: 12px;
+    width: 250px;
+}
+
+.team {
+    flex: 0 0 50%;
+}
+
+.summoner {
+    text-decoration: none;
+    color: black;
+}

@@ -157,6 +157,7 @@ function fetchProfile(summonerName) {
 
                     Promise.all(matchRequests).then(matches => {
                         fillSummonerMatches(matches, summoner);
+                        playersSearch();
                     });
                 });
         });
@@ -184,6 +185,25 @@ class Game {
                 itemsString += '<img class="no-image" />'
             }
         });
+
+        let blueTeamString = '';
+        let redTeamString = '';
+
+        this.teams.Blue.forEach((p) => {
+            blueTeamString += `
+            <a href="#" class="summoner" data-summoner-name="${p.player.summonerName}">
+            <div class="summoner-name">${p.player.summonerName}</div>
+            </a>
+            `
+        })
+
+        this.teams.Red.forEach((p) => {
+            redTeamString += `
+            <a href="#" class="summoner" data-summoner-name="${p.player.summonerName}">
+            <div class="summoner-name">${p.player.summonerName}</div>
+            </a>
+            `
+        })
 
 
         let winText = this.isWin ? 'Victory' : 'Defeat';
@@ -233,16 +253,31 @@ class Game {
             ${itemsString}
         </div>
         <div class="players">
-            <div class="blue-team">
-            ${this.teams.Blue.map((p) => p.player.summonerName).join(" ")}
+            <div class="team">
+            ${blueTeamString}
             </div>
-            <div class="red-team">
-            ${this.teams.Red.map((p) => p.player.summonerName).join(" ")}
+            <div class="team">
+            ${redTeamString}
             </div>
         </div>
         `;
 
         return match;
+    }
+}
+
+function playersSearch() {
+    let summoners = document.querySelectorAll('.summoner');
+
+    for (let i = 0; i < summoners.length; i++) {
+        let summoner = summoners[i];
+        summoner.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            let name = summoner.getAttribute('data-summoner-name');
+
+            fetchProfile(name);
+        })
     }
 }
 
