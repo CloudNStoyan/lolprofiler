@@ -45,6 +45,16 @@ html, body {
     padding: 0;
     margin: 0;
     font-size: 16px;
+    width: 200px;
+    transition: width 0.25s linear;
+}
+
+#input-name.empty {
+    width: 50px;
+}
+
+#input-name:focus {
+    width: 200px;
 }
 
 #input-name:focus {
@@ -196,7 +206,7 @@ html, body {
 }
 
 .match-info {
-    width: 70px;
+    width: 75px;
 }
 
 .matches-wrapper {

@@ -1,6 +1,16 @@
 let searchBtn = document.querySelector('#search-btn');
 let nameInput = document.querySelector('#input-name');
 
+nameInput.addEventListener("change", () => {
+    if (nameInput.value != "" && nameInput.classList.contains("empty")) {
+        nameInput.classList.remove("empty");
+    } 
+    
+    if (nameInput.value == "" && !nameInput.classList.contains("empty")) {
+        nameInput.classList.add("empty");
+    }
+});
+
 nameInput.addEventListener("keyup", (e) => {
     if (e.keyCode === 13) {
       e.preventDefault();
@@ -26,10 +36,7 @@ function fillSummonerRank(queues) {
         rankedInfo.className = 'rank-info';
         rankedWrapper.appendChild(rankedInfo);
         
-        rankedInfo.innerHTML = 
-        `
-        <h1 class="rank-text unranked">UNRANKED</h1>
-        `;
+        rankedInfo.innerHTML = '<h1 class="rank-text unranked">UNRANKED</h1>';
     }
                     
     queues.forEach((queue) => {
@@ -37,7 +44,7 @@ function fillSummonerRank(queues) {
         rankedInfo.className = 'rank-info';
         rankedInfo.innerHTML = 
         `
-        <div class="rank-queue">${queueNames[queue.queueType]}</div>
+        <div class="rank-queue">${lol.constants.ranked[queue.queueType]}</div>
         <img width="100" height="100" src="${Endpoints.DDragon.Image.RankedEmblem(queue.tier[0] + queue.tier.substring(1).toLowerCase())}"/>
         <div class="rank-text">${queue.tier} ${queue.rank}</div>
         `;
@@ -57,6 +64,7 @@ function fillOverall(overall) {
 
 function fillSummonerMatches(matches, summoner) {
     let matchesWrapper = document.querySelector('.matches-wrapper');
+    matchesWrapper.innerHTML = '';
                         
     matches.sort((a, b) => (a.gameCreation > b.gameCreation) ? -1 : 1)
 
@@ -85,6 +93,7 @@ function fillSummonerMatches(matches, summoner) {
             overall.loses += 1
         }
 
+        console.log(participant.championId);
         let champion = Object.values(lol.ddragon.champion.data).find(champ => champ.key == participant.championId);
         let queue = lol.ddragon.queues.find(q => q.queueId == game.queueId);
 
@@ -176,6 +185,7 @@ class Game {
     }
 
     ToNode() {
+        console.log(this.champion)
         let itemsString = '';
 
         this.stats.items.forEach((item) => {
@@ -209,6 +219,8 @@ class Game {
         let winText = this.isWin ? 'Victory' : 'Defeat';
         let match = document.createElement('div');
         match.className = 'match ' + winText.toLowerCase();
+
+        console.log(this.queue.queueId)
 
         let gameType = lol.constants.queues.find(q => q.id == this.queue.queueId);
 
@@ -305,13 +317,13 @@ class Endpoints {
     static DDragon = {
         Image: {
             ProfileIcon(profileIconId) {
-                return `http://ddragon.leagueoflegends.com/cdn/11.6.1/img/profileicon/${profileIconId}.png`;
+                return `http://ddragon.leagueoflegends.com/cdn/11.8.1/img/profileicon/${profileIconId}.png`;
             },
             ChampionSquare(imageName) {
-                return 'http://ddragon.leagueoflegends.com/cdn/11.7.1/img/champion/' + imageName;
+                return 'http://ddragon.leagueoflegends.com/cdn/11.8.1/img/champion/' + imageName;
             },
             SummonerSpell(imageName) {
-                return 'http://ddragon.leagueoflegends.com/cdn/11.7.1/img/spell/' + imageName;
+                return 'http://ddragon.leagueoflegends.com/cdn/11.8.1/img/spell/' + imageName;
             },
             Rune(imageName) {
                 return './ddragon/img/' + imageName;
@@ -320,7 +332,7 @@ class Endpoints {
                 return `./ddragon/img/ranked-emblems/Emblem_${tier}.png`;
             },
             Item(itemId) {
-                return `http://ddragon.leagueoflegends.com/cdn/11.7.1/img/item/${itemId}.png`
+                return `http://ddragon.leagueoflegends.com/cdn/11.8.1/img/item/${itemId}.png`
             }
         }
     }

@@ -25,7 +25,8 @@ contextBridge.exposeInMainWorld(
       item: readJson('ddragon/item.json')
     },
     constants: {
-      queues: readJson('constants/queues.json')
+      queues: readJson('constants/queues.json'),
+      ranked: readJson('constants/ranked.json')
     },
   }
 )
