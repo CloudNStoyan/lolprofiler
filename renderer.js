@@ -294,7 +294,7 @@ function putNameAnimation(name) {
     for (let i = 0; i < name.length; i++) {
         setTimeout(() => {
             nameInput.value += name[i];
-        }, 50 * i);
+        }, 75 * i);
 
         if (i + 1 >= name.length) {
             fetchProfile(name);
