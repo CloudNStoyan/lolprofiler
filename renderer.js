@@ -11,13 +11,13 @@ nameInput.addEventListener("keyup", (e) => {
 
 searchBtn.addEventListener('click', () => fetchProfile(nameInput.value));
 
-function fillSummonerInfo(summoner) {
+function handleSummoner(summoner) {
     document.querySelector('.profile-name').innerText = summoner.name;
     document.querySelector('.profile-level').innerText = summoner.summonerLevel;
     document.querySelector('.profile-icon img').src = Endpoints.DDragon.Image.ProfileIcon(summoner.profileIconId)
 }
 
-function fillSummonerRank(queues) {
+function handleQueues(queues) {
     let rankedWrapper = document.querySelector('.rank-wrapper')
     rankedWrapper.innerHTML = '';
 
@@ -42,23 +42,23 @@ function fillSummonerRank(queues) {
     })
 }
 
-function fillOverall(overall) {
-    let overallWrapper = document.querySelector('.overall');
+function handleSummary(summary) {
+    let summaryWrapper = document.querySelector('.summary');
 
-    overallWrapper.innerHTML = `
-    <div>Total: ${overall.total}</div>
-    <div>Wins: ${overall.wins}</div>
-    <div>Loses: ${overall.loses}</div>
+    summaryWrapper.innerHTML = `
+    <div>Total: ${summary.total}</div>
+    <div>Wins: ${summary.wins}</div>
+    <div>Loses: ${summary.loses}</div>
     `
 }
 
-function fillSummonerMatches(matches, summoner) {
+function handleMatches(matches, summoner) {
     let matchesWrapper = document.querySelector('.matches-wrapper');
     matchesWrapper.innerHTML = '';
                         
     matches.sort((a, b) => (a.gameCreation > b.gameCreation) ? -1 : 1)
 
-    let overall = {
+    let summary = {
         wins: 0,
         loses: 0,
         total: matches.length
@@ -78,9 +78,9 @@ function fillSummonerMatches(matches, summoner) {
         console.log(teams)
 
         if (team.win == "Win") {
-            overall.wins += 1
+            summary.wins += 1
         } else {
-            overall.loses += 1
+            summary.loses += 1
         }
 
         console.log(participant.championId);
@@ -133,39 +133,44 @@ function fillSummonerMatches(matches, summoner) {
         );
     });
 
-    fillOverall(overall);
+    handleSummary(summary);
 }
 
-function fetchProfile(summonerName) {
+async function fetchProfile(summonerName) {
     document.querySelector('.container').classList.add('hide');
     document.querySelector('.container').classList.add('loading');
     nameInput.setAttribute('disabled', '');
-    fetch(Endpoints.SummonerV4ByName(summonerName))
-        .then(response => response.json())
-        .then(summoner => {
-            fillSummonerInfo(summoner);
 
-            fetch(Endpoints.LeagueV4BySummoner(summoner.id))
-                .then(response => response.json())
-                .then(queues => {
-                    fillSummonerRank(queues);
-                });
-            
-            fetch(Endpoints.MatchV4Matchlist(summoner.accountId))
-                .then(response => response.json())
-                .then(matchList => {
-                    let matchRequests = [];
-                    matchList.matches.forEach((match) => matchRequests.push(fetch(Endpoints.MatchV4MatchById(match.gameId)).then(response => response.json())));
+    let summoner = await customFetch(Endpoints.SummonerV4ByName(summonerName));
+    handleSummoner(summoner);
 
-                    Promise.all(matchRequests).then(matches => {
-                        fillSummonerMatches(matches, summoner);
-                        playersSearch();
-                        document.querySelector('.container').classList.remove('hide');
-                        document.querySelector('.container').classList.remove('loading');
-                        nameInput.removeAttribute('disabled', '');
-                    });
-                });
-        });
+    let queues = await customFetch(Endpoints.LeagueV4BySummoner(summoner.id));
+    handleQueues(queues);
+
+    let matchList = await customFetch(Endpoints.MatchV4Matchlist(summoner.accountId));
+    let matchRequests = [];
+    matchList.matches.forEach((match) => matchRequests.push(customFetch(Endpoints.MatchV4MatchById(match.gameId))));
+
+    let matches = await Promise.all(matchRequests);
+    handleMatches(matches, summoner);
+
+    document.querySelector('.container').classList.remove('hide');
+    document.querySelector('.container').classList.remove('loading');
+    nameInput.removeAttribute('disabled', '');
+}
+
+async function customFetch(url) {
+    let cachedResponse = CustomCache.get(url);
+
+    if (cachedResponse) {
+        return cachedResponse;
+    }
+
+    let response = await fetch(url).then(resp => resp.json());
+
+    CustomCache.add(url, response);
+
+    return response;
 }
 
 class Game {
@@ -197,7 +202,7 @@ class Game {
 
         this.teams.Blue.forEach((p) => {
             blueTeamString += `
-            <a href="#" class="summoner" data-summoner-name="${p.player.summonerName}">
+            <a href="#" class="summoner" onclick="putNameAnimation('${p.player.summonerName}')">
             <div class="summoner-name">${p.player.summonerName}</div>
             </a>
             `
@@ -205,7 +210,7 @@ class Game {
 
         this.teams.Red.forEach((p) => {
             redTeamString += `
-            <a href="#" class="summoner" data-summoner-name="${p.player.summonerName}">
+            <a href="#" class="summoner" onclick="putNameAnimation('${p.player.summonerName}')">
             <div class="summoner-name">${p.player.summonerName}</div>
             </a>
             `
@@ -274,27 +279,12 @@ class Game {
     }
 }
 
-function playersSearch() {
-    let summoners = document.querySelectorAll('.summoner');
-
-    for (let i = 0; i < summoners.length; i++) {
-        let summoner = summoners[i];
-        summoner.addEventListener('click', (e) => {
-            e.preventDefault();
-
-            let name = summoner.getAttribute('data-summoner-name');
-            
-            putNameAnimation(name)
-        })
-    }
-}
-
 function putNameAnimation(name) {
     nameInput.value = '';
     for (let i = 0; i < name.length; i++) {
         setTimeout(() => {
             nameInput.value += name[i];
-        }, 75 * i);
+        }, 50 * i);
 
         if (i + 1 >= name.length) {
             fetchProfile(name);
@@ -324,15 +314,16 @@ class Endpoints {
     }
 
     static DDragon = {
+        Version: '11.8.1',
         Image: {
             ProfileIcon(profileIconId) {
-                return `http://ddragon.leagueoflegends.com/cdn/11.8.1/img/profileicon/${profileIconId}.png`;
+                return `http://ddragon.leagueoflegends.com/cdn/${Endpoints.DDragon.Version}/img/profileicon/${profileIconId}.png`;
             },
             ChampionSquare(imageName) {
-                return 'http://ddragon.leagueoflegends.com/cdn/11.8.1/img/champion/' + imageName;
+                return `http://ddragon.leagueoflegends.com/cdn/${Endpoints.DDragon.Version}/img/champion/${imageName}`;
             },
             SummonerSpell(imageName) {
-                return 'http://ddragon.leagueoflegends.com/cdn/11.8.1/img/spell/' + imageName;
+                return `http://ddragon.leagueoflegends.com/cdn/${Endpoints.DDragon.Version}/img/spell/${imageName}`;
             },
             Rune(imageName) {
                 return './ddragon/img/' + imageName;
@@ -341,7 +332,7 @@ class Endpoints {
                 return `./ddragon/img/ranked-emblems/Emblem_${tier}.png`;
             },
             Item(itemId) {
-                return `http://ddragon.leagueoflegends.com/cdn/11.8.1/img/item/${itemId}.png`
+                return `http://ddragon.leagueoflegends.com/cdn/${Endpoints.DDragon.Version}/img/item/${itemId}.png`
             }
         }
     }
