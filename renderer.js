@@ -1,30 +1,40 @@
-let searchBtn = document.querySelector('#search-btn');
-let nameInput = document.querySelector('#input-name');
+let lolprofiler = {
+    controls: {
+        searchBtn: document.querySelector('#search-btn'),
+        nameInput: document.querySelector('#input-name'),
+        profileName: document.querySelector('.profile-name'),
+        profileLevel: document.querySelector('.profile-level'),
+        profileIcon: document.querySelector('.profile-icon img'),
+        rankWrapper: document.querySelector('.rank-wrapper'),
+        summaryWrapper: document.querySelector('.summary'),
+        matchesWrapper: document.querySelector('.matches-wrapper'),
+        main: document.querySelector('.container'),
+    }
+}
 
-nameInput.addEventListener("keyup", (e) => {
+lolprofiler.controls.nameInput.addEventListener("keyup", (e) => {
     if (e.keyCode === 13) {
       e.preventDefault();
       
-      fetchProfile(nameInput.value);
+      fetchProfile(lolprofiler.controls.nameInput.value);
     }
   });
 
-searchBtn.addEventListener('click', () => fetchProfile(nameInput.value));
+lolprofiler.controls.searchBtn.addEventListener('click', () => fetchProfile(lolprofiler.controls.nameInput.value));
 
 function handleSummoner(summoner) {
-    document.querySelector('.profile-name').innerText = summoner.name;
-    document.querySelector('.profile-level').innerText = summoner.summonerLevel;
-    document.querySelector('.profile-icon img').src = Endpoints.DDragon.Image.ProfileIcon(summoner.profileIconId)
+    lolprofiler.controls.profileName.innerText = summoner.name;
+    lolprofiler.controls.profileLevel.innerText = summoner.summonerLevel;
+    lolprofiler.controls.profileIcon.src = Endpoints.DDragon.Image.ProfileIcon(summoner.profileIconId);
 }
 
 function handleQueues(queues) {
-    let rankedWrapper = document.querySelector('.rank-wrapper')
-    rankedWrapper.innerHTML = '';
+    lolprofiler.controls.rankWrapper.innerHTML = '';
 
     if (queues.length == 0) {
         let rankedInfo = document.createElement('div');
         rankedInfo.className = 'rank-info';
-        rankedWrapper.appendChild(rankedInfo);
+        lolprofiler.controls.rankWrapper.appendChild(rankedInfo);
         
         rankedInfo.innerHTML = '<h1 class="rank-text unranked">UNRANKED</h1>';
     }
@@ -38,14 +48,12 @@ function handleQueues(queues) {
         <img width="100" height="100" src="${Endpoints.DDragon.Image.RankedEmblem(queue.tier[0] + queue.tier.substring(1).toLowerCase())}"/>
         <div class="rank-text">${queue.tier} ${queue.rank}</div>
         `;
-        rankedWrapper.appendChild(rankedInfo);
+        lolprofiler.controls.rankedWrapper.appendChild(rankedInfo);
     })
 }
 
 function handleSummary(summary) {
-    let summaryWrapper = document.querySelector('.summary');
-
-    summaryWrapper.innerHTML = `
+    lolprofiler.controls.summaryWrapper.innerHTML = `
     <div>Total: ${summary.total}</div>
     <div>Wins: ${summary.wins}</div>
     <div>Loses: ${summary.loses}</div>
@@ -53,8 +61,7 @@ function handleSummary(summary) {
 }
 
 function handleMatches(matches, summoner) {
-    let matchesWrapper = document.querySelector('.matches-wrapper');
-    matchesWrapper.innerHTML = '';
+    lolprofiler.controls.matchesWrapper.innerHTML = '';
                         
     matches.sort((a, b) => (a.gameCreation > b.gameCreation) ? -1 : 1)
 
@@ -115,7 +122,7 @@ function handleMatches(matches, summoner) {
             items: items
         }
 
-        matchesWrapper.appendChild(
+        lolprofiler.controls.matchesWrapper.appendChild(
             new Game(
                 team.win == 'Win',
                 champion,
@@ -137,9 +144,9 @@ function handleMatches(matches, summoner) {
 }
 
 async function fetchProfile(summonerName) {
-    document.querySelector('.container').classList.add('hide');
-    document.querySelector('.container').classList.add('loading');
-    nameInput.setAttribute('disabled', '');
+    lolprofiler.controls.main.classList.add('hide');
+    lolprofiler.controls.main.classList.add('loading');
+    lolprofiler.controls.nameInput.setAttribute('disabled', '');
 
     let summoner = await customFetch(Endpoints.SummonerV4ByName(summonerName));
     handleSummoner(summoner);
@@ -154,9 +161,9 @@ async function fetchProfile(summonerName) {
     let matches = await Promise.all(matchRequests);
     handleMatches(matches, summoner);
 
-    document.querySelector('.container').classList.remove('hide');
-    document.querySelector('.container').classList.remove('loading');
-    nameInput.removeAttribute('disabled', '');
+    lolprofiler.controls.main.classList.remove('hide');
+    lolprofiler.controls.main.classList.remove('loading');
+    lolprofiler.controls.nameInput.removeAttribute('disabled', '');
 }
 
 async function customFetch(url) {
@@ -279,19 +286,6 @@ class Game {
     }
 }
 
-function putNameAnimation(name) {
-    nameInput.value = '';
-    for (let i = 0; i < name.length; i++) {
-        setTimeout(() => {
-            nameInput.value += name[i];
-        }, 50 * i);
-
-        if (i + 1 >= name.length) {
-            fetchProfile(name);
-        }
-    }
-}
-
 class Endpoints {
     static ApiKey = lol.api.key;
 
@@ -334,6 +328,19 @@ class Endpoints {
             Item(itemId) {
                 return `http://ddragon.leagueoflegends.com/cdn/${Endpoints.DDragon.Version}/img/item/${itemId}.png`
             }
+        }
+    }
+}
+
+function putNameAnimation(name) {
+    lolprofiler.controls.nameInput.value = '';
+    for (let i = 0; i < name.length; i++) {
+        setTimeout(() => {
+            lolprofiler.controls.nameInput.value += name[i];
+        }, 50 * i);
+
+        if (i + 1 >= name.length) {
+            fetchProfile(name);
         }
     }
 }
