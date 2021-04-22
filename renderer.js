@@ -48,7 +48,7 @@ function handleQueues(queues) {
         <img width="100" height="100" src="${Endpoints.DDragon.Image.RankedEmblem(queue.tier[0] + queue.tier.substring(1).toLowerCase())}"/>
         <div class="rank-text">${queue.tier} ${queue.rank}</div>
         `;
-        lolprofiler.controls.rankedWrapper.appendChild(rankedInfo);
+        lolprofiler.controls.rankWrapper.appendChild(rankedInfo);
     })
 }
 
@@ -340,7 +340,7 @@ function putNameAnimation(name) {
         }, 50 * i);
 
         if (i + 1 >= name.length) {
-            fetchProfile(name);
+            setTimeout(() => fetchProfile(name), (50 * i) + 50);
         }
     }
 }
