@@ -77,10 +77,10 @@ function handleMatches(matches, summoner) {
         let participant = game.participants.find(identity => identity.participantId == participantIdentity.participantId);
         let team = game.teams.find(team => team.teamId == participant.teamId);
 
-        let teams = {
-            Blue: game.participants.filter((p) => p.teamId == 100).map((p) => game.participantIdentities.find(identity => identity.participantId == p.participantId)),
-            Red: game.participants.filter((p) => p.teamId == 200).map((p) => game.participantIdentities.find(identity => identity.participantId == p.participantId))
-        };
+        let teams = [
+            game.participants.filter((p) => p.teamId == 100).map((p) => game.participantIdentities.find(identity => identity.participantId == p.participantId)),
+            game.participants.filter((p) => p.teamId == 200).map((p) => game.participantIdentities.find(identity => identity.participantId == p.participantId))
+        ];
 
         console.log(teams)
 
@@ -204,25 +204,19 @@ class Game {
             }
         });
 
-        let blueTeamString = '';
-        let redTeamString = '';
+        var teamsString = '';
 
-        this.teams.Blue.forEach((p) => {
-            blueTeamString += `
-            <a href="#" class="summoner" onclick="putNameAnimation('${p.player.summonerName}')">
-            <div class="summoner-name">${p.player.summonerName}</div>
-            </a>
-            `
+        this.teams.forEach((team) => {
+            let teamString = '<div class="team">';
+            team.forEach(p => {
+                teamString += `
+                <a href="#" class="summoner" onclick="putNameAnimation('${p.player.summonerName}')">
+                <div class="summoner-name">${p.player.summonerName}</div>
+                </a>
+                `
+            })
+            teamsString += teamString + "</div>";
         })
-
-        this.teams.Red.forEach((p) => {
-            redTeamString += `
-            <a href="#" class="summoner" onclick="putNameAnimation('${p.player.summonerName}')">
-            <div class="summoner-name">${p.player.summonerName}</div>
-            </a>
-            `
-        })
-
 
         let winText = this.isWin ? 'Victory' : 'Defeat';
         let match = document.createElement('div');
@@ -273,12 +267,7 @@ class Game {
             ${itemsString}
         </div>
         <div class="players">
-            <div class="team">
-            ${blueTeamString}
-            </div>
-            <div class="team">
-            ${redTeamString}
-            </div>
+            ${teamsString}
         </div>
         `;
 
