@@ -9,8 +9,15 @@ let lolprofiler = {
         summaryWrapper: document.querySelector('.summary'),
         matchesWrapper: document.querySelector('.matches-wrapper'),
         main: document.querySelector('.container'),
+        profileBtn: document.querySelector('.profile-btn')
     }
 }
+
+lolprofiler.controls.profileBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    putNameAnimation("Jojo Protagonist");
+})
 
 lolprofiler.controls.nameInput.addEventListener("keyup", (e) => {
     if (e.keyCode === 13) {
