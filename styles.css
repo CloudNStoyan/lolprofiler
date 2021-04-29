@@ -7,6 +7,7 @@
     --primary-dark-color: #2574a9;
     --secondary-color: #3a539b;
     --background-color: #e4f1fe;
+    --alert-color: #f783ac;
     --ff-ui: montserrat;
     --ff-general: 'Noto Sans TC', sans-serif; 
 }
@@ -395,4 +396,30 @@ html, body {
 .summoner {
     text-decoration: none;
     color: black;
+}
+
+.profile-form:not(.show) {
+    display: none;
+}
+
+.profile-form {
+    position: fixed;
+    top: calc(50% - 120px);
+    left: calc(50% - 220px);
+    z-index: 100;
+    width: 400px;
+    height: 200px;
+    padding: 20px;
+    background-color: var(--background-color);
+    border: 0;
+    border-radius: 20px;
+    text-align: center;
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.profile-form .close-btn {
+    text-align: right;
+    color: var(--alert-color);
+    font-size: 24px;
 }

@@ -9,9 +9,17 @@ let lolprofiler = {
         summaryWrapper: document.querySelector('.summary'),
         matchesWrapper: document.querySelector('.matches-wrapper'),
         main: document.querySelector('.container'),
-        profileBtn: document.querySelector('.profile-btn')
+        profileBtn: document.querySelector('.profile-btn'),
+        profileForm: document.querySelector('.profile-form'),
+        closeProfileFormBtn: document.querySelector('.profile-form .close-btn')
     }
 }
+
+lolprofiler.controls.closeProfileFormBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    lolprofiler.controls.profileForm.classList.remove('show');
+})
 
 lolprofiler.controls.profileBtn.addEventListener("click", (e) => {
     e.preventDefault();
