@@ -11,9 +11,14 @@ let lolprofiler = {
         main: document.querySelector('.container'),
         profileBtn: document.querySelector('.profile-btn'),
         profileForm: document.querySelector('.profile-form'),
-        closeProfileFormBtn: document.querySelector('.profile-form .close-btn')
+        closeProfileFormBtn: document.querySelector('.profile-form .close-btn'),
+        saveProfileFormBtn: document.querySelector('.profile-form .save-btn')
     }
 }
+
+lolprofiler.controls.saveProfileFormBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+})
 
 lolprofiler.controls.closeProfileFormBtn.addEventListener("click", (e) => {
     e.preventDefault();
@@ -24,7 +29,7 @@ lolprofiler.controls.closeProfileFormBtn.addEventListener("click", (e) => {
 lolprofiler.controls.profileBtn.addEventListener("click", (e) => {
     e.preventDefault();
 
-    putNameAnimation("Jojo Protagonist");
+    lolprofiler.controls.profileForm.classList.add('show');
 })
 
 lolprofiler.controls.nameInput.addEventListener("keyup", (e) => {

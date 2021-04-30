@@ -423,3 +423,8 @@ html, body {
     color: var(--alert-color);
     font-size: 24px;
 }
+
+.profile-form .save-btn {
+    text-decoration: none;
+    color: var(--secondary-color);
+}
