@@ -9,18 +9,34 @@ let lolprofiler = {
         summaryWrapper: document.querySelector('.summary'),
         matchesWrapper: document.querySelector('.matches-wrapper'),
         main: document.querySelector('.container'),
-        profileBtn: document.querySelector('.profile-btn'),
-        profileForm: document.querySelector('.profile-form'),
-        closeProfileFormBtn: document.querySelector('.profile-form .close-btn'),
-        saveProfileFormBtn: document.querySelector('.profile-form .save-btn')
+        profileBtn: document.querySelector('.settings-btn'),
+        profileForm: document.querySelector('.settings-form'),
+        closeSettingsFormBtn: document.querySelector('.settings-form .close-btn'),
+        saveSettingsFormBtn: document.querySelector('.settings-form .save-btn'),
+        saveSettingsFormInput: document.querySelector('.settings-form .summoner-name-input'),
+        favoriteBtn: document.querySelector('.favorite-btn'),
+    },
+    localStorageKeys: {
+        summonerName: "summonerName",
     }
 }
 
-lolprofiler.controls.saveProfileFormBtn.addEventListener("click", (e) => {
+lolprofiler.controls.favoriteBtn.addEventListener('click', (e) => {
     e.preventDefault();
+
+    let savedSummonerName = localStorage.getItem(lolprofiler.localStorageKeys.summonerName);
+
+    if (savedSummonerName) {
+        putNameAnimation(savedSummonerName);
+    }
+});
+
+lolprofiler.controls.saveSettingsFormBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    localStorage.setItem(lolprofiler.localStorageKeys.summonerName, lolprofiler.controls.saveSettingsFormInput.value);
 })
 
-lolprofiler.controls.closeProfileFormBtn.addEventListener("click", (e) => {
+lolprofiler.controls.closeSettingsFormBtn.addEventListener("click", (e) => {
     e.preventDefault();
 
     lolprofiler.controls.profileForm.classList.remove('show');
@@ -30,6 +46,12 @@ lolprofiler.controls.profileBtn.addEventListener("click", (e) => {
     e.preventDefault();
 
     lolprofiler.controls.profileForm.classList.add('show');
+
+    let savedSummonerName = localStorage.getItem(lolprofiler.localStorageKeys.summonerName);
+
+    if (savedSummonerName) {
+        lolprofiler.controls.saveSettingsFormInput.value = savedSummonerName;
+    }
 })
 
 lolprofiler.controls.nameInput.addEventListener("keyup", (e) => {
