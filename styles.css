@@ -418,16 +418,32 @@ html, body {
 }
 
 .settings-form .close-btn {
-    text-align: right;
     color: var(--alert-color);
     font-size: 24px;
+    position: absolute;
+    top: 5px;
+    right: 20px;
 }
 
 .settings-form .save-btn {
     text-decoration: none;
     color: var(--secondary-color);
+    background-color: white;
+    padding: 10px 0;
+    border: 0;
+    border-radius: 15px;
+    font-size: 24px;
+    display: block;
 }
 
 .favorite-btn {
     color: gold;
+}
+
+.settings-form-header {
+    margin-top: -15px;
+}
+
+.summoner-form {
+    height: 100px;
 }
