@@ -409,9 +409,10 @@ html, body {
     width: 400px;
     height: 200px;
     padding: 20px;
-    background-color: var(--background-color);
-    border: 0;
-    border-radius: 20px;
+    background-color: white;
+    border-bottom: 2px solid var(--primary-dark-color);
+    border-right: 2px solid var(--primary-dark-color);
+    border-radius: 5px;
     text-align: center;
     display: flex;
     flex-flow: column nowrap;
@@ -428,12 +429,16 @@ html, body {
 .settings-form .save-btn {
     text-decoration: none;
     color: var(--secondary-color);
-    background-color: white;
-    padding: 10px 0;
+    background-color: var(--primary-dark-color);
+    padding: 5px 20px;
     border: 0;
-    border-radius: 15px;
+    border-radius: 5px;
     font-size: 24px;
     display: block;
+    width: 120px;
+    margin: 0 auto;
+    color: white;
+    margin-top: 20px;
 }
 
 .favorite-btn {
@@ -445,5 +450,21 @@ html, body {
 }
 
 .summoner-form {
-    height: 100px;
+    display: flex;
+    flex-flow: column nowrap;
+    text-align: left;
+}
+
+.form-label {
+    color: #5e5e5e;
+}
+
+.form-input {
+    outline: 0;
+    border: 0;
+    border-bottom: 2px solid var(--primary-dark-color);
+}
+
+.form-input:focus {
+    border-bottom: 2px solid var(--primary-color);
 }
