@@ -18,8 +18,9 @@ input {
 
 html, body {
     font-family: var(--ff-general);
-    background-color: var(--background-color);
+    background: linear-gradient(90deg, #00C9FF 0%, #92FE9D 100%);
     margin: 0;
+    overflow: hidden;
 }
 
 .right-nav {
@@ -36,7 +37,6 @@ html, body {
 .header {
     grid-area: header;
     text-align: center;
-    background: radial-gradient(circle, rgba(25,181,254,1) 0%, rgba(58,83,155,1) 100%);
     position: fixed;
     width: 100%;
     height: 70px;
@@ -45,6 +45,14 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.container {
+    transition: opacity 0.25s linear;
+}
+
+.container.hide-entirely {
+    opacity: 0;
 }
 
 .container:not(.hide) .header-content {
@@ -59,8 +67,7 @@ html, body {
     padding: 10px;
     background: #fff;
     width: 250px;
-    border: 0;
-    border-radius: 15px;
+    outline: 5px solid rgba(255, 255, 255, 0.2);
     transition: background-color 0.25s linear;
     float: left;
     margin-left: calc(50% - 125px);
@@ -72,27 +79,22 @@ html, body {
     padding: 0;
     margin: 0;
     font-size: 16px;
-    transition: background-color 0.25s linear;
+    background-color: transparent;
 }
 
-#input-name:focus {
-    border-bottom: 2px solid var(--secondary-color);
-}
-
-.loading-wrapper {
-    display: none;
+#input-name:focus::placeholder {
+    color: transparent;
 }
 
 .aside, .main {
     margin-top: 20px;
     background-color: #fff;
-    border: 0;
-    border-radius: 15px;
+    outline: 5px solid rgba(255, 255, 255, 0.5);
     padding: 20px;
     transition: opacity 0.25s linear;
 }
 
-.container.hide .aside, .container.hide .main {
+.container.hide .aside, .container.hide .main, .container:not(.profile-loaded) .aside, .container:not(.profile-loaded) .main {
     opacity: 0;
 }
 
@@ -100,7 +102,7 @@ html, body {
     height: 100%;
 }
 
-.container.loading .search-wrapper, .container.loading .search-wrapper input {
+.container.loading .search-wrapper {
     background-color: #e9e9e9;
 }
 
@@ -410,9 +412,7 @@ html, body {
     height: 200px;
     padding: 20px;
     background-color: white;
-    border-bottom: 2px solid var(--primary-dark-color);
-    border-right: 2px solid var(--primary-dark-color);
-    border-radius: 5px;
+    outline: 5px solid rgba(255, 255, 255, 0.2);
     text-align: center;
     display: flex;
     flex-flow: column nowrap;
@@ -467,4 +467,48 @@ html, body {
 
 .form-input:focus {
     border-bottom: 2px solid var(--primary-color);
+}
+
+.toast-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 100;
+}
+
+@keyframes slideInFromRight {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+.toast {
+    width: 200px;
+    background: linear-gradient(90deg, #d53369 0%, #daae51 100%);
+    padding: 5px;
+    margin: 10px;
+    animation: 0.25s ease-out 0s 1 slideInFromRight;
+    transition: all 0.25s linear;
+}
+
+.toast.hide {
+    transform: translateX(300px);
+}
+
+.toast.disappear {
+    height: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.toast .content {
+    margin: 0;
+    background-color: white;
+    padding: 5px;
+    text-align: center;
+    font-size: 24px;
+    color: #1F2667
 }

@@ -15,11 +15,40 @@ let lolprofiler = {
         saveSettingsFormBtn: document.querySelector('.settings-form .save-btn'),
         saveSettingsFormInput: document.querySelector('.settings-form .summoner-name-input'),
         favoriteBtn: document.querySelector('.favorite-btn'),
+        toastContainer: document.querySelector('.toast-container'),
     },
     localStorageKeys: {
         summonerName: "summonerName",
+    },
+    constants: {
+        inputNamePlaceholder: "Summoner Name"
     }
 }
+
+toast.config.container = lolprofiler.controls.toastContainer;
+
+function addPlaceholder() {
+    let placeholder = lolprofiler.constants.inputNamePlaceholder;
+    
+    for (let i = 0; i < placeholder.length; i++) {
+        let char = placeholder[i];
+        let timeout = 50 * (char != " " ? i : (i - 1));
+        setTimeout(() => {
+            lolprofiler.controls.nameInput.placeholder += char;
+        }, timeout);
+    }
+}
+
+lolprofiler.controls.nameInput.addEventListener('focus', () => lolprofiler.controls.main.classList.add("hide"))
+lolprofiler.controls.nameInput.addEventListener('focusout', () => {
+    if (!lolprofiler.controls.main.classList.contains("profile-loaded")) {
+        return;
+    }
+
+    lolprofiler.controls.main.classList.remove("hide")
+})
+
+window.addEventListener('load', () => setTimeout(addPlaceholder, 100));
 
 lolprofiler.controls.favoriteBtn.addEventListener('click', (e) => {
     e.preventDefault();
@@ -34,18 +63,21 @@ lolprofiler.controls.favoriteBtn.addEventListener('click', (e) => {
 lolprofiler.controls.saveSettingsFormBtn.addEventListener("click", (e) => {
     e.preventDefault();
     localStorage.setItem(lolprofiler.localStorageKeys.summonerName, lolprofiler.controls.saveSettingsFormInput.value);
+    toast.create("Saved");
 })
 
 lolprofiler.controls.closeSettingsFormBtn.addEventListener("click", (e) => {
     e.preventDefault();
 
     lolprofiler.controls.profileForm.classList.remove('show');
+    lolprofiler.controls.main.classList.remove("hide-entirely");
 })
 
 lolprofiler.controls.profileBtn.addEventListener("click", (e) => {
     e.preventDefault();
 
     lolprofiler.controls.profileForm.classList.add('show');
+    lolprofiler.controls.main.classList.add("hide-entirely");
 
     let savedSummonerName = localStorage.getItem(lolprofiler.localStorageKeys.summonerName);
 
@@ -205,6 +237,7 @@ async function fetchProfile(summonerName) {
 
     lolprofiler.controls.main.classList.remove('hide');
     lolprofiler.controls.main.classList.remove('loading');
+    lolprofiler.controls.main.classList.add("profile-loaded");
     lolprofiler.controls.nameInput.removeAttribute('disabled', '');
 }
 
@@ -251,11 +284,19 @@ class Game {
         this.teams.forEach((team) => {
             let teamString = '<div class="team">';
             team.forEach(p => {
-                teamString += `
-                <a href="#" class="summoner" onclick="putNameAnimation('${p.player.summonerName}')">
-                <div class="summoner-name">${p.player.summonerName}</div>
-                </a>
-                `
+                if (p.accountId != "0") { // is player
+                    teamString += `
+                    <a href="#" class="summoner" onclick="putNameAnimation('${p.player.summonerName}')">
+                    <div class="summoner-name">${p.player.summonerName}</div>
+                    </a>
+                    `  
+                } else {
+                    teamString += `
+                    <a href="#" class="summoner" onclick="putNameAnimation('${p.player.summonerName}')">
+                    <div class="summoner-name">${p.player.summonerName} Bot</div>
+                    </a>
+                    `  
+                }
             })
             teamsString += teamString + "</div>";
         })
