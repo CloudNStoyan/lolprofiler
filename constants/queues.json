@@ -1,1 +1,12 @@
-[{"id": 450, "name": "ARAM"}, {"id": 400, "name": "Normal"}, {"id": 840, "name": "Bot"}, {"id": 850, "name": "Bot"}, {"id": 440, "name": "Flex"}, {"id": 420, "name": "Solo/Duo"},{"id": 700, "name": "Clash"}, {"id": 1020, "name": "One for All"}, {"id": 430, "name": "Blind"}]
+[
+    {"id": 450, "name": "ARAM", "tooltip": "ARAM 5v5"},
+    {"id": 400, "name": "Normal", "tooltip": "Normal Draft"},
+    {"id": 830, "name": "Bot", "tooltip": "Co-op Intro"},
+    {"id": 840, "name": "Bot", "tooltip": "Co-op Beginner"},
+    {"id": 850, "name": "Bot", "tooltip": "Co-op Intermediate"},
+    {"id": 440, "name": "Flex", "tooltip":"Ranked Flex"},
+    {"id": 420, "name": "Solo/Duo", "tooltip":"Ranked Solo/Duo"},
+    {"id": 700, "name": "Clash", "tooltip":"Clash 5v5"},
+    {"id": 1020, "name": "One for All", "tooltip":"One for All"},
+    {"id": 430, "name": "Blind", "tooltip":"Normal Blind"}
+]

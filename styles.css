@@ -315,16 +315,17 @@ html, body {
     border-radius: 3px;
 }
 
-.items > div {
+
+.tooltip-container {
     position: relative;
     cursor: pointer;
 }
 
-.items span {
+.tooltip-content {
     display: none;
 }
 
-.items img:hover + span {
+.tooltip:hover + span {
     position: absolute;
     display: block;
     width: 100px;

@@ -273,9 +273,9 @@ class Game {
 
         this.stats.items.forEach((item) => {
             if (item != 0) {
-                itemsString += `<div><img src="${Endpoints.DDragon.Image.Item(item)}" /><span>${lol.ddragon.item.data[item].name}</span></div>`;
+                itemsString += `<div class="tooltip-container"><img class="tooltip" src="${Endpoints.DDragon.Image.Item(item)}" /><span class="tooltip-content">${lol.ddragon.item.data[item].name}</span></div>`;
             } else {
-                itemsString += '<img class="no-image" />'
+                itemsString += '<div><img class="no-image" /></div>'
             }
         });
 
@@ -312,7 +312,7 @@ class Game {
         match.innerHTML = 
         `
         <div class="match-info">
-            <div>${gameType.name}</div>
+            <div class="tooltip-container"><div class="tooltip">${gameType.name}</div><span class="tooltip-content">${gameType.tooltip}</span></div>
             <div></div>
             <div class="seperator"></div>
             <div class="result">${winText}</div>
