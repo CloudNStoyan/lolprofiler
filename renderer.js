@@ -209,7 +209,8 @@ function handleMatches(matches, summoner) {
                 queue,
                 null,
                 stats,
-                teams
+                teams,
+                game.gameCreation
                 ).ToNode()
         );
     });
@@ -256,7 +257,7 @@ async function customFetch(url) {
 }
 
 class Game {
-    constructor(isWin, champion, kda, gameLength, queue, longAgo, stats, teams) {
+    constructor(isWin, champion, kda, gameLength, queue, longAgo, stats, teams, gameCreation) {
         this.isWin = isWin;
         this.champion = champion;
         this.kda = kda;
@@ -265,6 +266,7 @@ class Game {
         this.longAgo = longAgo;
         this.stats = stats;
         this.teams = teams;
+        this.gameCreation = gameCreation;
     }
 
     ToNode() {
@@ -307,13 +309,17 @@ class Game {
 
         console.log(this.queue.queueId)
 
+        let now = Date.now();
+
+        let gameDate = longAgo(now - this.gameCreation);
+
         let gameType = lol.constants.queues.find(q => q.id == this.queue.queueId);
 
         match.innerHTML = 
         `
         <div class="match-info">
             <div class="tooltip-container"><div class="tooltip">${gameType.name}</div><span class="tooltip-content">${gameType.tooltip}</span></div>
-            <div></div>
+            <div>${gameDate}</div>
             <div class="seperator"></div>
             <div class="result">${winText}</div>
             <div>${this.gameLength}</div>
@@ -415,4 +421,25 @@ function putNameAnimation(name) {
             setTimeout(() => fetchProfile(name), (50 * i) + 50);
         }
     }
+}
+
+function longAgo(difference) {
+    let seconds = difference / 1000;
+    let minutes = seconds / 60;
+    let hours = minutes / 60;
+    let days = hours / 24;
+
+    if (days >= 1) {
+        return Math.round(days) + ' days ago';
+    }
+
+    if (hours >= 1) {
+        return Math.round(hours) + ' hours ago';
+    }
+
+    if (minutes >= 1) {
+        return Math.round(minutes) + ' min ago';
+    }
+
+    return Math.round(seconds) + ' seconds ago'
 }
