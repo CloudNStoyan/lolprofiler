@@ -22,12 +22,110 @@ let lolprofiler = {
     },
     constants: {
         inputNamePlaceholder: "Summoner Name"
+    },
+    uiStates: {
+        load: "load",
+        loaded: "loaded"
+    },
+    DDragon: {
+        Version: '11.8.1',
+        Image: {
+            ProfileIcon(profileIconId) {
+                return `http://ddragon.leagueoflegends.com/cdn/${lolprofiler.DDragon.Version}/img/profileicon/${profileIconId}.png`;
+            },
+            ChampionSquare(imageName) {
+                return `http://ddragon.leagueoflegends.com/cdn/${lolprofiler.DDragon.Version}/img/champion/${imageName}`;
+            },
+            SummonerSpell(imageName) {
+                return `http://ddragon.leagueoflegends.com/cdn/${lolprofiler.DDragon.Version}/img/spell/${imageName}`;
+            },
+            Rune(imageName) {
+                return `./ddragon/img/${imageName}`;
+            },
+            RankedEmblem(tier) {
+                return `./ddragon/img/ranked-emblems/Emblem_${tier}.png`;
+            },
+            Item(itemId) {
+                return `http://ddragon.leagueoflegends.com/cdn/${lolprofiler.DDragon.Version}/img/item/${itemId}.png`
+            }
+        }
+    },
+    updateUIState(state) {
+        if (state == lolprofiler.uiStates.load) {
+            this.controls.main.classList.add('hide');
+            this.controls.main.classList.add('loading');
+            this.controls.nameInput.setAttribute('disabled', '');
+        } else if (state == lolprofiler.uiStates.loaded) {
+            this.controls.main.classList.remove('hide');
+            this.controls.main.classList.remove('loading');
+            this.controls.main.classList.add("profile-loaded");
+            this.controls.nameInput.removeAttribute('disabled', '');
+        }
+    },
+    init() {
+        toast.config.container = lolprofiler.controls.toastContainer;
+
+        this.controls.nameInput.addEventListener('focus', () => this.controls.main.classList.add("hide"));
+
+        this.controls.nameInput.addEventListener('focusout', () => {
+            if (!this.controls.main.classList.contains("profile-loaded")) {
+                return;
+            }
+        
+            this.controls.main.classList.remove("hide")
+        });
+
+        this.controls.favoriteBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+        
+            let savedSummonerName = localStorage.getItem(this.localStorageKeys.summonerName);
+        
+            if (savedSummonerName) {
+                putNameAnimation(savedSummonerName);
+            }
+        });
+
+        this.controls.saveSettingsFormBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            localStorage.setItem(this.localStorageKeys.summonerName, this.controls.saveSettingsFormInput.value);
+            toast.create("Saved");
+        });
+        
+        this.controls.closeSettingsFormBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+        
+            this.controls.profileForm.classList.remove('show');
+            this.controls.main.classList.remove("hide-entirely");
+        });
+
+        this.controls.profileBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+        
+            this.controls.profileForm.classList.add('show');
+            this.controls.main.classList.add("hide-entirely");
+        
+            let savedSummonerName = localStorage.getItem(this.localStorageKeys.summonerName);
+        
+            if (savedSummonerName) {
+                this.controls.saveSettingsFormInput.value = savedSummonerName;
+            }
+        });
+
+        this.controls.nameInput.addEventListener("keyup", (e) => {
+            if (e.keyCode === 13) {
+              e.preventDefault();
+              
+              fetchProfile(this.controls.nameInput.value);
+            }
+        });
+
+        this.controls.searchBtn.addEventListener('click', () => fetchProfile(this.controls.nameInput.value));
     }
 }
 
-toast.config.container = lolprofiler.controls.toastContainer;
+lolprofiler.init();
 
-function addPlaceholder() {
+window.addEventListener('load', () => setTimeout(() => {
     let placeholder = lolprofiler.constants.inputNamePlaceholder;
     
     for (let i = 0; i < placeholder.length; i++) {
@@ -37,69 +135,12 @@ function addPlaceholder() {
             lolprofiler.controls.nameInput.placeholder += char;
         }, timeout);
     }
-}
-
-lolprofiler.controls.nameInput.addEventListener('focus', () => lolprofiler.controls.main.classList.add("hide"))
-lolprofiler.controls.nameInput.addEventListener('focusout', () => {
-    if (!lolprofiler.controls.main.classList.contains("profile-loaded")) {
-        return;
-    }
-
-    lolprofiler.controls.main.classList.remove("hide")
-})
-
-window.addEventListener('load', () => setTimeout(addPlaceholder, 100));
-
-lolprofiler.controls.favoriteBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-
-    let savedSummonerName = localStorage.getItem(lolprofiler.localStorageKeys.summonerName);
-
-    if (savedSummonerName) {
-        putNameAnimation(savedSummonerName);
-    }
-});
-
-lolprofiler.controls.saveSettingsFormBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    localStorage.setItem(lolprofiler.localStorageKeys.summonerName, lolprofiler.controls.saveSettingsFormInput.value);
-    toast.create("Saved");
-})
-
-lolprofiler.controls.closeSettingsFormBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-
-    lolprofiler.controls.profileForm.classList.remove('show');
-    lolprofiler.controls.main.classList.remove("hide-entirely");
-})
-
-lolprofiler.controls.profileBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-
-    lolprofiler.controls.profileForm.classList.add('show');
-    lolprofiler.controls.main.classList.add("hide-entirely");
-
-    let savedSummonerName = localStorage.getItem(lolprofiler.localStorageKeys.summonerName);
-
-    if (savedSummonerName) {
-        lolprofiler.controls.saveSettingsFormInput.value = savedSummonerName;
-    }
-})
-
-lolprofiler.controls.nameInput.addEventListener("keyup", (e) => {
-    if (e.keyCode === 13) {
-      e.preventDefault();
-      
-      fetchProfile(lolprofiler.controls.nameInput.value);
-    }
-  });
-
-lolprofiler.controls.searchBtn.addEventListener('click', () => fetchProfile(lolprofiler.controls.nameInput.value));
+}, 500));
 
 function handleSummoner(summoner) {
     lolprofiler.controls.profileName.innerText = summoner.name;
     lolprofiler.controls.profileLevel.innerText = summoner.summonerLevel;
-    lolprofiler.controls.profileIcon.src = Endpoints.DDragon.Image.ProfileIcon(summoner.profileIconId);
+    lolprofiler.controls.profileIcon.src = lolprofiler.DDragon.Image.ProfileIcon(summoner.profileIconId);
 }
 
 function handleQueues(queues) {
@@ -119,7 +160,7 @@ function handleQueues(queues) {
         rankedInfo.innerHTML = 
         `
         <div class="rank-queue">${lol.constants.ranked[queue.queueType]}</div>
-        <img width="100" height="100" src="${Endpoints.DDragon.Image.RankedEmblem(queue.tier[0] + queue.tier.substring(1).toLowerCase())}"/>
+        <img width="100" height="100" src="${lolprofiler.DDragon.Image.RankedEmblem(queue.tier[0] + queue.tier.substring(1).toLowerCase())}"/>
         <div class="rank-text">${queue.tier} ${queue.rank}</div>
         `;
         lolprofiler.controls.rankWrapper.appendChild(rankedInfo);
@@ -219,41 +260,22 @@ function handleMatches(matches, summoner) {
 }
 
 async function fetchProfile(summonerName) {
-    lolprofiler.controls.main.classList.add('hide');
-    lolprofiler.controls.main.classList.add('loading');
-    lolprofiler.controls.nameInput.setAttribute('disabled', '');
+    lolprofiler.updateUIState(lolprofiler.uiStates.load);
 
-    let summoner = await customFetch(Endpoints.SummonerV4ByName(summonerName));
+    let summoner = await riotapi.SummonerByName(summonerName)
     handleSummoner(summoner);
 
-    let queues = await customFetch(Endpoints.LeagueV4BySummoner(summoner.id));
+    let queues = await riotapi.LeagueBySummonerId(summoner.id);
     handleQueues(queues);
 
-    let matchList = await customFetch(Endpoints.MatchV4Matchlist(summoner.accountId));
+    let matchList = await riotapi.MatchlistByAccountId(summoner.accountId);
     let matchRequests = [];
-    matchList.matches.forEach((match) => matchRequests.push(customFetch(Endpoints.MatchV4MatchById(match.gameId))));
+    matchList.matches.forEach((match) => matchRequests.push(riotapi.MatchById(match.gameId)));
 
     let matches = await Promise.all(matchRequests);
     handleMatches(matches, summoner);
 
-    lolprofiler.controls.main.classList.remove('hide');
-    lolprofiler.controls.main.classList.remove('loading');
-    lolprofiler.controls.main.classList.add("profile-loaded");
-    lolprofiler.controls.nameInput.removeAttribute('disabled', '');
-}
-
-async function customFetch(url) {
-    let cachedResponse = CustomCache.get(url);
-
-    if (cachedResponse) {
-        return cachedResponse;
-    }
-
-    let response = await fetch(url).then(resp => resp.json());
-
-    CustomCache.add(url, response);
-
-    return response;
+    lolprofiler.updateUIState(lolprofiler.uiStates.loaded);
 }
 
 class Game {
@@ -275,7 +297,7 @@ class Game {
 
         this.stats.items.forEach((item) => {
             if (item != 0) {
-                itemsString += `<div class="tooltip-container"><img class="tooltip" src="${Endpoints.DDragon.Image.Item(item)}" /><span class="tooltip-content">${lol.ddragon.item.data[item].name}</span></div>`;
+                itemsString += `<div class="tooltip-container"><img class="tooltip" src="${lolprofiler.DDragon.Image.Item(item)}" /><span class="tooltip-content">${lol.ddragon.item.data[item].name}</span></div>`;
             } else {
                 itemsString += '<div><img class="no-image" /></div>'
             }
@@ -327,16 +349,16 @@ class Game {
         <div class="setup">
             <div class="additional-info">
                 <div class="champion-image">
-                    <img src="${Endpoints.DDragon.Image.ChampionSquare(this.champion.image.full)}"/>
+                    <img src="${lolprofiler.DDragon.Image.ChampionSquare(this.champion.image.full)}"/>
                 </div>
                 <div class="masteries">
                     <div class="summoner-spells">
-                        <img src="${Endpoints.DDragon.Image.SummonerSpell(this.stats.summonerSpell1.image.full)}"/>
-                        <img src="${Endpoints.DDragon.Image.SummonerSpell(this.stats.summonerSpell2.image.full)}"/>
+                        <img src="${lolprofiler.DDragon.Image.SummonerSpell(this.stats.summonerSpell1.image.full)}"/>
+                        <img src="${lolprofiler.DDragon.Image.SummonerSpell(this.stats.summonerSpell2.image.full)}"/>
                     </div>
                     <div class="runes">
-                        <img src="${Endpoints.DDragon.Image.Rune(this.stats.keystone.icon)}"/>
-                        <img src="${Endpoints.DDragon.Image.Rune(this.stats.secondaryKeystone.icon)}"/>
+                        <img src="${lolprofiler.DDragon.Image.Rune(this.stats.keystone.icon)}"/>
+                        <img src="${lolprofiler.DDragon.Image.Rune(this.stats.secondaryKeystone.icon)}"/>
                     </div>
                 </div>
             </div>
@@ -361,52 +383,6 @@ class Game {
         `;
 
         return match;
-    }
-}
-
-class Endpoints {
-    static ApiKey = lol.api.key;
-
-    static baseUrl = 'https://eun1.api.riotgames.com/lol';
-
-    static SummonerV4ByName(summonerName) {
-        return `${this.baseUrl}/summoner/v4/summoners/by-name/${summonerName}?api_key=${Endpoints.ApiKey}`;
-    }
-
-    static LeagueV4BySummoner(summonerId) {
-        return `${this.baseUrl}/league/v4/entries/by-summoner/${summonerId}?api_key=${Endpoints.ApiKey}`;
-    }
-
-    static MatchV4Matchlist(accountId) {
-        return `${this.baseUrl}/match/v4/matchlists/by-account/${accountId}?endIndex=10&begindIndex=0&api_key=${Endpoints.ApiKey}`;
-    }
-
-    static MatchV4MatchById(gameId) {
-        return `${this.baseUrl}/match/v4/matches/${gameId}?api_key=${Endpoints.ApiKey}`;
-    }
-
-    static DDragon = {
-        Version: '11.8.1',
-        Image: {
-            ProfileIcon(profileIconId) {
-                return `http://ddragon.leagueoflegends.com/cdn/${Endpoints.DDragon.Version}/img/profileicon/${profileIconId}.png`;
-            },
-            ChampionSquare(imageName) {
-                return `http://ddragon.leagueoflegends.com/cdn/${Endpoints.DDragon.Version}/img/champion/${imageName}`;
-            },
-            SummonerSpell(imageName) {
-                return `http://ddragon.leagueoflegends.com/cdn/${Endpoints.DDragon.Version}/img/spell/${imageName}`;
-            },
-            Rune(imageName) {
-                return './ddragon/img/' + imageName;
-            },
-            RankedEmblem(tier) {
-                return `./ddragon/img/ranked-emblems/Emblem_${tier}.png`;
-            },
-            Item(itemId) {
-                return `http://ddragon.leagueoflegends.com/cdn/${Endpoints.DDragon.Version}/img/item/${itemId}.png`
-            }
-        }
     }
 }
 
