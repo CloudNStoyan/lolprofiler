@@ -331,6 +331,8 @@ class Game {
 
         console.log(this.queue.queueId)
 
+        console.log(this);
+
         let now = Date.now();
 
         let gameDate = longAgo(now - this.gameCreation);
@@ -357,8 +359,18 @@ class Game {
                         <img src="${lolprofiler.DDragon.Image.SummonerSpell(this.stats.summonerSpell2.image.full)}"/>
                     </div>
                     <div class="runes">
-                        <img src="${lolprofiler.DDragon.Image.Rune(this.stats.keystone.icon)}"/>
-                        <img src="${lolprofiler.DDragon.Image.Rune(this.stats.secondaryKeystone.icon)}"/>
+                        <div class="tooltip-container">
+                            <div class="tooltip">
+                                <img src="${lolprofiler.DDragon.Image.Rune(this.stats.keystone.icon)}"/>
+                            </div>
+                            <span class="tooltip-content">${this.stats.keystone.name}</span>
+                        </div>
+                        <div class="tooltip-container">
+                            <div class="tooltip">
+                                <img src="${lolprofiler.DDragon.Image.Rune(this.stats.secondaryKeystone.icon)}"/>
+                            </div>
+                            <span class="tooltip-content">${this.stats.secondaryKeystone.name}</span>
+                        </div>
                     </div>
                 </div>
             </div>
