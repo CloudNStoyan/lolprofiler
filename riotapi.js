@@ -11,8 +11,8 @@ let riotapi = {
         let endpoint = `/league/v4/entries/by-summoner/${summonerId}?api_key=${this.config.apiKey}`;
         return await this.cachedFetch(endpoint);
     },
-    async MatchlistByAccountId(accountId) {
-        let endpoint = `/match/v4/matchlists/by-account/${accountId}?endIndex=10&begindIndex=0&api_key=${this.config.apiKey}`;
+    async MatchlistByAccountId(accountId, beginIndex = 0, endIndex = 10) {
+        let endpoint = `/match/v4/matchlists/by-account/${accountId}?beginIndex=${beginIndex}&endIndex=${endIndex}&api_key=${this.config.apiKey}`;
         return await this.cachedFetch(endpoint);
     },
     async MatchById(gameId) {

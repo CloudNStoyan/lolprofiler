@@ -27,6 +27,10 @@ let lolprofiler = {
         load: "load",
         loaded: "loaded"
     },
+    currentSummoner: {
+        summonerObject: null,
+        loadedMatches: null
+    },
     DDragon: {
         Version: '11.8.1',
         Image: {
@@ -254,7 +258,31 @@ function handleMatches(matches, summoner) {
                 game.gameCreation
                 ).ToNode()
         );
+
+        
     });
+
+    let loadMoreBtn = document.createElement('a');
+    loadMoreBtn.href = '#';
+    loadMoreBtn.innerText = 'Load More';
+    loadMoreBtn.className = 'btn';
+    loadMoreBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+
+        loadMoreBtn.innerHTML = '<i class="fas fa-spinner"></i>';
+        loadMoreBtn.classList.add('spinning');
+
+        let loadedMatches = lolprofiler.currentSummoner.loadedMatches;
+
+        let matchList = await riotapi.MatchlistByAccountId(summoner.accountId, loadedMatches.length, loadedMatches.length + 10);
+        let matchRequests = [];
+        matchList.matches.forEach((match) => matchRequests.push(riotapi.MatchById(match.gameId)));
+
+        let matches = loadedMatches.concat(await Promise.all(matchRequests));
+        handleMatches(matches, summoner);
+        lolprofiler.currentSummoner.loadedMatches = matches;
+    });
+    lolprofiler.controls.matchesWrapper.appendChild(loadMoreBtn);
 
     handleSummary(summary);
 }
@@ -263,6 +291,7 @@ async function fetchProfile(summonerName) {
     lolprofiler.updateUIState(lolprofiler.uiStates.load);
 
     let summoner = await riotapi.SummonerByName(summonerName)
+    lolprofiler.currentSummoner.summonerObject = summoner;
     handleSummoner(summoner);
 
     let queues = await riotapi.LeagueBySummonerId(summoner.id);
@@ -274,6 +303,7 @@ async function fetchProfile(summonerName) {
 
     let matches = await Promise.all(matchRequests);
     handleMatches(matches, summoner);
+    lolprofiler.currentSummoner.loadedMatches = matches;
 
     lolprofiler.updateUIState(lolprofiler.uiStates.loaded);
 }
