@@ -172,10 +172,18 @@ function handleQueues(queues) {
 }
 
 function handleSummary(summary) {
+    let winsPercentage = (summary.wins / summary.total) * 100
+    let losePercentage = 100 - winsPercentage;
+
     lolprofiler.controls.summaryWrapper.innerHTML = `
-    <div>Total: ${summary.total}</div>
-    <div>Wins: ${summary.wins}</div>
-    <div>Loses: ${summary.loses}</div>
+    <div class="summary-progress">
+        <div class="progress win" style="width: ${winsPercentage.toFixed(2)}%">
+            <span>${winsPercentage}%</span>
+        </div>
+        <div class="progress lose" style="width: ${losePercentage.toFixed(2)}%">
+            <span>${losePercentage}%</span>
+        </div>
+    </div>
     `
 }
 

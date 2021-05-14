@@ -529,3 +529,26 @@ html, body {
 .spinning > * {
     animation: rotating 2s linear infinite;
 }
+
+.summary-progress {
+    display: flex;
+    flex-flow: row nowrap;
+}
+
+.progress {
+    height: 24px;
+}
+
+.progress.win {
+    background-color: var(--color-blue);
+}
+
+.progress.lose {
+    background-color: var(--color-red);
+}
+
+.progress span {
+    text-align: center;
+    display: block;
+    color: white;
+}
