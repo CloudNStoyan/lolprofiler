@@ -124,6 +124,18 @@ let lolprofiler = {
         });
 
         this.controls.searchBtn.addEventListener('click', () => fetchProfile(this.controls.nameInput.value));
+    },
+    loadBars() {
+        setTimeout(() => {
+            let progressBars = document.querySelectorAll('.summary-progress .progress');
+
+            for (let i = 0; i < progressBars.length; i++) {
+                let bar = progressBars[i];
+                let barWidth = bar.getAttribute('data-width');
+                bar.setAttribute('style', `width: ${barWidth}%;`);
+            }
+
+        }, 500)
     }
 }
 
@@ -177,14 +189,16 @@ function handleSummary(summary) {
 
     lolprofiler.controls.summaryWrapper.innerHTML = `
     <div class="summary-progress">
-        <div class="progress win" style="width: ${winsPercentage.toFixed(2)}%">
-            <span>${winsPercentage}%</span>
+        <div class="progress win" data-width="${winsPercentage.toFixed(2)}">
+            <span>${Math.round(winsPercentage)}%</span>
         </div>
-        <div class="progress lose" style="width: ${losePercentage.toFixed(2)}%">
-            <span>${losePercentage}%</span>
+        <div class="progress lose" data-width="${losePercentage.toFixed(2)}">
+            <span>${Math.round(losePercentage)}%</span>
         </div>
     </div>
     `
+
+    lolprofiler.loadBars()
 }
 
 function handleMatches(matches, summoner) {

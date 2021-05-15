@@ -26,6 +26,8 @@ html, body {
 .right-nav {
     float: right;
     margin-right: 20px;
+    opacity: 0;
+    transition: opacity 1s linear;
 }
 
 .settings-btn {
@@ -185,19 +187,26 @@ html, body {
     text-align: center;
 }
 
+.section-header {
+    display: flex;
+    flex-flow: row nowrap;
+}
+
 .section-title {
-    width: 20%;
+    display: block;
     color: gray;
     text-transform: uppercase;
     font-size: 12px;
+    flex: 0 0 auto;
 }
 
 .section-line {
-    display: inline-block;
-    border: 1px solid #ebebeb;
-    border-radius:1px;
-    width: 85%;
-    vertical-align: middle;
+    background-color: #ebebeb;
+    height: 2px;
+    width: 100%;
+    display: block;
+    margin: auto;
+    margin-left: 5px;
 }
 
 .section {
@@ -536,7 +545,9 @@ html, body {
 }
 
 .progress {
+    width: 0;
     height: 24px;
+    transition: width 1s ease-out;
 }
 
 .progress.win {
@@ -551,4 +562,8 @@ html, body {
     text-align: center;
     display: block;
     color: white;
+}
+
+.container:not(.hide) .right-nav {
+    opacity: 1;
 }
