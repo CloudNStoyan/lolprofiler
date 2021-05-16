@@ -201,10 +201,10 @@ function handleSummary(summary) {
     lolprofiler.loadBars()
 }
 
-function handleMatches(matches, summoner) {
+function handleV5Matches(matches, summoner) {
     lolprofiler.controls.matchesWrapper.innerHTML = '';
-                        
-    matches.sort((a, b) => (a.gameCreation > b.gameCreation) ? -1 : 1)
+
+    matches.sort((a, b) => (a.info.gameCreation > b.info.gameCreation) ? -1 : 1)
 
     let summary = {
         wins: 0,
@@ -213,51 +213,39 @@ function handleMatches(matches, summoner) {
     }
 
     matches.forEach(game => {
-        console.log(game);
-        let participantIdentity = game.participantIdentities.find(identity => identity.player.summonerId == summoner.id);
-        let participant = game.participants.find(identity => identity.participantId == participantIdentity.participantId);
-        let team = game.teams.find(team => team.teamId == participant.teamId);
+        let participant = game.info.participants.find(p => p.puuid == summoner.puuid)
+        let team = game.info.teams.find(t => t.teamId == participant.teamId);
 
-        let teams = [
-            game.participants.filter((p) => p.teamId == 100).map((p) => game.participantIdentities.find(identity => identity.participantId == p.participantId)),
-            game.participants.filter((p) => p.teamId == 200).map((p) => game.participantIdentities.find(identity => identity.participantId == p.participantId))
-        ];
-
-        console.log(teams)
-
-        if (team.win == "Win") {
-            summary.wins += 1
+        if (team.win) {
+            summary.wins += 1;
         } else {
-            summary.loses += 1
+            summary.loses += 1;
         }
 
-        console.log(participant.championId);
         let champion = Object.values(lol.ddragon.champion.data).find(champ => champ.key == participant.championId);
-        let queue = lol.ddragon.queues.find(q => q.queueId == game.queueId);
 
-        let teamKills = 0;
+        let queue = lol.ddragon.queues.find(q => q.queueId == game.info.queueId);
 
-        game.participants.forEach((player) => {
-            if (player.teamId == team.teamId) {
-                teamKills += player.stats.kills;
-            }
-        })
+        let teamKills = game.info.participants.filter((p) => p.teamId == participant.teamId).map(x => x.kills).reduce((a, b) => a + b, 0);
+
+        let keystone = lol.ddragon.runesReforged.find(x => x.id == participant.perks.styles[0].style).slots[0].runes.find(x => x.id == participant.perks.styles[0].selections[0].perk);
+        let secondaryRunePath = lol.ddragon.runesReforged.find(x => x.id == participant.perks.styles[1].style);
+
+        let items = [participant.item0, participant.item1, participant.item2, participant.item6, participant.item3, participant.item4, participant.item5];
+
+        let teams = [
+            game.info.participants.filter((p) => p.teamId == 100),
+            game.info.participants.filter((p) => p.teamId == 200)
+        ];
 
         let summonerSpells = Object.values(lol.ddragon.summoner.data);
-        
-        let secondaryRunePath = lol.ddragon.runesReforged.find(runePath => runePath.id == participant.stats.perkSubStyle);
-        let keystone = lol.ddragon.runesReforged
-        .find(runePath => runePath.id == participant.stats.perkPrimaryStyle).slots[0].runes
-        .find(rune => rune.id == participant.stats.perk0);
-
-        var items = [participant.stats.item0, participant.stats.item1, participant.stats.item2, participant.stats.item6, participant.stats.item3, participant.stats.item4, participant.stats.item5];
 
         let stats = {
-            level: participant.stats.champLevel,
-            creepScore: participant.stats.totalMinionsKilled,
-            killPercentage: Math.round(((participant.stats.kills + participant.stats.assists) / teamKills) * 100),
-            summonerSpell1: summonerSpells.find(spell => spell.key == participant.spell1Id),
-            summonerSpell2: summonerSpells.find(spell => spell.key == participant.spell2Id),
+            level: participant.champLevel,
+            creepScore: participant.totalMinionsKilled,
+            killPercentage: Math.round(((participant.kills + participant.assists) / teamKills) * 100),
+            summonerSpell1: summonerSpells.find(spell => spell.key == participant.summoner1Id),
+            summonerSpell2: summonerSpells.find(spell => spell.key == participant.summoner2Id),
             keystone: keystone,
             secondaryKeystone: secondaryRunePath,
             items: items
@@ -265,23 +253,22 @@ function handleMatches(matches, summoner) {
 
         lolprofiler.controls.matchesWrapper.appendChild(
             new Game(
-                team.win == 'Win',
+                team.win,
                 champion,
                 {
-                    kills: participant.stats.kills,
-                    deaths: participant.stats.deaths,
-                    assists: participant.stats.assists
+                    kills: participant.kills,
+                    deaths: participant.deaths,
+                    assists: participant.assists
                 },
-                `${Math.floor((game.gameDuration / 60))}m ${(game.gameDuration % 60)}s`,
+                `${Math.floor(((game.info.gameDuration / 1000) / 60))}m ${(Math.floor((game.info.gameDuration / 1000) % 60))}s`,
                 queue,
                 null,
                 stats,
                 teams,
-                game.gameCreation
+                game.info.gameCreation,
+                game.info.gameDuration
                 ).ToNode()
         );
-
-        
     });
 
     let loadMoreBtn = document.createElement('a');
@@ -296,12 +283,12 @@ function handleMatches(matches, summoner) {
 
         let loadedMatches = lolprofiler.currentSummoner.loadedMatches;
 
-        let matchList = await riotapi.MatchlistByAccountId(summoner.accountId, loadedMatches.length, loadedMatches.length + 10);
+        let matchList = await riotapi.V5MatchlistByPUUID(summoner.puuid, loadedMatches.length);
         let matchRequests = [];
-        matchList.matches.forEach((match) => matchRequests.push(riotapi.MatchById(match.gameId)));
+        matchList.forEach(matchId => matchRequests.push(riotapi.V5MatchById(matchId)));
 
         let matches = loadedMatches.concat(await Promise.all(matchRequests));
-        handleMatches(matches, summoner);
+        handleV5Matches(matches, summoner);
         lolprofiler.currentSummoner.loadedMatches = matches;
     });
     lolprofiler.controls.matchesWrapper.appendChild(loadMoreBtn);
@@ -319,19 +306,19 @@ async function fetchProfile(summonerName) {
     let queues = await riotapi.LeagueBySummonerId(summoner.id);
     handleQueues(queues);
 
-    let matchList = await riotapi.MatchlistByAccountId(summoner.accountId);
+    let matchList = await riotapi.V5MatchlistByPUUID(summoner.puuid);
     let matchRequests = [];
-    matchList.matches.forEach((match) => matchRequests.push(riotapi.MatchById(match.gameId)));
+    matchList.forEach(matchId => matchRequests.push(riotapi.V5MatchById(matchId)));
 
     let matches = await Promise.all(matchRequests);
-    handleMatches(matches, summoner);
+    handleV5Matches(matches, summoner);
     lolprofiler.currentSummoner.loadedMatches = matches;
 
     lolprofiler.updateUIState(lolprofiler.uiStates.loaded);
 }
 
 class Game {
-    constructor(isWin, champion, kda, gameLength, queue, longAgo, stats, teams, gameCreation) {
+    constructor(isWin, champion, kda, gameLength, queue, longAgo, stats, teams, gameCreation, gameDuration) {
         this.isWin = isWin;
         this.champion = champion;
         this.kda = kda;
@@ -341,10 +328,10 @@ class Game {
         this.stats = stats;
         this.teams = teams;
         this.gameCreation = gameCreation;
+        this.gameDuration = gameDuration;
     }
 
     ToNode() {
-        console.log(this.champion)
         let itemsString = '';
 
         this.stats.items.forEach((item) => {
@@ -360,16 +347,16 @@ class Game {
         this.teams.forEach((team) => {
             let teamString = '<div class="team">';
             team.forEach(p => {
-                if (p.accountId != "0") { // is player
+                if (p.puuid != "0") { // is player
                     teamString += `
-                    <a href="#" class="summoner" onclick="putNameAnimation('${p.player.summonerName}')">
-                    <div class="summoner-name">${p.player.summonerName}</div>
+                    <a href="#" class="summoner" onclick="putNameAnimation('${p.summonerName}')">
+                    <div class="summoner-name">${p.summonerName}</div>
                     </a>
                     `  
                 } else {
                     teamString += `
-                    <a href="#" class="summoner" onclick="putNameAnimation('${p.player.summonerName}')">
-                    <div class="summoner-name">${p.player.summonerName} Bot</div>
+                    <a href="#" class="summoner" onclick="putNameAnimation('${p.summonerName}')">
+                    <div class="summoner-name">${p.summonerName} Bot</div>
                     </a>
                     `  
                 }
@@ -381,13 +368,9 @@ class Game {
         let match = document.createElement('div');
         match.className = 'match ' + winText.toLowerCase();
 
-        console.log(this.queue.queueId)
-
-        console.log(this);
-
         let now = Date.now();
 
-        let gameDate = longAgo(now - this.gameCreation);
+        let gameDate = longAgo(now - this.gameCreation - this.gameDuration);
 
         let gameType = lol.constants.queues.find(q => q.id == this.queue.queueId);
 

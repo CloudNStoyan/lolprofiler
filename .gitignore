@@ -1,4 +1,5 @@
 node_modules
 ddragon/img
-key.txt
+productionkey.txt
+devkey.txt
 start.bat

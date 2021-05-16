@@ -15,7 +15,8 @@ contextBridge.exposeInMainWorld(
   'lol',
   {
     api: {
-      key: readText('key.txt')
+      devKey: readText('devkey.txt'),
+      productionKey: readText('productionkey.txt')
     },
     ddragon: {
       champion: readJson('ddragon/champion.json'),
