@@ -16,6 +16,10 @@ let lolprofiler = {
         saveSettingsFormInput: document.querySelector('.settings-form .summoner-name-input'),
         favoriteBtn: document.querySelector('.favorite-btn'),
         toastContainer: document.querySelector('.toast-container'),
+        winBar: document.querySelector('.progress.win'),
+        winBarSpan: document.querySelector('.progress.win > span'),
+        loseBar: document.querySelector('.progress.lose'),
+        loseBarSpan: document.querySelector('.progress.lose > span')
     },
     localStorageKeys: {
         summonerName: "summonerName",
@@ -187,16 +191,11 @@ function handleSummary(summary) {
     let winsPercentage = (summary.wins / summary.total) * 100
     let losePercentage = 100 - winsPercentage;
 
-    lolprofiler.controls.summaryWrapper.innerHTML = `
-    <div class="summary-progress">
-        <div class="progress win" data-width="${winsPercentage.toFixed(2)}">
-            <span>${Math.round(winsPercentage)}%</span>
-        </div>
-        <div class="progress lose" data-width="${losePercentage.toFixed(2)}">
-            <span>${Math.round(losePercentage)}%</span>
-        </div>
-    </div>
-    `
+    lolprofiler.controls.winBar.setAttribute('data-width', winsPercentage.toFixed(2));
+    lolprofiler.controls.loseBar.setAttribute('data-width', losePercentage.toFixed(2));
+
+    lolprofiler.controls.winBarSpan.innerText = Math.round(winsPercentage) + '%';
+    lolprofiler.controls.loseBarSpan.innerText = Math.round(losePercentage) + '%';
 
     lolprofiler.loadBars()
 }
@@ -274,7 +273,7 @@ function handleV5Matches(matches, summoner) {
     let loadMoreBtn = document.createElement('a');
     loadMoreBtn.href = '#';
     loadMoreBtn.innerText = 'Load More';
-    loadMoreBtn.className = 'btn';
+    loadMoreBtn.className = 'btn load-more-btn';
     loadMoreBtn.addEventListener('click', async (e) => {
         e.preventDefault();
 
@@ -378,7 +377,7 @@ class Game {
         `
         <div class="match-info">
             <div class="tooltip-container"><div class="tooltip">${gameType.name}</div><span class="tooltip-content">${gameType.tooltip}</span></div>
-            <div>${gameDate}</div>
+            <div class="tooltip-container"><div class="tooltip">${gameDate}</div><span class="tooltip-content">${dateToCustomString(new Date(this.gameCreation))}</span></div>
             <div class="seperator"></div>
             <div class="result">${winText}</div>
             <div>${this.gameLength}</div>
@@ -465,4 +464,8 @@ function longAgo(difference) {
     }
 
     return Math.round(seconds) + ' seconds ago'
+}
+
+function dateToCustomString(date) {
+    return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}<br>${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`
 }

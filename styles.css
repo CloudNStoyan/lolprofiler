@@ -12,6 +12,12 @@
     --ff-general: 'Noto Sans TC', sans-serif; 
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 input {
     font-family: var(--ff-general);
 }
@@ -82,6 +88,7 @@ html, body {
     margin: 0;
     font-size: 16px;
     background-color: transparent;
+    width: 175px;
 }
 
 #input-name:focus::placeholder {
@@ -337,7 +344,7 @@ html, body {
 .tooltip:hover + span {
     position: absolute;
     display: block;
-    width: 100px;
+    width: max-content;
     padding: 10px;
     background-color: #333;
     color: #fff;
@@ -516,7 +523,7 @@ html, body {
     padding: 10px;
     background-color: rgba(34, 193, 195, 0.8);
     color: white;
-    display: block;
+    display: inline-block;
     margin: 10px 5px;
     text-align: center;
 }
@@ -542,6 +549,7 @@ html, body {
 .summary-progress {
     display: flex;
     flex-flow: row nowrap;
+    margin: 10px 0;
 }
 
 .progress {
@@ -566,4 +574,77 @@ html, body {
 
 .container:not(.hide) .right-nav {
     opacity: 1;
+}
+
+.winratio-container {
+    flex: 0 0 45%;
+    margin: 0 auto;
+}
+
+.winratio-title {
+    text-align: center;
+    margin: 0;
+}
+
+.summary {
+    display: flex;
+    flex-flow: row nowrap;
+}
+
+.filter-container {
+    flex: 0 0 50%;
+    border-right: 2px solid #ebebeb;
+}
+
+.filter-btn {
+    width: 120px;
+}
+
+select {
+    appearance: none;
+    background-color: transparent;
+    border: none;
+    padding: 0 1em 0 0;
+    margin: 0;
+    width: 100%;
+    font-family: inherit;
+    font-size: inherit;
+    cursor: inherit;
+    line-height: inherit;
+}
+
+.select::after {
+    content: "";
+    width: 0.8em;
+    height: 0.5em;
+    background-color: white;
+    clip-path: polygon(100% 0%, 0 0%, 50% 100%);
+}
+
+.select {
+    width: 100%;
+    min-width: 15ch;
+    max-width: 30ch;
+    outline: 5px solid rgba(34, 193, 195, 0.2);
+    padding: 10px;
+    font-size: 1.25rem;
+    cursor: pointer;
+    line-height: 1.1;
+    background-color: rgba(34, 193, 195, 0.8);
+    color: white;
+}
+
+.select:hover {
+    outline: 5px solid rgba(253, 187, 45, 0.2);
+    background-color: rgba(253, 187, 45, 0.8);
+}
+
+.select.game-type {
+    width: 200px;
+    margin: 10px;
+}
+
+.load-more-btn {
+    width: 99%;
+    margin-left: 0.5%;
 }
