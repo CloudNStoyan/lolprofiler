@@ -298,18 +298,29 @@ function handleV5Matches(matches, summoner) {
 async function fetchProfile(summonerName) {
     lolprofiler.updateUIState(lolprofiler.uiStates.load);
 
-    let summoner = await riotapi.SummonerByName(summonerName)
+    let summonerResponse = await riotapi.SummonerByName(summonerName)
+    if (summonerResponse.status == 404) {
+        toast.create('Error Summoner not found!')
+        lolprofiler.updateUIState(lolprofiler.uiStates.loaded);
+        return;
+    }
+
+    let summoner = await summonerResponse.json();
+
     lolprofiler.currentSummoner.summonerObject = summoner;
     handleSummoner(summoner);
 
-    let queues = await riotapi.LeagueBySummonerId(summoner.id);
+    console.log(summonerResponse.body)
+
+    let queues = await (await riotapi.LeagueBySummonerId(summoner.id)).json();
     handleQueues(queues);
 
-    let matchList = await riotapi.V5MatchlistByPUUID(summoner.puuid);
+    let matchList = await (await riotapi.V5MatchlistByPUUID(summoner.puuid)).json();
     let matchRequests = [];
     matchList.forEach(matchId => matchRequests.push(riotapi.V5MatchById(matchId)));
 
     let matches = await Promise.all(matchRequests);
+    matches = await Promise.all(matches.map(x => x.json()));
     handleV5Matches(matches, summoner);
     lolprofiler.currentSummoner.loadedMatches = matches;
 

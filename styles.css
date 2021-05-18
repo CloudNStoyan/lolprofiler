@@ -387,7 +387,7 @@ html, body {
     display: flex;
     flex-flow: row wrap;
     font-size: 12px;
-    width: 250px;
+    width: 300px;
 }
 
 .team {
