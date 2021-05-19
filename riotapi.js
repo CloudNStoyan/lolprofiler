@@ -6,7 +6,7 @@ let riotapi = {
     },
     async SummonerByName(summonerName) {
         let endpoint = `/summoner/v4/summoners/by-name/${summonerName}?api_key=${this.config.devKey}`;
-        return await this.cachedFetch(endpoint);
+        return await this.cachedFetch(endpoint, true, false);
     },
     async LeagueBySummonerId(summonerId) {
         let endpoint = `/league/v4/entries/by-summoner/${summonerId}?api_key=${this.config.devKey}`;
@@ -28,7 +28,7 @@ let riotapi = {
         let endpoint = `https://europe.api.riotgames.com/lol/match/v5/matches/${gameId}?api_key=${this.config.devKey}`;
         return await this.cachedFetch(endpoint, false);
     },
-    async cachedFetch(url, useBaseUrl = true) {
+    async cachedFetch(url, useBaseUrl = true, parseResponseAsJson = true) {
         if (useBaseUrl) {
             url = this.config.baseUrl + url;
         }
@@ -39,7 +39,7 @@ let riotapi = {
             return cachedResponse;
         }
     
-        let response = await fetch(url);
+        let response = await fetch(url).then(response => parseResponseAsJson ? response.json() : response);
     
         this.APIResponseCache.add(url, response);
     

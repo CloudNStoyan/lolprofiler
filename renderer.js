@@ -310,17 +310,14 @@ async function fetchProfile(summonerName) {
     lolprofiler.currentSummoner.summonerObject = summoner;
     handleSummoner(summoner);
 
-    console.log(summonerResponse.body)
-
-    let queues = await (await riotapi.LeagueBySummonerId(summoner.id)).json();
+    let queues = await riotapi.LeagueBySummonerId(summoner.id);
     handleQueues(queues);
 
-    let matchList = await (await riotapi.V5MatchlistByPUUID(summoner.puuid)).json();
+    let matchList = await riotapi.V5MatchlistByPUUID(summoner.puuid);
     let matchRequests = [];
     matchList.forEach(matchId => matchRequests.push(riotapi.V5MatchById(matchId)));
 
     let matches = await Promise.all(matchRequests);
-    matches = await Promise.all(matches.map(x => x.json()));
     handleV5Matches(matches, summoner);
     lolprofiler.currentSummoner.loadedMatches = matches;
 
