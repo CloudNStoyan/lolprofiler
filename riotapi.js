@@ -28,6 +28,10 @@ let riotapi = {
         let endpoint = `https://europe.api.riotgames.com/lol/match/v5/matches/${gameId}?api_key=${this.config.devKey}`;
         return await this.cachedFetch(endpoint, false);
     },
+    async MasteryBySummonerId(summonerId) {
+        let endpoint = `/champion-mastery/v4/champion-masteries/by-summoner/${summonerId}?api_key=${this.config.devKey}`
+        return await this.cachedFetch(endpoint);
+    },
     async cachedFetch(url, useBaseUrl = true, parseResponseAsJson = true) {
         if (useBaseUrl) {
             url = this.config.baseUrl + url;

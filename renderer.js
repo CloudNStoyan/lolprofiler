@@ -19,7 +19,8 @@ let lolprofiler = {
         winBar: document.querySelector('.progress.win'),
         winBarSpan: document.querySelector('.progress.win > span'),
         loseBar: document.querySelector('.progress.lose'),
-        loseBarSpan: document.querySelector('.progress.lose > span')
+        loseBarSpan: document.querySelector('.progress.lose > span'),
+        masteryWrapper: document.querySelector('.mastery')
     },
     localStorageKeys: {
         summonerName: "summonerName",
@@ -200,6 +201,39 @@ function handleSummary(summary) {
     lolprofiler.loadBars()
 }
 
+function handleMastery(championMastery) {
+    lolprofiler.controls.masteryWrapper.innerHTML = '';
+
+    championMastery = championMastery.slice(0, 10);
+    let championsWrapper = document.createElement('div');
+    championsWrapper.className = 'champions-wrapper';
+
+    let champions = Object.values(lol.ddragon.champion.data);
+    
+    championMastery.forEach((mastery) => {
+        let champ = champions.find(x => x.key == mastery.championId);
+
+        let championMastery = document.createElement('div');
+        championMastery.className = 'mastery-champ';
+        championMastery.innerHTML = 
+        `
+        <div class="tooltip-container mastery-image-wrapper">
+            <span class="champion-level">${Math.round(mastery.championPoints / 1000)}K</span>
+            <img class="tooltip" src="${lolprofiler.DDragon.Image.ChampionSquare(champ.image.full)}"/>
+            <div class="tooltip-content">
+                <span>${champ.name}</span>
+                <span class="line"></span>
+                <span>Level ${mastery.championLevel}</span>
+            </div>
+        </div>
+        `;
+
+        championsWrapper.appendChild(championMastery);
+    });
+
+    lolprofiler.controls.masteryWrapper.appendChild(championsWrapper);
+}
+
 function handleV5Matches(matches, summoner) {
     lolprofiler.controls.matchesWrapper.innerHTML = '';
 
@@ -309,6 +343,9 @@ async function fetchProfile(summonerName) {
 
     lolprofiler.currentSummoner.summonerObject = summoner;
     handleSummoner(summoner);
+
+    let mastery = await riotapi.MasteryBySummonerId(summoner.id);
+    handleMastery(mastery);
 
     let queues = await riotapi.LeagueBySummonerId(summoner.id);
     handleQueues(queues);

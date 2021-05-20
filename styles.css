@@ -27,6 +27,7 @@ html, body {
     background: linear-gradient(90deg, #00C9FF 0%, #92FE9D 100%);
     margin: 0;
     overflow: hidden;
+    height: 100%;
 }
 
 .right-nav {
@@ -263,7 +264,7 @@ html, body {
 }
 
 .matches-wrapper {
-    height: 300px;
+    height: 430px;
     overflow: scroll;
     overflow-x: hidden;
     box-shadow: 0 4px 2px -2px lightgrey;
@@ -339,11 +340,7 @@ html, body {
 
 .tooltip-content {
     display: none;
-}
-
-.tooltip:hover + span {
     position: absolute;
-    display: block;
     width: max-content;
     padding: 10px;
     background-color: #333;
@@ -351,6 +348,20 @@ html, body {
     border: 0;
     border-radius: 3px;
     z-index: 100;
+    text-align: center;
+}
+
+.tooltip-content > span {
+    display: block;
+}
+
+.tooltip-content span.line {
+    height: 2px;
+    background-color: lightgray;
+}
+
+.tooltip:hover + .tooltip-content {
+    display: block;
 }
 
 .items img.no-image {
@@ -647,4 +658,30 @@ select {
 .load-more-btn {
     width: 99%;
     margin-left: 0.5%;
+}
+
+.mastery-image-wrapper {
+    width: 84px;
+    height: 80px;
+}
+
+.mastery-image-wrapper img {
+    width: 80px;
+}
+
+.champions-wrapper {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+}
+
+.mastery-image-wrapper .champion-level {
+    position: absolute;
+    bottom: 0;
+    background-color: rgb(255 255 255 / 50%);
+    width: 100%;
+    text-align: center;
+    color: #333;
+    font-weight: bolder;
+    font-size: 14px;
 }
