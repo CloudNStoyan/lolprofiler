@@ -260,6 +260,14 @@ function handleV5Matches(matches, summoner) {
         let queue = lol.ddragon.queues.find(q => q.queueId == game.info.queueId);
 
         let teamKills = game.info.participants.filter((p) => p.teamId == participant.teamId).map(x => x.kills).reduce((a, b) => a + b, 0);
+        let participantsDamage = game.info.participants.map(x => x.totalDamageDealtToChampions);
+        let maxDamage = 0;
+
+        participantsDamage.forEach(damage => {
+            if (damage > maxDamage) {
+                maxDamage = damage
+            }
+        })
 
         let keystone = lol.ddragon.runesReforged.find(x => x.id == participant.perks.styles[0].style).slots[0].runes.find(x => x.id == participant.perks.styles[0].selections[0].perk);
         let secondaryRunePath = lol.ddragon.runesReforged.find(x => x.id == participant.perks.styles[1].style);
@@ -281,7 +289,9 @@ function handleV5Matches(matches, summoner) {
             summonerSpell2: summonerSpells.find(spell => spell.key == participant.summoner2Id),
             keystone: keystone,
             secondaryKeystone: secondaryRunePath,
-            items: items
+            items: items,
+            damage: participant.totalDamageDealtToChampions,
+            maxDamage: maxDamage
         }
 
         lolprofiler.controls.matchesWrapper.appendChild(
@@ -418,6 +428,8 @@ class Game {
 
         let gameType = lol.constants.queues.find(q => q.id == this.queue.queueId);
 
+        console.log(this.stats)
+
         match.innerHTML = 
         `
         <div class="match-info">
@@ -458,7 +470,16 @@ class Game {
         <div class="score">
             <div>${this.kda.kills} / <span class="deaths">${this.kda.deaths}</span> / ${this.kda.assists}</div>
             <div>${this.kda.deaths == 0 ? 'Perfect KDA' : `${((this.kda.kills + this.kda.assists) / this.kda.deaths).toFixed(2)}:1 KDA`}</div>
-            <div class="flairs"></div>
+            <div class="tooltip-container">
+                <div class="damage-meter tooltip">
+                    <div class="damage" style="width: ${Math.round((this.stats.damage / this.stats.maxDamage) * 100)}%">${Math.round(this.stats.damage / 1000)}K</div>
+                </div>
+                <div class="tooltip-content">
+                    <span>Total Damage Done</span>
+                    <span class="line"></span>
+                    <span class="small">* to champions</span>
+                </div>
+            </div>
         </div>
         <div class="stats">
             <div>Level ${this.stats.level}</div>
