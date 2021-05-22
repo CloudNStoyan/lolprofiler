@@ -412,6 +412,14 @@ html, body {
 .summoner {
     text-decoration: none;
     color: black;
+    text-align: left;
+}
+
+.summoner-champ-icon {
+    float: left;
+    margin-right: 2px;
+    width: 16px;
+    height: 16px;
 }
 
 .settings-form:not(.show) {

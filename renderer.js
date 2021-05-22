@@ -396,21 +396,25 @@ class Game {
             }
         });
 
-        var teamsString = '';
+        let teamsString = '';
+        let champions = Object.values(lol.ddragon.champion.data);
 
         this.teams.forEach((team) => {
             let teamString = '<div class="team">';
             team.forEach(p => {
+                let champ = champions.find(x => x.key == p.championId);
                 if (p.puuid != "0") { // is player
                     teamString += `
                     <a href="#" class="summoner" onclick="putNameAnimation('${p.summonerName}')">
-                    <div class="summoner-name">${p.summonerName}</div>
+                        <img class="summoner-champ-icon" src="${lolprofiler.DDragon.Image.ChampionSquare(champ.image.full)}" />
+                        <div class="summoner-name">${p.summonerName}</div>
                     </a>
                     `  
                 } else {
                     teamString += `
-                    <a href="#" class="summoner" onclick="putNameAnimation('${p.summonerName}')">
-                    <div class="summoner-name">${p.summonerName} Bot</div>
+                    <a href="#" class="summoner">
+                        <img class="summoner-champ-icon" src="${lolprofiler.DDragon.Image.ChampionSquare(champ.image.full)}" />
+                        <div class="summoner-name">${p.summonerName} Bot</div>
                     </a>
                     `  
                 }
