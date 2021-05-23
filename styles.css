@@ -711,3 +711,22 @@ select {
     color: white;
     font-size: 11px;
 }
+
+.recently-times {
+    flex: 0 0 80px;
+    text-align: center;
+}
+
+.recently-summoner .section-line {
+    background: linear-gradient(90deg, #3A1C71 0%, #FDBB2D 100%);
+    margin-top: 24px;
+    margin-left: 0;
+}
+
+.recently-summoner .summoner {
+    border-bottom: 2px solid #3A1C71;
+}
+
+.recently-summoner .recently-times {
+    border-bottom: 2px solid #FDBB2D;
+}

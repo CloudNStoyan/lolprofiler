@@ -20,7 +20,8 @@ let lolprofiler = {
         winBarSpan: document.querySelector('.progress.win > span'),
         loseBar: document.querySelector('.progress.lose'),
         loseBarSpan: document.querySelector('.progress.lose > span'),
-        masteryWrapper: document.querySelector('.mastery')
+        masteryWrapper: document.querySelector('.mastery'),
+        recentlyWrapper: document.querySelector('.recently-wrapper')
     },
     localStorageKeys: {
         summonerName: "summonerName",
@@ -188,6 +189,30 @@ function handleQueues(queues) {
     })
 }
 
+function handleRecently(recentlyPlayedWith) {
+    lolprofiler.controls.recentlyWrapper.innerHTML = "";
+
+    let keys = Object.keys(recentlyPlayedWith);
+    let recentlies = keys.filter(k => recentlyPlayedWith[k].times > 1).map(k => {
+        return {"name": k, "times": recentlyPlayedWith[k].times}
+    });
+
+    recentlies.sort((a, b) => (a.times > b.times) ? -1 : 1)
+
+    let recentliesHtml = '';
+
+    recentlies.forEach(recently => {
+        recentliesHtml += `
+        <div class="section-header recently-summoner">
+            <a href="#" class="summoner" onclick="putNameAnimation('${recently.name}')">${recently.name}</a>
+            <span class="section-line"></span>
+            <span class="recently-times">${recently.times} Games</span>
+        </div>`
+    })
+
+    lolprofiler.controls.recentlyWrapper.innerHTML = recentliesHtml;
+}
+
 function handleSummary(summary) {
     let winsPercentage = (summary.wins / summary.total) * 100
     let losePercentage = 100 - winsPercentage;
@@ -238,6 +263,24 @@ function handleV5Matches(matches, summoner) {
     lolprofiler.controls.matchesWrapper.innerHTML = '';
 
     matches.sort((a, b) => (a.info.gameCreation > b.info.gameCreation) ? -1 : 1)
+
+    let allSummonerNames = ([].concat.apply([], matches.map(g => g.info.participants))).map(p => p.summonerName);
+
+    let recentlyPlayedWith = {};
+
+    allSummonerNames.forEach(name => {
+        if (name == summoner.name) {
+            return;
+        }
+
+        if (recentlyPlayedWith[name]) {
+            recentlyPlayedWith[name].times++
+        } else {
+            recentlyPlayedWith[name] = {times: 1};
+        }
+    });
+    
+    handleRecently(recentlyPlayedWith)
 
     let summary = {
         wins: 0,
