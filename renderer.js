@@ -21,7 +21,9 @@ let lolprofiler = {
         loseBar: document.querySelector('.progress.lose'),
         loseBarSpan: document.querySelector('.progress.lose > span'),
         masteryWrapper: document.querySelector('.mastery'),
-        recentlyWrapper: document.querySelector('.recently-wrapper')
+        recentlyWrapper: document.querySelector('.recently-wrapper'),
+        selectGameType: document.querySelector('.game-type'),
+        filterBtn: document.querySelector('.filter-btn')
     },
     localStorageKeys: {
         summonerName: "summonerName",
@@ -130,6 +132,30 @@ let lolprofiler = {
         });
 
         this.controls.searchBtn.addEventListener('click', () => fetchProfile(this.controls.nameInput.value));
+
+        let queues = lol.constants.queues.filter(q => q.showInSelect);
+        
+        let gameTypeDefaultOption = document.createElement('option');
+        gameTypeDefaultOption.innerText = 'All'
+        gameTypeDefaultOption.value = -1;
+        this.controls.selectGameType.appendChild(gameTypeDefaultOption);
+
+        queues.forEach(q => {
+            let opt = document.createElement('option');
+            opt.innerText = q.name;
+            opt.value = q.id;
+            this.controls.selectGameType.appendChild(opt);
+        });
+
+        this.controls.filterBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            let queueId = parseInt(this.controls.selectGameType.value);
+
+            if (queueId == -1) {
+                return;
+            }
+        })
     },
     loadBars() {
         setTimeout(() => {
