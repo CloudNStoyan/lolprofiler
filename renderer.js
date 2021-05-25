@@ -364,7 +364,7 @@ function handleV5Matches(matches, summoner) {
         }
 
         lolprofiler.controls.matchesWrapper.appendChild(
-            new Game(
+            createGame(
                 team.win,
                 champion,
                 {
@@ -374,12 +374,11 @@ function handleV5Matches(matches, summoner) {
                 },
                 `${Math.floor(((game.info.gameDuration / 1000) / 60))}m ${(Math.floor((game.info.gameDuration / 1000) % 60))}s`,
                 queue,
-                null,
                 stats,
                 teams,
                 game.info.gameCreation,
                 game.info.gameDuration
-                ).ToNode()
+                )
         );
     });
 
@@ -440,24 +439,10 @@ async function fetchProfile(summonerName) {
     lolprofiler.updateUIState(lolprofiler.uiStates.loaded);
 }
 
-class Game {
-    constructor(isWin, champion, kda, gameLength, queue, longAgo, stats, teams, gameCreation, gameDuration) {
-        this.isWin = isWin;
-        this.champion = champion;
-        this.kda = kda;
-        this.gameLength = gameLength;
-        this.queue = queue;
-        this.longAgo = longAgo;
-        this.stats = stats;
-        this.teams = teams;
-        this.gameCreation = gameCreation;
-        this.gameDuration = gameDuration;
-    }
+function createGame(isWin, champion, kda, gameLength, queue, stats, teams, gameCreation, gameDuration) {
+    let itemsString = '';
 
-    ToNode() {
-        let itemsString = '';
-
-        this.stats.items.forEach((item) => {
+        stats.items.forEach((item) => {
             if (item != 0) {
                 itemsString += `<div class="tooltip-container"><img class="tooltip" src="${lolprofiler.DDragon.Image.Item(item)}" /><span class="tooltip-content">${lol.ddragon.item.data[item].name}</span></div>`;
             } else {
@@ -468,7 +453,7 @@ class Game {
         let teamsString = '';
         let champions = Object.values(lol.ddragon.champion.data);
 
-        this.teams.forEach((team) => {
+        teams.forEach((team) => {
             let teamString = '<div class="team">';
             team.forEach(p => {
                 let champ = champions.find(x => x.key == p.championId);
@@ -491,61 +476,59 @@ class Game {
             teamsString += teamString + "</div>";
         })
 
-        let winText = this.isWin ? 'Victory' : 'Defeat';
+        let winText = isWin ? 'Victory' : 'Defeat';
         let match = document.createElement('div');
         match.className = 'match ' + winText.toLowerCase();
 
         let now = Date.now();
 
-        let gameDate = longAgo(now - this.gameCreation - this.gameDuration);
+        let gameDate = longAgo(now - gameCreation - gameDuration);
 
-        let gameType = lol.constants.queues.find(q => q.id == this.queue.queueId);
-
-        console.log(this.stats)
+        let gameType = lol.constants.queues.find(q => q.id == queue.queueId);
 
         match.innerHTML = 
         `
         <div class="match-info">
             <div class="tooltip-container"><div class="tooltip">${gameType.name}</div><span class="tooltip-content">${gameType.tooltip}</span></div>
-            <div class="tooltip-container"><div class="tooltip">${gameDate}</div><span class="tooltip-content">${dateToCustomString(new Date(this.gameCreation))}</span></div>
+            <div class="tooltip-container"><div class="tooltip">${gameDate}</div><span class="tooltip-content">${dateToCustomString(new Date(gameCreation))}</span></div>
             <div class="seperator"></div>
             <div class="result">${winText}</div>
-            <div>${this.gameLength}</div>
+            <div>${gameLength}</div>
         </div>
         <div class="setup">
             <div class="additional-info">
                 <div class="champion-image">
-                    <img src="${lolprofiler.DDragon.Image.ChampionSquare(this.champion.image.full)}"/>
+                    <img src="${lolprofiler.DDragon.Image.ChampionSquare(champion.image.full)}"/>
                 </div>
                 <div class="masteries">
                     <div class="summoner-spells">
-                        <img src="${lolprofiler.DDragon.Image.SummonerSpell(this.stats.summonerSpell1.image.full)}"/>
-                        <img src="${lolprofiler.DDragon.Image.SummonerSpell(this.stats.summonerSpell2.image.full)}"/>
+                        <img src="${lolprofiler.DDragon.Image.SummonerSpell(stats.summonerSpell1.image.full)}"/>
+                        <img src="${lolprofiler.DDragon.Image.SummonerSpell(stats.summonerSpell2.image.full)}"/>
                     </div>
                     <div class="runes">
                         <div class="tooltip-container">
                             <div class="tooltip">
-                                <img src="${lolprofiler.DDragon.Image.Rune(this.stats.keystone.icon)}"/>
+                                <img src="${lolprofiler.DDragon.Image.Rune(stats.keystone.icon)}"/>
                             </div>
-                            <span class="tooltip-content">${this.stats.keystone.name}</span>
+                            <span class="tooltip-content">${stats.keystone.name}</span>
                         </div>
                         <div class="tooltip-container">
                             <div class="tooltip">
-                                <img src="${lolprofiler.DDragon.Image.Rune(this.stats.secondaryKeystone.icon)}"/>
+                                <img src="${lolprofiler.DDragon.Image.Rune(stats.secondaryKeystone.icon)}"/>
                             </div>
-                            <span class="tooltip-content">${this.stats.secondaryKeystone.name}</span>
+                            <span class="tooltip-content">${stats.secondaryKeystone.name}</span>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="champion-name">${this.champion.name}</div>
+            <div class="champion-name">${champion.name}</div>
         </div>
         <div class="score">
-            <div>${this.kda.kills} / <span class="deaths">${this.kda.deaths}</span> / ${this.kda.assists}</div>
-            <div>${this.kda.deaths == 0 ? 'Perfect KDA' : `${((this.kda.kills + this.kda.assists) / this.kda.deaths).toFixed(2)}:1 KDA`}</div>
+            <div>${kda.kills} / <span class="deaths">${kda.deaths}</span> / ${kda.assists}</div>
+            <div>${kda.deaths == 0 ? 'Perfect KDA' : `${((kda.kills + kda.assists) / kda.deaths).toFixed(2)}:1 KDA`}</div>
             <div class="tooltip-container">
                 <div class="damage-meter tooltip">
-                    <div class="damage" style="width: ${Math.round((this.stats.damage / this.stats.maxDamage) * 100)}%">${Math.round(this.stats.damage / 1000)}K</div>
+                    <div class="damage" style="width: ${Math.round((stats.damage / stats.maxDamage) * 100)}%">${Math.round(stats.damage / 1000)}K</div>
                 </div>
                 <div class="tooltip-content">
                     <span>Total Damage Done</span>
@@ -555,9 +538,9 @@ class Game {
             </div>
         </div>
         <div class="stats">
-            <div>Level ${this.stats.level}</div>
-            <div>${this.stats.creepScore} CS</div>
-            <div>P/Kill ${this.stats.killPercentage}%</div>
+            <div>Level ${stats.level}</div>
+            <div>${stats.creepScore} CS</div>
+            <div>P/Kill ${stats.killPercentage}%</div>
         </div>
         <div class="items">
             ${itemsString}
@@ -568,7 +551,6 @@ class Game {
         `;
 
         return match;
-    }
 }
 
 function putNameAnimation(name) {
