@@ -43,7 +43,7 @@ let riotapi = {
             return cachedResponse;
         }
     
-        let response = await fetch(url).then(response => parseResponseAsJson ? response.json() : response);
+        let response = await fetch(url).then(response => parseResponseAsJson ? response.json() : {status: response.status, json: response.json()});
     
         this.APIResponseCache.add(url, response);
     

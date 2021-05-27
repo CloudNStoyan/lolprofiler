@@ -413,6 +413,10 @@ html, body {
     text-decoration: none;
     color: black;
     text-align: left;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100%;
 }
 
 .summoner-champ-icon {

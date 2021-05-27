@@ -411,13 +411,14 @@ async function fetchProfile(summonerName) {
     lolprofiler.updateUIState(lolprofiler.uiStates.load);
 
     let summonerResponse = await riotapi.SummonerByName(summonerName)
+
     if (summonerResponse.status == 404) {
         toast.create('Error Summoner not found!')
         lolprofiler.updateUIState(lolprofiler.uiStates.loaded);
         return;
     }
 
-    let summoner = await summonerResponse.json();
+    let summoner = await summonerResponse.json;
 
     lolprofiler.currentSummoner.summonerObject = summoner;
     handleSummoner(summoner);
