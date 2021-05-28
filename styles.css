@@ -714,6 +714,7 @@ select {
     background-color: var(--color-darkred);
     color: white;
     font-size: 11px;
+    min-width: fit-content;
 }
 
 .recently-times {
@@ -733,4 +734,9 @@ select {
 
 .recently-summoner .recently-times {
     border-bottom: 2px solid #FDBB2D;
+}
+
+.bot-label {
+    color: lightgray;
+    font-weight: bold;
 }

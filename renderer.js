@@ -458,7 +458,7 @@ function createGame(isWin, champion, kda, gameLength, queue, stats, teams, gameC
             let teamString = '<div class="team">';
             team.forEach(p => {
                 let champ = champions.find(x => x.key == p.championId);
-                if (p.puuid != "0") { // is player
+                if (p.puuid != "BOT") { // is player
                     teamString += `
                     <a href="#" class="summoner" onclick="putNameAnimation('${p.summonerName}')">
                         <img class="summoner-champ-icon" src="${lolprofiler.DDragon.Image.ChampionSquare(champ.image.full)}" />
@@ -469,7 +469,7 @@ function createGame(isWin, champion, kda, gameLength, queue, stats, teams, gameC
                     teamString += `
                     <a href="#" class="summoner">
                         <img class="summoner-champ-icon" src="${lolprofiler.DDragon.Image.ChampionSquare(champ.image.full)}" />
-                        <div class="summoner-name">${p.summonerName} Bot</div>
+                        <div class="summoner-name">${p.summonerName} <span class="bot-label">Bot</span></div>
                     </a>
                     `  
                 }
