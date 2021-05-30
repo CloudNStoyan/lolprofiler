@@ -33,7 +33,8 @@ let lolprofiler = {
     },
     uiStates: {
         load: "load",
-        loaded: "loaded"
+        loaded: "loaded",
+        error: "error"
     },
     currentSummoner: {
         summonerObject: null,
@@ -71,6 +72,11 @@ let lolprofiler = {
             this.controls.main.classList.remove('hide');
             this.controls.main.classList.remove('loading');
             this.controls.main.classList.add("profile-loaded");
+            this.controls.nameInput.removeAttribute('disabled', '');
+        } else if (state == lolprofiler.uiStates.error) {
+            this.controls.main.classList.remove('profile-loaded');
+            this.controls.main.classList.remove('loading');
+            this.controls.main.classList.add('hide');
             this.controls.nameInput.removeAttribute('disabled', '');
         }
     },
@@ -290,7 +296,7 @@ function handleV5Matches(matches, summoner) {
 
     matches.sort((a, b) => (a.info.gameCreation > b.info.gameCreation) ? -1 : 1)
 
-    let allSummonerNames = ([].concat.apply([], matches.map(g => g.info.participants))).map(p => p.summonerName);
+    let allSummonerNames = ([].concat.apply([], matches.map(g => g.info.participants))).filter(p => p.puuid != 'BOT').map(p => p.summonerName).slice(0, 10);
 
     let recentlyPlayedWith = {};
 
@@ -415,6 +421,12 @@ async function fetchProfile(summonerName) {
     if (summonerResponse.status == 404) {
         toast.create('Error Summoner not found!')
         lolprofiler.updateUIState(lolprofiler.uiStates.loaded);
+        return;
+    }
+
+    if (summonerResponse.status == 403) {
+        toast.create('Error Currently the Riot API is down!');
+        lolprofiler.updateUIState(lolprofiler.uiStates.error);
         return;
     }
 

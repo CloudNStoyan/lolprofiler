@@ -44,6 +44,10 @@ let riotapi = {
         }
     
         let response = await fetch(url).then(response => parseResponseAsJson ? response.json() : {status: response.status, json: response.json()});
+
+        if (response.status > 400) {
+            return response;
+        }
     
         this.APIResponseCache.add(url, response);
     
