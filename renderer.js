@@ -191,6 +191,100 @@ window.addEventListener('load', () => setTimeout(() => {
     }
 }, 500));
 
+function addLoadMoreBtn() {
+    let loadMoreBtn = document.createElement('a');
+    loadMoreBtn.href = '#';
+    loadMoreBtn.innerText = 'Load More';
+    loadMoreBtn.className = 'btn load-more-btn';
+    loadMoreBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+
+        loadMoreBtn.innerHTML = '<i class="fas fa-spinner"></i>';
+        loadMoreBtn.classList.add('spinning');
+
+        let loadedMatches = lolprofiler.currentSummoner.loadedMatches;
+        let summoner = lolprofiler.currentSummoner.summonerObject;
+
+        let matchList = await riotapi.V5MatchlistByPUUID(summoner.puuid, loadedMatches.length);
+        let matchRequests = [];
+        matchList.forEach(matchId => matchRequests.push(riotapi.V5MatchById(matchId)));
+
+        let matches = loadedMatches.concat(await Promise.all(matchRequests));
+        handleV5Matches(matches, summoner);
+        lolprofiler.currentSummoner.loadedMatches = matches;
+    });
+    lolprofiler.controls.matchesWrapper.appendChild(loadMoreBtn);
+}
+
+function createMasteryElement(mastery, champions) {
+    let champ = champions.find(x => x.key == mastery.championId);
+
+    let points = `${Math.round(mastery.championPoints / 1000)}K`;
+    let championSquareImage = lolprofiler.DDragon.Image.ChampionSquare(champ.image.full);
+
+    let championMastery = document.createElement('div');
+    championMastery.className = 'mastery-champ';
+    championMastery.innerHTML = 
+    `
+    <div class="tooltip-container mastery-image-wrapper">
+        <span class="champion-level">${points}</span>
+        <img class="tooltip" src="${championSquareImage}"/>
+        <div class="tooltip-content">
+            <span>${champ.name}</span>
+            <span class="line"></span>
+            <span>Level ${mastery.championLevel}</span>
+        </div>
+    </div>
+    `;
+    return championMastery;
+}
+
+function createItemsElement(items) {
+    let html = '';
+    items.forEach((item) => {
+        if (item != 0) {
+            html += `<div class="tooltip-container"><img class="tooltip" src="${lolprofiler.DDragon.Image.Item(item)}" /><span class="tooltip-content">${lol.ddragon.item.data[item].name}</span></div>`;
+        } else {
+            html += '<div><img class="no-image" /></div>'
+        }
+    });
+
+    return html;
+}
+
+function createTeamsElement(teams) {
+    let html = '';
+    let champions = Object.values(lol.ddragon.champion.data);
+
+    teams.forEach((teamObj) => {
+        let team = '<div class="team">';
+        teamObj.forEach(p => {
+            console.log(p)
+            let champ = champions.find(x => x.key == p.championId) ?? champions.find(x => x.name == p.championName);
+            console.log(champ)
+            if (p.puuid != "BOT") { // is player
+                team += `
+                    <a href="#" class="summoner" onclick="putNameAnimation('${p.summonerName}')">
+                        <img class="summoner-champ-icon" src="${lolprofiler.DDragon.Image.ChampionSquare(champ.image.full)}" />
+                        <div class="summoner-name">${p.summonerName}</div>
+                    </a>
+                    `
+            } else {
+                team += `
+                    <a href="#" class="summoner">
+                        <img class="summoner-champ-icon" src="${lolprofiler.DDragon.Image.ChampionSquare(champ.image.full)}" />
+                        <div class="summoner-name">${p.summonerName} <span class="bot-label">Bot</span></div>
+                    </a>
+                    `
+            }
+        })
+
+        html += team + "</div>";
+    })
+
+    return html;
+}
+
 function handleSummoner(summoner) {
     lolprofiler.controls.profileName.innerText = summoner.name;
     lolprofiler.controls.profileLevel.innerText = summoner.summonerLevel;
@@ -267,26 +361,7 @@ function handleMastery(championMastery) {
 
     let champions = Object.values(lol.ddragon.champion.data);
     
-    championMastery.forEach((mastery) => {
-        let champ = champions.find(x => x.key == mastery.championId);
-
-        let championMastery = document.createElement('div');
-        championMastery.className = 'mastery-champ';
-        championMastery.innerHTML = 
-        `
-        <div class="tooltip-container mastery-image-wrapper">
-            <span class="champion-level">${Math.round(mastery.championPoints / 1000)}K</span>
-            <img class="tooltip" src="${lolprofiler.DDragon.Image.ChampionSquare(champ.image.full)}"/>
-            <div class="tooltip-content">
-                <span>${champ.name}</span>
-                <span class="line"></span>
-                <span>Level ${mastery.championLevel}</span>
-            </div>
-        </div>
-        `;
-
-        championsWrapper.appendChild(championMastery);
-    });
+    championMastery.forEach((mastery) => championsWrapper.appendChild(createMasteryElement(mastery, champions)));
 
     lolprofiler.controls.masteryWrapper.appendChild(championsWrapper);
 }
@@ -388,27 +463,7 @@ function handleV5Matches(matches, summoner) {
         );
     });
 
-    let loadMoreBtn = document.createElement('a');
-    loadMoreBtn.href = '#';
-    loadMoreBtn.innerText = 'Load More';
-    loadMoreBtn.className = 'btn load-more-btn';
-    loadMoreBtn.addEventListener('click', async (e) => {
-        e.preventDefault();
-
-        loadMoreBtn.innerHTML = '<i class="fas fa-spinner"></i>';
-        loadMoreBtn.classList.add('spinning');
-
-        let loadedMatches = lolprofiler.currentSummoner.loadedMatches;
-
-        let matchList = await riotapi.V5MatchlistByPUUID(summoner.puuid, loadedMatches.length);
-        let matchRequests = [];
-        matchList.forEach(matchId => matchRequests.push(riotapi.V5MatchById(matchId)));
-
-        let matches = loadedMatches.concat(await Promise.all(matchRequests));
-        handleV5Matches(matches, summoner);
-        lolprofiler.currentSummoner.loadedMatches = matches;
-    });
-    lolprofiler.controls.matchesWrapper.appendChild(loadMoreBtn);
+    addLoadMoreBtn();
 
     handleSummary(summary);
 }
@@ -418,15 +473,8 @@ async function fetchProfile(summonerName) {
 
     let summonerResponse = await riotapi.SummonerByName(summonerName)
 
-    if (summonerResponse.status == 404) {
-        toast.create('Error Summoner not found!')
-        lolprofiler.updateUIState(lolprofiler.uiStates.loaded);
-        return;
-    }
-
-    if (summonerResponse.status == 403) {
-        toast.create('Error Currently the Riot API is down!');
-        lolprofiler.updateUIState(lolprofiler.uiStates.error);
+    if (summonerResponse.status > 400) {
+        handleAPIErrors(summonerResponse.status);
         return;
     }
 
@@ -452,54 +500,39 @@ async function fetchProfile(summonerName) {
     lolprofiler.updateUIState(lolprofiler.uiStates.loaded);
 }
 
-function createGame(isWin, champion, kda, gameLength, queue, stats, teams, gameCreation, gameDuration) {
-    let itemsString = '';
+function handleAPIErrors(status) {
+    switch (status) {
+        case 404: 
+            toast.create('Error Summoner not found!')
+            lolprofiler.updateUIState(lolprofiler.uiStates.loaded);
+            break;
+        case 403: 
+            toast.create('Error Currently the Riot API is down!');
+            lolprofiler.updateUIState(lolprofiler.uiStates.error);
+            break;
+        default:
+            toast.create('Unexpected API failure!')
+            lolprofiler.updateUIState(lolprofiler.uiStates.error);
+            break;
+    }
+}
 
-        stats.items.forEach((item) => {
-            if (item != 0) {
-                itemsString += `<div class="tooltip-container"><img class="tooltip" src="${lolprofiler.DDragon.Image.Item(item)}" /><span class="tooltip-content">${lol.ddragon.item.data[item].name}</span></div>`;
-            } else {
-                itemsString += '<div><img class="no-image" /></div>'
-            }
-        });
+function createGame(isWin, champion, kda, gameLength, queue, stats, teamsObj, gameCreation, gameDuration) {
+    let items = createItemsElement(stats.items);
 
-        let teamsString = '';
-        let champions = Object.values(lol.ddragon.champion.data);
+    let teams = createTeamsElement(teamsObj);
 
-        teams.forEach((team) => {
-            let teamString = '<div class="team">';
-            team.forEach(p => {
-                let champ = champions.find(x => x.key == p.championId);
-                if (p.puuid != "BOT") { // is player
-                    teamString += `
-                    <a href="#" class="summoner" onclick="putNameAnimation('${p.summonerName}')">
-                        <img class="summoner-champ-icon" src="${lolprofiler.DDragon.Image.ChampionSquare(champ.image.full)}" />
-                        <div class="summoner-name">${p.summonerName}</div>
-                    </a>
-                    `  
-                } else {
-                    teamString += `
-                    <a href="#" class="summoner">
-                        <img class="summoner-champ-icon" src="${lolprofiler.DDragon.Image.ChampionSquare(champ.image.full)}" />
-                        <div class="summoner-name">${p.summonerName} <span class="bot-label">Bot</span></div>
-                    </a>
-                    `  
-                }
-            })
-            teamsString += teamString + "</div>";
-        })
+    let winText = isWin ? 'Victory' : 'Defeat';
+    let match = document.createElement('div');
+    match.className = 'match ' + winText.toLowerCase();
 
-        let winText = isWin ? 'Victory' : 'Defeat';
-        let match = document.createElement('div');
-        match.className = 'match ' + winText.toLowerCase();
+    let now = Date.now();
 
-        let now = Date.now();
+    let gameDate = longAgo(now - gameCreation - gameDuration);
 
-        let gameDate = longAgo(now - gameCreation - gameDuration);
+    let gameType = lol.constants.queues.find(q => q.id == queue.queueId);
 
-        let gameType = lol.constants.queues.find(q => q.id == queue.queueId);
-
-        match.innerHTML = 
+    match.innerHTML =
         `
         <div class="match-info">
             <div class="tooltip-container"><div class="tooltip">${gameType.name}</div><span class="tooltip-content">${gameType.tooltip}</span></div>
@@ -556,14 +589,14 @@ function createGame(isWin, champion, kda, gameLength, queue, stats, teams, gameC
             <div>P/Kill ${stats.killPercentage}%</div>
         </div>
         <div class="items">
-            ${itemsString}
+            ${items}
         </div>
         <div class="players">
-            ${teamsString}
+            ${teams}
         </div>
         `;
 
-        return match;
+    return match;
 }
 
 function putNameAnimation(name) {
