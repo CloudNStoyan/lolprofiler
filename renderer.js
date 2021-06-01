@@ -444,23 +444,23 @@ function handleV5Matches(matches, summoner) {
             maxDamage: maxDamage
         }
 
-        lolprofiler.controls.matchesWrapper.appendChild(
-            createGame(
-                team.win,
-                champion,
-                {
-                    kills: participant.kills,
-                    deaths: participant.deaths,
-                    assists: participant.assists
-                },
-                `${Math.floor(((game.info.gameDuration / 1000) / 60))}m ${(Math.floor((game.info.gameDuration / 1000) % 60))}s`,
-                queue,
-                stats,
-                teams,
-                game.info.gameCreation,
-                game.info.gameDuration
-                )
-        );
+        let gameObj = {
+            isWin: team.win,
+            champion: champion,
+            kda: {
+                kills: participant.kills,
+                deaths: participant.deaths,
+                assists: participant.assists
+            },
+            gameLength: `${Math.floor(((game.info.gameDuration / 1000) / 60))}m ${(Math.floor((game.info.gameDuration / 1000) % 60))}s`,
+            queue: queue,
+            stats: stats,
+            teamsObj: teams,
+            gameCreation: game.info.gameCreation,
+            gameDuration: game.info.gameDuration,
+        }
+
+        lolprofiler.controls.matchesWrapper.appendChild(createGame(gameObj));
     });
 
     addLoadMoreBtn();
@@ -517,29 +517,29 @@ function handleAPIErrors(status) {
     }
 }
 
-function createGame(isWin, champion, kda, gameLength, queue, stats, teamsObj, gameCreation, gameDuration) {
-    let items = createItemsElement(stats.items);
+function createGame(game) {
+    let items = createItemsElement(game.stats.items);
 
-    let teams = createTeamsElement(teamsObj);
+    let teams = createTeamsElement(game.teamsObj);
 
-    let winText = isWin ? 'Victory' : 'Defeat';
+    let winText = game.isWin ? 'Victory' : 'Defeat';
     let match = document.createElement('div');
     match.className = 'match ' + winText.toLowerCase();
 
     let now = Date.now();
 
-    let gameDate = longAgo(now - gameCreation - gameDuration);
+    let gameDate = longAgo(now - game.gameCreation - game.gameDuration);
 
-    let gameType = lol.constants.queues.find(q => q.id == queue.queueId);
+    let gameType = lol.constants.queues.find(q => q.id == game.queue.queueId);
 
     match.innerHTML =
         `
         <div class="match-info">
             <div class="tooltip-container"><div class="tooltip">${gameType.name}</div><span class="tooltip-content">${gameType.tooltip}</span></div>
-            <div class="tooltip-container"><div class="tooltip">${gameDate}</div><span class="tooltip-content">${dateToCustomString(new Date(gameCreation))}</span></div>
+            <div class="tooltip-container"><div class="tooltip">${gameDate}</div><span class="tooltip-content">${dateToCustomString(new Date(game.gameCreation))}</span></div>
             <div class="seperator"></div>
             <div class="result">${winText}</div>
-            <div>${gameLength}</div>
+            <div>${game.gameLength}</div>
         </div>
         <div class="setup">
             <div class="additional-info">
@@ -556,13 +556,13 @@ function createGame(isWin, champion, kda, gameLength, queue, stats, teamsObj, ga
                             <div class="tooltip">
                                 <img src="${lolprofiler.DDragon.Image.Rune(stats.keystone.icon)}"/>
                             </div>
-                            <span class="tooltip-content">${stats.keystone.name}</span>
+                            <span class="tooltip-content">${game.stats.keystone.name}</span>
                         </div>
                         <div class="tooltip-container">
                             <div class="tooltip">
                                 <img src="${lolprofiler.DDragon.Image.Rune(stats.secondaryKeystone.icon)}"/>
                             </div>
-                            <span class="tooltip-content">${stats.secondaryKeystone.name}</span>
+                            <span class="tooltip-content">${game.stats.secondaryKeystone.name}</span>
                         </div>
                     </div>
                 </div>
@@ -570,11 +570,11 @@ function createGame(isWin, champion, kda, gameLength, queue, stats, teamsObj, ga
             <div class="champion-name">${champion.name}</div>
         </div>
         <div class="score">
-            <div>${kda.kills} / <span class="deaths">${kda.deaths}</span> / ${kda.assists}</div>
-            <div>${kda.deaths == 0 ? 'Perfect KDA' : `${((kda.kills + kda.assists) / kda.deaths).toFixed(2)}:1 KDA`}</div>
+            <div>${game.kda.kills} / <span class="deaths">${game.kda.deaths}</span> / ${game.kda.assists}</div>
+            <div>${game.kda.deaths == 0 ? 'Perfect KDA' : `${((game.kda.kills + game.kda.assists) / game.kda.deaths).toFixed(2)}:1 KDA`}</div>
             <div class="tooltip-container">
                 <div class="damage-meter tooltip">
-                    <div class="damage" style="width: ${Math.round((stats.damage / stats.maxDamage) * 100)}%">${Math.round(stats.damage / 1000)}K</div>
+                    <div class="damage" style="width: ${Math.round((game.stats.damage / game.stats.maxDamage) * 100)}%">${Math.round(game.stats.damage / 1000)}K</div>
                 </div>
                 <div class="tooltip-content">
                     <span>Total Damage Done</span>
@@ -584,9 +584,9 @@ function createGame(isWin, champion, kda, gameLength, queue, stats, teamsObj, ga
             </div>
         </div>
         <div class="stats">
-            <div>Level ${stats.level}</div>
-            <div>${stats.creepScore} CS</div>
-            <div>P/Kill ${stats.killPercentage}%</div>
+            <div>Level ${game.stats.level}</div>
+            <div>${game.stats.creepScore} CS</div>
+            <div>P/Kill ${game.stats.killPercentage}%</div>
         </div>
         <div class="items">
             ${items}
