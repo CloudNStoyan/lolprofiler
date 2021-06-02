@@ -544,30 +544,30 @@ function createGame(game) {
         <div class="setup">
             <div class="additional-info">
                 <div class="champion-image">
-                    <img src="${lolprofiler.DDragon.Image.ChampionSquare(champion.image.full)}"/>
+                    <img src="${lolprofiler.DDragon.Image.ChampionSquare(game.champion.image.full)}"/>
                 </div>
                 <div class="masteries">
                     <div class="summoner-spells">
-                        <img src="${lolprofiler.DDragon.Image.SummonerSpell(stats.summonerSpell1.image.full)}"/>
-                        <img src="${lolprofiler.DDragon.Image.SummonerSpell(stats.summonerSpell2.image.full)}"/>
+                        <img src="${lolprofiler.DDragon.Image.SummonerSpell(game.stats.summonerSpell1.image.full)}"/>
+                        <img src="${lolprofiler.DDragon.Image.SummonerSpell(game.stats.summonerSpell2.image.full)}"/>
                     </div>
                     <div class="runes">
                         <div class="tooltip-container">
                             <div class="tooltip">
-                                <img src="${lolprofiler.DDragon.Image.Rune(stats.keystone.icon)}"/>
+                                <img src="${lolprofiler.DDragon.Image.Rune(game.stats.keystone.icon)}"/>
                             </div>
                             <span class="tooltip-content">${game.stats.keystone.name}</span>
                         </div>
                         <div class="tooltip-container">
                             <div class="tooltip">
-                                <img src="${lolprofiler.DDragon.Image.Rune(stats.secondaryKeystone.icon)}"/>
+                                <img src="${lolprofiler.DDragon.Image.Rune(game.stats.secondaryKeystone.icon)}"/>
                             </div>
                             <span class="tooltip-content">${game.stats.secondaryKeystone.name}</span>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="champion-name">${champion.name}</div>
+            <div class="champion-name">${game.champion.name}</div>
         </div>
         <div class="score">
             <div>${game.kda.kills} / <span class="deaths">${game.kda.deaths}</span> / ${game.kda.assists}</div>
