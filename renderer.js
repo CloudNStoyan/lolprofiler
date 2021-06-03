@@ -259,9 +259,7 @@ function createTeamsElement(teams) {
     teams.forEach((teamObj) => {
         let team = '<div class="team">';
         teamObj.forEach(p => {
-            console.log(p)
             let champ = champions.find(x => x.key == p.championId) ?? champions.find(x => x.name == p.championName);
-            console.log(champ)
             if (p.puuid != "BOT") { // is player
                 team += `
                     <a href="#" class="summoner" onclick="putNameAnimation('${p.summonerName}')">
@@ -319,7 +317,7 @@ function handleRecently(recentlyPlayedWith) {
     lolprofiler.controls.recentlyWrapper.innerHTML = "";
 
     let keys = Object.keys(recentlyPlayedWith);
-    let recentlies = keys.filter(k => recentlyPlayedWith[k].times > 1).map(k => {
+    let recentlies = keys.filter(k => recentlyPlayedWith[k].times > 1).slice(0, 5).map(k => {
         return {"name": k, "times": recentlyPlayedWith[k].times}
     });
 
@@ -371,7 +369,7 @@ function handleV5Matches(matches, summoner) {
 
     matches.sort((a, b) => (a.info.gameCreation > b.info.gameCreation) ? -1 : 1)
 
-    let allSummonerNames = ([].concat.apply([], matches.map(g => g.info.participants))).filter(p => p.puuid != 'BOT').map(p => p.summonerName).slice(0, 10);
+    let allSummonerNames = ([].concat.apply([], matches.map(g => g.info.participants))).filter(p => p.puuid != 'BOT').map(p => p.summonerName);
 
     let recentlyPlayedWith = {};
 
