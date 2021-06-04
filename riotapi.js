@@ -26,7 +26,7 @@ let riotapi = {
     },
     async V5MatchById(gameId) {
         let endpoint = `https://europe.api.riotgames.com/lol/match/v5/matches/${gameId}?api_key=${this.config.devKey}`;
-        return await this.cachedFetch(endpoint, false);
+        return await this.cachedFetch(endpoint, false, false);
     },
     async MasteryBySummonerId(summonerId) {
         let endpoint = `/champion-mastery/v4/champion-masteries/by-summoner/${summonerId}?api_key=${this.config.devKey}`
@@ -43,7 +43,7 @@ let riotapi = {
             return cachedResponse;
         }
     
-        let response = await fetch(url).then(response => parseResponseAsJson ? response.json() : {status: response.status, json: response.json()});
+        let response = await fetch(url).then(response => parseResponseAsJson ? response.json() : {status: response.status, json: response.json(), url: url, urlSegments: url.split('/')});
 
         if (response.status > 400) {
             return response;

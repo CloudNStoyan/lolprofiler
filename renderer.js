@@ -41,7 +41,7 @@ let lolprofiler = {
         loadedMatches: null
     },
     DDragon: {
-        Version: '11.8.1',
+        Version: lol.ddragon.version,
         Image: {
             ProfileIcon(profileIconId) {
                 return `http://ddragon.leagueoflegends.com/cdn/${lolprofiler.DDragon.Version}/img/profileicon/${profileIconId}.png`;
@@ -466,13 +466,28 @@ function handleV5Matches(matches, summoner) {
     handleSummary(summary);
 }
 
+async function handleMatcheResponses(matchResponses) {
+    let matches = []
+    for (let i = 0; i < matchResponses.length; i++) {
+        let matchResponse = matchResponses[i];
+        if (matchResponse.status == 200) {
+            let json = await matchResponse.json;
+            matches.push(json)   
+        } else {
+            let matchId = matchResponse.urlSegments[matchResponse.urlSegments - 1].split('?')[0];
+            APIErrorsHandler.Match(matchResponse.status, matchId);
+        }
+    }
+    return matches;
+}
+
 async function fetchProfile(summonerName) {
     lolprofiler.updateUIState(lolprofiler.uiStates.load);
 
     let summonerResponse = await riotapi.SummonerByName(summonerName)
 
     if (summonerResponse.status > 400) {
-        handleAPIErrors(summonerResponse.status);
+        APIErrorsHandler.Summoner(summonerResponse.status);
         return;
     }
 
@@ -491,27 +506,36 @@ async function fetchProfile(summonerName) {
     let matchRequests = [];
     matchList.forEach(matchId => matchRequests.push(riotapi.V5MatchById(matchId)));
 
-    let matches = await Promise.all(matchRequests);
+    let matchResponses = await Promise.all(matchRequests);
+    let matches = await handleMatcheResponses(matchResponses);
+
     handleV5Matches(matches, summoner);
     lolprofiler.currentSummoner.loadedMatches = matches;
 
     lolprofiler.updateUIState(lolprofiler.uiStates.loaded);
 }
 
-function handleAPIErrors(status) {
-    switch (status) {
-        case 404: 
-            toast.create('Error Summoner not found!')
-            lolprofiler.updateUIState(lolprofiler.uiStates.loaded);
-            break;
-        case 403: 
-            toast.create('Error Currently the Riot API is down!');
-            lolprofiler.updateUIState(lolprofiler.uiStates.error);
-            break;
-        default:
-            toast.create('Unexpected API failure!')
-            lolprofiler.updateUIState(lolprofiler.uiStates.error);
-            break;
+let APIErrorsHandler = {
+    Summoner(status) {
+        switch (status) {
+            case 404: 
+                toast.create('Error Summoner not found!')
+                lolprofiler.updateUIState(lolprofiler.uiStates.loaded);
+                break;
+            case 403: 
+                toast.create('Error Currently the Riot API is down!');
+                lolprofiler.updateUIState(lolprofiler.uiStates.error);
+                break;
+            default:
+                toast.create('Unexpected API failure!')
+                lolprofiler.updateUIState(lolprofiler.uiStates.error);
+                break;
+        }
+    },
+    Match(status, matchId) {
+        if (status == 404) {
+            console.error(`Couldn't find a match with ${matchId} so its skipped!`)
+        }
     }
 }
 

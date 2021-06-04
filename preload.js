@@ -172,6 +172,7 @@ function exposeLoL() {
         productionKey: readText('productionkey.txt')
       },
       ddragon: {
+        version: ddragonCache.version,
         champion: readJson(generatePathToDDragon('champion.json')),
         queues: readJson(generatePathToDDragon('queues.json')),
         summoner: readJson(generatePathToDDragon('summoner.json')),
