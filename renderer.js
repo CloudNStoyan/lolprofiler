@@ -546,7 +546,7 @@ function createGame(game) {
 
     let winText = game.isWin ? 'Victory' : 'Defeat';
     let match = document.createElement('div');
-    match.className = 'match ' + winText.toLowerCase();
+    match.className = `match ${game.isWin ? 'victory' : 'defeat'}`;
 
     let now = Date.now();
 
@@ -656,5 +656,18 @@ function longAgo(difference) {
 }
 
 function dateToCustomString(date) {
-    return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}<br>${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`
+    let time = {
+        hours: zeroPadStart(date.getHours()),
+        minutes: zeroPadStart(date.getMinutes()),
+        seconds: zeroPadStart(date.getSeconds()),
+        date: zeroPadStart(date.getDate()),
+        month: zeroPadStart(date.getMonth()),
+        year: zeroPadStart(date.getFullYear()),
+    };
+    
+    return `${time.hours}:${time.minutes}:${time.seconds}<br>${time.date}/${time.month}/${time.year}`;
+}
+
+function zeroPadStart(number) {
+    return number.toString().padStart(2, '0');
 }
