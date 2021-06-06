@@ -153,7 +153,7 @@ let lolprofiler = {
             this.controls.selectGameType.appendChild(opt);
         });
 
-        this.controls.filterBtn.addEventListener('click', (e) => {
+        this.controls.filterBtn.addEventListener('click', async (e) => {
             e.preventDefault();
 
             let queueId = parseInt(this.controls.selectGameType.value);
@@ -161,6 +161,18 @@ let lolprofiler = {
             if (queueId == -1) {
                 return;
             }
+
+            let summoner = lolprofiler.currentSummoner.summonerObject;
+
+            let matchList = await riotapi.V5MatchlistByPUUID(summoner.puuid, 0, 10, queueId);
+            let matchRequests = [];
+            matchList.forEach(matchId => matchRequests.push(riotapi.V5MatchById(matchId)));
+
+            let matchResponses = await Promise.all(matchRequests);
+            let matches = await handleMatcheResponses(matchResponses);
+
+            handleV5Matches(matches, summoner);
+            lolprofiler.currentSummoner.loadedMatches = matches;
         })
     },
     loadBars() {

@@ -20,8 +20,13 @@ let riotapi = {
         let endpoint = `/match/v4/matches/${gameId}?api_key=${this.config.devKey}`;
         return await this.cachedFetch(endpoint);
     },
-    async V5MatchlistByPUUID(puuid, start = 0, count = 10) {
+    async V5MatchlistByPUUID(puuid, start = 0, count = 10, queue = null) {
         let endpoint = `https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${start}&count=${count}&api_key=${this.config.devKey}`;
+
+        if (queue) {
+            endpoint += `&queue=${queue}`
+        }
+
         return await this.cachedFetch(endpoint, false);
     },
     async V5MatchById(gameId) {
