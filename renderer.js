@@ -164,12 +164,7 @@ let lolprofiler = {
 
             let summoner = lolprofiler.currentSummoner.summonerObject;
 
-            let matchList = await riotapi.V5MatchlistByPUUID(summoner.puuid, 0, 10, queueId);
-            let matchRequests = [];
-            matchList.forEach(matchId => matchRequests.push(riotapi.V5MatchById(matchId)));
-
-            let matchResponses = await Promise.all(matchRequests);
-            let matches = await handleMatcheResponses(matchResponses);
+            let matches = await getMatches(summoner, 0, 10, queueId)
 
             handleV5Matches(matches, summoner);
             lolprofiler.currentSummoner.loadedMatches = matches;
@@ -217,15 +212,21 @@ function addLoadMoreBtn() {
         let loadedMatches = lolprofiler.currentSummoner.loadedMatches;
         let summoner = lolprofiler.currentSummoner.summonerObject;
 
-        let matchList = await riotapi.V5MatchlistByPUUID(summoner.puuid, loadedMatches.length);
-        let matchRequests = [];
-        matchList.forEach(matchId => matchRequests.push(riotapi.V5MatchById(matchId)));
-
-        let matches = loadedMatches.concat(await Promise.all(matchRequests));
+        let matches = loadedMatches.concat(await getMatches(summoner, loadedMatches.length));
         handleV5Matches(matches, summoner);
         lolprofiler.currentSummoner.loadedMatches = matches;
     });
     lolprofiler.controls.matchesWrapper.appendChild(loadMoreBtn);
+}
+
+async function getMatches(summoner, start = 0, count = 10, queueId = null) {
+    let matchList = await riotapi.V5MatchlistByPUUID(summoner.puuid, start, count, queueId);
+    let matchRequests = [];
+    matchList.forEach(matchId => matchRequests.push(riotapi.V5MatchById(matchId)));
+
+    let matchResponses = await Promise.all(matchRequests);
+    let matches = await handleMatcheResponses(matchResponses);
+    return matches;
 }
 
 function createMasteryElement(mastery, champions) {
@@ -514,18 +515,14 @@ async function fetchProfile(summonerName) {
     let queues = await riotapi.LeagueBySummonerId(summoner.id);
     handleQueues(queues);
 
-    let matchList = await riotapi.V5MatchlistByPUUID(summoner.puuid);
-    let matchRequests = [];
-    matchList.forEach(matchId => matchRequests.push(riotapi.V5MatchById(matchId)));
-
-    let matchResponses = await Promise.all(matchRequests);
-    let matches = await handleMatcheResponses(matchResponses);
-
+    let matches = await getMatches(summoner)
     handleV5Matches(matches, summoner);
     lolprofiler.currentSummoner.loadedMatches = matches;
 
     lolprofiler.updateUIState(lolprofiler.uiStates.loaded);
 }
+
+
 
 let APIErrorsHandler = {
     Summoner(status) {
