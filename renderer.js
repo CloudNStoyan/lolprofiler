@@ -400,83 +400,81 @@ function handleV5Matches(matches, summoner) {
     
     handleRecently(recentlyPlayedWith)
 
+    let games = matches.map(game => getGameInfo(game));
+
+    games.forEach(game => lolprofiler.controls.matchesWrapper.appendChild(createGame(game)));
+
     let summary = {
-        wins: 0,
-        loses: 0,
+        wins: games.filter(x => x.isWin).lenght,
+        loses: matches.length - this.wins,
         total: matches.length
     }
-
-    matches.forEach(game => {
-        let participant = game.info.participants.find(p => p.puuid == summoner.puuid)
-        let team = game.info.teams.find(t => t.teamId == participant.teamId);
-
-        if (team.win) {
-            summary.wins += 1;
-        } else {
-            summary.loses += 1;
-        }
-
-        let champion = Object.values(lol.ddragon.champion.data).find(champ => champ.key == participant.championId);
-
-        let queue = lol.ddragon.queues.find(q => q.queueId == game.info.queueId);
-
-        let teamKills = game.info.participants.filter((p) => p.teamId == participant.teamId).map(x => x.kills).reduce((a, b) => a + b, 0);
-        let participantsDamage = game.info.participants.map(x => x.totalDamageDealtToChampions);
-        let maxDamage = 0;
-
-        participantsDamage.forEach(damage => {
-            if (damage > maxDamage) {
-                maxDamage = damage
-            }
-        })
-
-        let keystone = lol.ddragon.runesReforged.find(x => x.id == participant.perks.styles[0].style).slots[0].runes.find(x => x.id == participant.perks.styles[0].selections[0].perk);
-        let secondaryRunePath = lol.ddragon.runesReforged.find(x => x.id == participant.perks.styles[1].style);
-
-        let items = [participant.item0, participant.item1, participant.item2, participant.item6, participant.item3, participant.item4, participant.item5];
-
-        let teams = [
-            game.info.participants.filter((p) => p.teamId == 100),
-            game.info.participants.filter((p) => p.teamId == 200)
-        ];
-
-        let summonerSpells = Object.values(lol.ddragon.summoner.data);
-
-        let stats = {
-            level: participant.champLevel,
-            creepScore: participant.totalMinionsKilled,
-            killPercentage: Math.round(((participant.kills + participant.assists) / teamKills) * 100),
-            summonerSpell1: summonerSpells.find(spell => spell.key == participant.summoner1Id),
-            summonerSpell2: summonerSpells.find(spell => spell.key == participant.summoner2Id),
-            keystone: keystone,
-            secondaryKeystone: secondaryRunePath,
-            items: items,
-            damage: participant.totalDamageDealtToChampions,
-            maxDamage: maxDamage
-        }
-
-        let gameObj = {
-            isWin: team.win,
-            champion: champion,
-            kda: {
-                kills: participant.kills,
-                deaths: participant.deaths,
-                assists: participant.assists
-            },
-            gameLength: `${Math.floor(((game.info.gameDuration / 1000) / 60))}m ${(Math.floor((game.info.gameDuration / 1000) % 60))}s`,
-            queue: queue,
-            stats: stats,
-            teamsObj: teams,
-            gameCreation: game.info.gameCreation,
-            gameDuration: game.info.gameDuration,
-        }
-
-        lolprofiler.controls.matchesWrapper.appendChild(createGame(gameObj));
-    });
 
     addLoadMoreBtn();
 
     handleSummary(summary);
+}
+
+function getGameInfo(game) {
+    let participant = game.info.participants.find(p => p.puuid == summoner.puuid)
+    let team = game.info.teams.find(t => t.teamId == participant.teamId);
+
+    let champion = Object.values(lol.ddragon.champion.data).find(champ => champ.key == participant.championId);
+
+    let queue = lol.ddragon.queues.find(q => q.queueId == game.info.queueId);
+
+    let teamKills = game.info.participants.filter((p) => p.teamId == participant.teamId).map(x => x.kills).reduce((a, b) => a + b, 0);
+    let participantsDamage = game.info.participants.map(x => x.totalDamageDealtToChampions);
+    let maxDamage = 0;
+
+    participantsDamage.forEach(damage => {
+        if (damage > maxDamage) {
+            maxDamage = damage
+        }
+    })
+
+    let keystone = lol.ddragon.runesReforged.find(x => x.id == participant.perks.styles[0].style).slots[0].runes.find(x => x.id == participant.perks.styles[0].selections[0].perk);
+    let secondaryRunePath = lol.ddragon.runesReforged.find(x => x.id == participant.perks.styles[1].style);
+
+    let items = [participant.item0, participant.item1, participant.item2, participant.item6, participant.item3, participant.item4, participant.item5];
+
+    let teams = [
+        game.info.participants.filter((p) => p.teamId == 100),
+        game.info.participants.filter((p) => p.teamId == 200)
+    ];
+
+    let summonerSpells = Object.values(lol.ddragon.summoner.data);
+
+    let stats = {
+        level: participant.champLevel,
+        creepScore: participant.totalMinionsKilled,
+        killPercentage: Math.round(((participant.kills + participant.assists) / teamKills) * 100),
+        summonerSpell1: summonerSpells.find(spell => spell.key == participant.summoner1Id),
+        summonerSpell2: summonerSpells.find(spell => spell.key == participant.summoner2Id),
+        keystone: keystone,
+        secondaryKeystone: secondaryRunePath,
+        items: items,
+        damage: participant.totalDamageDealtToChampions,
+        maxDamage: maxDamage
+    }
+
+    let gameObj = {
+        isWin: team.win,
+        champion: champion,
+        kda: {
+            kills: participant.kills,
+            deaths: participant.deaths,
+            assists: participant.assists
+        },
+        gameLength: `${Math.floor(((game.info.gameDuration / 1000) / 60))}m ${(Math.floor((game.info.gameDuration / 1000) % 60))}s`,
+        queue: queue,
+        stats: stats,
+        teamsObj: teams,
+        gameCreation: game.info.gameCreation,
+        gameDuration: game.info.gameDuration,
+    }
+
+    return gameObj;
 }
 
 async function handleMatcheResponses(matchResponses) {
