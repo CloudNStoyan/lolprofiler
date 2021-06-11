@@ -164,7 +164,9 @@ let lolprofiler = {
 
             let summoner = lolprofiler.currentSummoner.summonerObject;
 
-            let matches = await getMatches(summoner, 0, 10, queueId)
+            let matches = await getMatches(summoner, 0, 10, queueId);
+
+            console.log(matches)
 
             handleV5Matches(matches, summoner);
             lolprofiler.currentSummoner.loadedMatches = matches;
@@ -178,6 +180,10 @@ let lolprofiler = {
                 let bar = progressBars[i];
                 let barWidth = bar.getAttribute('data-width');
                 bar.setAttribute('style', `width: ${barWidth}%;`);
+
+                if (parseFloat(barWidth) == 0) {
+                    bar.setAttribute('style','display: none;');
+                }
             }
 
         }, 500)
@@ -360,7 +366,7 @@ function handleSummary(summary) {
     lolprofiler.controls.winBarSpan.innerText = Math.round(winsPercentage) + '%';
     lolprofiler.controls.loseBarSpan.innerText = Math.round(losePercentage) + '%';
 
-    lolprofiler.loadBars()
+    lolprofiler.loadBars();
 }
 
 function handleMastery(championMastery) {
@@ -400,12 +406,12 @@ function handleV5Matches(matches, summoner) {
     
     handleRecently(recentlyPlayedWith)
 
-    let games = matches.map(game => getGameInfo(game));
+    let games = matches.map(game => getGameInfo(game, summoner));
 
     games.forEach(game => lolprofiler.controls.matchesWrapper.appendChild(createGame(game)));
 
     let summary = {
-        wins: games.filter(x => x.isWin).lenght,
+        wins: games.filter(x => x.isWin).length,
         loses: matches.length - this.wins,
         total: matches.length
     }
@@ -415,7 +421,7 @@ function handleV5Matches(matches, summoner) {
     handleSummary(summary);
 }
 
-function getGameInfo(game) {
+function getGameInfo(game, summoner) {
     let participant = game.info.participants.find(p => p.puuid == summoner.puuid)
     let team = game.info.teams.find(t => t.teamId == participant.teamId);
 

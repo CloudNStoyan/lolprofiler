@@ -744,3 +744,7 @@ select {
     color: lightgray;
     font-weight: bold;
 }
+
+a.btn[disabled] {
+    opacity: 0.7;
+}
