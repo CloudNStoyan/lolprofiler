@@ -42,15 +42,16 @@ let lolprofiler = {
     },
     DDragon: {
         Version: lol.ddragon.version,
+        BaseUrl: 'http://ddragon.leagueoflegends.com/cdn',
         Image: {
             ProfileIcon(profileIconId) {
-                return `http://ddragon.leagueoflegends.com/cdn/${lolprofiler.DDragon.Version}/img/profileicon/${profileIconId}.png`;
+                return `${lolprofiler.DDragon.BaseUrl}/${lolprofiler.DDragon.Version}/img/profileicon/${profileIconId}.png`;
             },
             ChampionSquare(imageName) {
-                return `http://ddragon.leagueoflegends.com/cdn/${lolprofiler.DDragon.Version}/img/champion/${imageName}`;
+                return `${lolprofiler.DDragon.BaseUrl}/${lolprofiler.DDragon.Version}/img/champion/${imageName}`;
             },
             SummonerSpell(imageName) {
-                return `http://ddragon.leagueoflegends.com/cdn/${lolprofiler.DDragon.Version}/img/spell/${imageName}`;
+                return `${lolprofiler.DDragon.BaseUrl}/${lolprofiler.DDragon.Version}/img/spell/${imageName}`;
             },
             Rune(imageName) {
                 return `./ddragon/img/${imageName}`;
@@ -59,7 +60,7 @@ let lolprofiler = {
                 return `./ddragon/img/ranked-emblems/Emblem_${tier}.png`;
             },
             Item(itemId) {
-                return `http://ddragon.leagueoflegends.com/cdn/${lolprofiler.DDragon.Version}/img/item/${itemId}.png`
+                return `${lolprofiler.DDragon.BaseUrl}/${lolprofiler.DDragon.Version}/img/item/${itemId}.png`
             }
         }
     },
@@ -146,11 +147,11 @@ let lolprofiler = {
         gameTypeDefaultOption.value = -1;
         this.controls.selectGameType.appendChild(gameTypeDefaultOption);
 
-        queues.forEach(q => {
-            let opt = document.createElement('option');
-            opt.innerText = q.name;
-            opt.value = q.id;
-            this.controls.selectGameType.appendChild(opt);
+        queues.forEach(queue => {
+            let option = document.createElement('option');
+            option.innerText = queue.name;
+            option.value = queue.id;
+            this.controls.selectGameType.appendChild(option);
         });
 
         this.controls.filterBtn.addEventListener('click', async (e) => {
@@ -162,14 +163,9 @@ let lolprofiler = {
                 return;
             }
 
-            let summoner = lolprofiler.currentSummoner.summonerObject;
-
-            let matches = await getMatches(summoner, 0, 10, queueId);
-
-            console.log(matches)
+            let matches = await getMatches(lolprofiler.currentSummoner.summonerObject, 0, 10, queueId);
 
             handleV5Matches(matches, summoner);
-            lolprofiler.currentSummoner.loadedMatches = matches;
         })
     },
     loadBars() {
@@ -178,10 +174,10 @@ let lolprofiler = {
 
             for (let i = 0; i < progressBars.length; i++) {
                 let bar = progressBars[i];
-                let barWidth = bar.getAttribute('data-width');
+                let barWidth = parseFloat(bar.getAttribute('data-width'));
                 bar.setAttribute('style', `width: ${barWidth}%;`);
 
-                if (parseFloat(barWidth) == 0) {
+                if (barWidth == 0) {
                     bar.setAttribute('style','display: none;');
                 }
             }
@@ -194,10 +190,11 @@ lolprofiler.init();
 
 window.addEventListener('load', () => setTimeout(() => {
     let placeholder = lolprofiler.constants.inputNamePlaceholder;
+    let typingSpeed = 50;
     
     for (let i = 0; i < placeholder.length; i++) {
         let char = placeholder[i];
-        let timeout = 50 * (char != " " ? i : (i - 1));
+        let timeout = typingSpeed * (char != " " ? i : (i - 1));
         setTimeout(() => {
             lolprofiler.controls.nameInput.placeholder += char;
         }, timeout);
@@ -220,7 +217,6 @@ function addLoadMoreBtn() {
 
         let matches = loadedMatches.concat(await getMatches(summoner, loadedMatches.length));
         handleV5Matches(matches, summoner);
-        lolprofiler.currentSummoner.loadedMatches = matches;
     });
     lolprofiler.controls.matchesWrapper.appendChild(loadMoreBtn);
 }
@@ -419,6 +415,8 @@ function handleV5Matches(matches, summoner) {
     addLoadMoreBtn();
 
     handleSummary(summary);
+
+    lolprofiler.currentSummoner.loadedMatches = matches;
 }
 
 function getGameInfo(game, summoner) {
@@ -521,7 +519,6 @@ async function fetchProfile(summonerName) {
 
     let matches = await getMatches(summoner)
     handleV5Matches(matches, summoner);
-    lolprofiler.currentSummoner.loadedMatches = matches;
 
     lolprofiler.updateUIState(lolprofiler.uiStates.loaded);
 }
