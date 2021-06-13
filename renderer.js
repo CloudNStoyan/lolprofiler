@@ -489,8 +489,18 @@ async function handleMatcheResponses(matchResponses) {
             let json = await matchResponse.json;
             matches.push(json)   
         } else {
-            let matchId = matchResponse.urlSegments[matchResponse.urlSegments - 1].split('?')[0];
+            let matchId = matchResponse.urlSegments[matchResponse.urlSegments.length - 1].split('?')[0];
             APIErrorsHandler.Match(matchResponse.status, matchId);
+
+            //let start = matchResponses.length;
+
+            //if (lolprofiler.currentSummoner.loadedMatches) {
+            //    start += lolprofiler.currentSummoner.loadedMatches.length;
+            //}
+
+            //let match = await getMatches(lolprofiler.currentSummoner.summonerObject, start, 1)[0];
+            //console.log(match)
+            //matches.push(match)
         }
     }
     return matches;
@@ -544,7 +554,7 @@ let APIErrorsHandler = {
     },
     Match(status, matchId) {
         if (status == 404) {
-            console.error(`Couldn't find a match with ${matchId} so its skipped!`)
+            console.error(`Couldn't find a match with id '${matchId}' so its skipped!`)
         }
     }
 }

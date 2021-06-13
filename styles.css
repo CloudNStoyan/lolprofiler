@@ -421,13 +421,18 @@ html, body {
     overflow: hidden;
     white-space: nowrap;
     width: 100%;
+    display: block;
 }
 
 .summoner-champ-icon {
     float: left;
     margin-right: 2px;
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
+}
+
+.team .summoner:not(:first-child) {
+    margin-top: 2px;
 }
 
 .settings-form:not(.show) {
