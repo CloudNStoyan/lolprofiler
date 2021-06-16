@@ -742,3 +742,15 @@ select {
 a.btn[disabled] {
     opacity: 0.7;
 }
+
+img:not(.img-loaded) {
+    opacity: 0;
+}
+
+img.img-loaded {
+    opacity: 1;
+}
+
+img {
+    transition: opacity 1s fade-in;
+}
