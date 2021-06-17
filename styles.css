@@ -752,5 +752,5 @@ img.img-loaded {
 }
 
 img {
-    transition: opacity 1s fade-in;
+    transition: opacity 0.25s linear;
 }

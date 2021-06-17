@@ -243,7 +243,7 @@ function createMasteryElement(mastery, champions) {
     `
     <div class="tooltip-container mastery-image-wrapper">
         <span class="champion-level">${points}</span>
-        <img class="tooltip" src="${championSquareImage}" loaded="isLoaded(this)"/>
+        <img class="tooltip" src="${championSquareImage}" onload="isLoaded(this)"/>
         <div class="tooltip-content">
             <span>${champ.name}</span>
             <span class="line"></span>
@@ -258,7 +258,7 @@ function createItemsElement(items) {
     let html = '';
     items.forEach((item) => {
         if (item != 0) {
-            html += `<div class="tooltip-container"><img class="tooltip" src="${lolprofiler.DDragon.Image.Item(item)}"  loaded="isLoaded(this)"/><span class="tooltip-content">${lol.ddragon.item.data[item].name}</span></div>`;
+            html += `<div class="tooltip-container"><img class="tooltip" src="${lolprofiler.DDragon.Image.Item(item)}"  onload="isLoaded(this)"/><span class="tooltip-content">${lol.ddragon.item.data[item].name}</span></div>`;
         } else {
             html += '<div><img class="no-image" /></div>'
         }
@@ -292,23 +292,23 @@ function createSetupElement(champion, stats) {
     return `
     <div class="additional-info">
         <div class="champion-image">
-            <img src="${lolprofiler.DDragon.Image.ChampionSquare(champion.image.full)}" loaded="isLoaded(this)"/>
+            <img src="${lolprofiler.DDragon.Image.ChampionSquare(champion.image.full)}" onload="isLoaded(this)"/>
         </div>
         <div class="masteries">
             <div class="summoner-spells">
-                <img src="${lolprofiler.DDragon.Image.SummonerSpell(stats.summonerSpell1.image.full)}" loaded="isLoaded(this)"/>
-                <img src="${lolprofiler.DDragon.Image.SummonerSpell(stats.summonerSpell2.image.full)}" loaded="isLoaded(this)"/>
+                <img src="${lolprofiler.DDragon.Image.SummonerSpell(stats.summonerSpell1.image.full)}" onload="isLoaded(this)"/>
+                <img src="${lolprofiler.DDragon.Image.SummonerSpell(stats.summonerSpell2.image.full)}" onload="isLoaded(this)"/>
             </div>
             <div class="runes">
                 <div class="tooltip-container">
                     <div class="tooltip">
-                        <img src="${lolprofiler.DDragon.Image.Rune(stats.keystone.icon)}" loaded="isLoaded(this)"/>
+                        <img src="${lolprofiler.DDragon.Image.Rune(stats.keystone.icon)}" onload="isLoaded(this)"/>
                     </div>
                     <span class="tooltip-content">${stats.keystone.name}</span>
                 </div>
                 <div class="tooltip-container">
                     <div class="tooltip">
-                        <img src="${lolprofiler.DDragon.Image.Rune(stats.secondaryKeystone.icon)}" loaded="isLoaded(this)"/>
+                        <img src="${lolprofiler.DDragon.Image.Rune(stats.secondaryKeystone.icon)}" onload="isLoaded(this)"/>
                     </div>
                     <span class="tooltip-content">${stats.secondaryKeystone.name}</span>
                 </div>
@@ -355,14 +355,14 @@ function createTeamsElement(teams) {
             if (p.puuid != "BOT") { // is player
                 team += `
                     <a href="#" class="summoner" onclick="putNameAnimation('${p.summonerName}')">
-                        <img class="summoner-champ-icon" src="${lolprofiler.DDragon.Image.ChampionSquare(champ.image.full)}" loaded="isLoaded(this)"/>
+                        <img class="summoner-champ-icon" src="${lolprofiler.DDragon.Image.ChampionSquare(champ.image.full)}" onload="isLoaded(this)"/>
                         <div class="summoner-name">${p.summonerName}</div>
                     </a>
                     `
             } else {
                 team += `
                     <a href="#" class="summoner">
-                        <img class="summoner-champ-icon" src="${lolprofiler.DDragon.Image.ChampionSquare(champ.image.full)}" loaded="isLoaded(this)"/>
+                        <img class="summoner-champ-icon" src="${lolprofiler.DDragon.Image.ChampionSquare(champ.image.full)}" onload="isLoaded(this)"/>
                         <div class="summoner-name">${p.summonerName} <span class="bot-label">Bot</span></div>
                     </a>
                     `
@@ -398,7 +398,7 @@ function handleQueues(queues) {
         rankedInfo.innerHTML = 
         `
         <div class="rank-queue">${lol.constants.ranked[queue.queueType]}</div>
-        <img width="100" height="100" src="${lolprofiler.DDragon.Image.RankedEmblem(queue.tier[0] + queue.tier.substring(1).toLowerCase())}" loaded="isLoaded(this)"/>
+        <img width="100" height="100" src="${lolprofiler.DDragon.Image.RankedEmblem(queue.tier[0] + queue.tier.substring(1).toLowerCase())}" onload="isLoaded(this)"/>
         <div class="rank-text">${queue.tier} ${queue.rank}</div>
         `;
         lolprofiler.controls.rankWrapper.appendChild(rankedInfo);
