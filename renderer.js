@@ -248,6 +248,9 @@ function createMasteryElement(mastery, champions) {
             <span>${champ.name}</span>
             <span class="line"></span>
             <span>Level ${mastery.championLevel}</span>
+            <div class="champ-description">
+            ${champ.blurb}
+            </div>
         </div>
     </div>
     `;
@@ -258,7 +261,18 @@ function createItemsElement(items) {
     let html = '';
     items.forEach((item) => {
         if (item != 0) {
-            html += `<div class="tooltip-container"><img class="tooltip" src="${lolprofiler.DDragon.Image.Item(item)}"  onload="isLoaded(this)"/><span class="tooltip-content">${lol.ddragon.item.data[item].name}</span></div>`;
+            let itemData = lol.ddragon.item.data[item];
+            html += `
+            <div class="tooltip-container">
+                <img class="tooltip" src="${lolprofiler.DDragon.Image.Item(item)}" onload="isLoaded(this)"/>
+                <div class="tooltip-content">
+                    <span>${itemData.name}</span>
+                    <span class="line"></span>
+                    <div class="item-description">
+                    ${itemData.description}
+                    </div>
+                </div>
+            </div>`;
         } else {
             html += '<div><img class="no-image" /></div>'
         }
@@ -304,7 +318,13 @@ function createSetupElement(champion, stats) {
                     <div class="tooltip">
                         <img src="${lolprofiler.DDragon.Image.Rune(stats.keystone.icon)}" onload="isLoaded(this)"/>
                     </div>
-                    <span class="tooltip-content">${stats.keystone.name}</span>
+                    <div class="tooltip-content">
+                        <span>${stats.keystone.name}</span>
+                        <span class="line"></span>
+                        <div class="keystone-description">
+                        ${stats.keystone.shortDesc}
+                        </div>
+                    </div>
                 </div>
                 <div class="tooltip-container">
                     <div class="tooltip">

@@ -320,6 +320,10 @@ html, body {
     display: inline-block;
 }
 
+.keystone-description {
+    max-width: 300px;
+}
+
 .items {
     display: flex;
     flex-flow: row wrap;
@@ -334,6 +338,10 @@ html, body {
     margin: 1px;
     border: 0;
     border-radius: 3px;
+}
+
+.item-description {
+    max-width: 300px;
 }
 
 
@@ -374,6 +382,7 @@ html, body {
 
 .items img.no-image {
     border: 1px solid lightgray;
+    opacity: 1;
 }
 
 .score, .stats {
@@ -698,6 +707,10 @@ select {
     color: #333;
     font-weight: bolder;
     font-size: 14px;
+}
+
+.champ-description {
+    max-width: 300px;
 }
 
 .damage-meter {
