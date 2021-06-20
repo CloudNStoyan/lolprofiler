@@ -5,23 +5,23 @@ let riotapi = {
         baseUrl: 'https://eun1.api.riotgames.com/lol',
     },
     async SummonerByName(summonerName) {
-        let endpoint = `/summoner/v4/summoners/by-name/${summonerName}?api_key=${this.config.devKey}`;
+        let endpoint = `/summoner/v4/summoners/by-name/${summonerName}`;
         return await this.cachedFetch(endpoint, true, false);
     },
     async LeagueBySummonerId(summonerId) {
-        let endpoint = `/league/v4/entries/by-summoner/${summonerId}?api_key=${this.config.devKey}`;
+        let endpoint = `/league/v4/entries/by-summoner/${summonerId}`;
         return await this.cachedFetch(endpoint);
     },
     async MatchlistByAccountId(accountId, beginIndex = 0, endIndex = 10) {
-        let endpoint = `/match/v4/matchlists/by-account/${accountId}?beginIndex=${beginIndex}&endIndex=${endIndex}&api_key=${this.config.devKey}`;
+        let endpoint = `/match/v4/matchlists/by-account/${accountId}?beginIndex=${beginIndex}&endIndex=${endIndex}`;
         return await this.cachedFetch(endpoint);
     },
     async MatchById(gameId) {
-        let endpoint = `/match/v4/matches/${gameId}?api_key=${this.config.devKey}`;
+        let endpoint = `/match/v4/matches/${gameId}`;
         return await this.cachedFetch(endpoint);
     },
     async V5MatchlistByPUUID(puuid, start = 0, count = 10, queue = null) {
-        let endpoint = `https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${start}&count=${count}&api_key=${this.config.devKey}`;
+        let endpoint = `https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${start}&count=${count}`;
 
         if (queue) {
             endpoint += `&queue=${queue}`
@@ -30,11 +30,11 @@ let riotapi = {
         return await this.cachedFetch(endpoint, false);
     },
     async V5MatchById(gameId) {
-        let endpoint = `https://europe.api.riotgames.com/lol/match/v5/matches/${gameId}?api_key=${this.config.devKey}`;
+        let endpoint = `https://europe.api.riotgames.com/lol/match/v5/matches/${gameId}`;
         return await this.cachedFetch(endpoint, false, false);
     },
     async MasteryBySummonerId(summonerId) {
-        let endpoint = `/champion-mastery/v4/champion-masteries/by-summoner/${summonerId}?api_key=${this.config.devKey}`
+        let endpoint = `/champion-mastery/v4/champion-masteries/by-summoner/${summonerId}`
         return await this.cachedFetch(endpoint);
     },
     async cachedFetch(url, useBaseUrl = true, parseResponseAsJson = true) {
@@ -47,8 +47,15 @@ let riotapi = {
         if (cachedResponse) {
             return cachedResponse;
         }
+
+        let config = {
+            method: 'GET',
+            headers: {
+                'X-Riot-Token': this.config.devKey
+            }
+        }
     
-        let response = await fetch(url).then(response => parseResponseAsJson ? response.json() : {status: response.status, json: response.json(), url: url, urlSegments: url.split('/')});
+        let response = await fetch(url, config).then(response => parseResponseAsJson ? response.json() : {status: response.status, json: response.json(), url: url, urlSegments: url.split('/')});
 
         if (response.status > 400) {
             return response;
