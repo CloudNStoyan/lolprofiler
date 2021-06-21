@@ -383,7 +383,7 @@ function createTeamsElement(teams) {
                 team += `
                     <a href="#" class="summoner">
                         <img class="summoner-champ-icon" src="${lolprofiler.DDragon.Image.ChampionSquare(champ.image.full)}" onload="isLoaded(this)"/>
-                        <div class="summoner-name">${p.summonerName} <span class="bot-label">Bot</span></div>
+                        <div class="summoner-name tooltip-container">${p.summonerName} <span class="bot-label tooltip">Bot</span><span class="tooltip-content">This is not a real player.</span></div>
                     </a>
                     `
             }
