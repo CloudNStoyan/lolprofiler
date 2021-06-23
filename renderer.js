@@ -310,8 +310,14 @@ function createSetupElement(champion, stats) {
         </div>
         <div class="masteries">
             <div class="summoner-spells">
-                <img src="${lolprofiler.DDragon.Image.SummonerSpell(stats.summonerSpell1.image.full)}" onload="isLoaded(this)"/>
-                <img src="${lolprofiler.DDragon.Image.SummonerSpell(stats.summonerSpell2.image.full)}" onload="isLoaded(this)"/>
+                <div class="tooltip-container">
+                    <img class="tooltip" src="${lolprofiler.DDragon.Image.SummonerSpell(stats.summonerSpell1.image.full)}" onload="isLoaded(this)"/>
+                    <span class="tooltip-content">${stats.summonerSpell1.description}</span>
+                </div>
+                <div class="tooltip-container">
+                    <img class="tooltip" src="${lolprofiler.DDragon.Image.SummonerSpell(stats.summonerSpell2.image.full)}" onload="isLoaded(this)"/>
+                    <span class="tooltip-content">${stats.summonerSpell2.description}</span>
+                </div>
             </div>
             <div class="runes">
                 <div class="tooltip-container">
