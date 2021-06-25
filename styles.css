@@ -768,3 +768,28 @@ img.img-loaded {
 img {
     transition: opacity 0.25s linear;
 }
+
+.details-btn {
+    font-size: 30px;
+    color: #00C9FF;
+    margin: auto;
+}
+
+.match-details-container:not(.open) {
+    display: none;
+}
+
+.match-details-container {
+    position: fixed;
+    top: calc(50% - 120px);
+    left: calc(50% - 220px);
+    z-index: 100;
+    width: 400px;
+    height: 200px;
+    padding: 20px;
+    background-color: white;
+    outline: 5px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+    display: flex;
+    flex-flow: column nowrap;
+}

@@ -23,7 +23,8 @@ let lolprofiler = {
         masteryWrapper: document.querySelector('.mastery'),
         recentlyWrapper: document.querySelector('.recently-wrapper'),
         selectGameType: document.querySelector('.game-type'),
-        filterBtn: document.querySelector('.filter-btn')
+        filterBtn: document.querySelector('.filter-btn'),
+        matchDetailsContainer: document.querySelector('.match-details-container')
     },
     localStorageKeys: {
         summonerName: "summonerName",
@@ -401,6 +402,15 @@ function createTeamsElement(teams) {
     return html;
 }
 
+function openMatchDetails(teams) {
+    let container = lolprofiler.controls.matchDetailsContainer;
+    container.innerHTML = '';
+    container.classList.add('open');
+    lolprofiler.controls.main.classList.add("hide-entirely");
+
+    console.log(teams);
+}
+
 function handleSummoner(summoner) {
     lolprofiler.controls.profileName.innerText = summoner.name;
     lolprofiler.controls.profileLevel.innerText = summoner.summonerLevel;
@@ -636,8 +646,6 @@ async function fetchProfile(summonerName) {
     lolprofiler.updateUIState(lolprofiler.uiStates.loaded);
 }
 
-
-
 let APIErrorsHandler = {
     Summoner(status) {
         switch (status) {
@@ -687,6 +695,18 @@ function createGame(game) {
             ${createTeamsElement(game.teamsObj)}
         </div>
         `;
+    
+    let detailsBtn = document.createElement('a');
+    detailsBtn.className = 'details-btn';
+    detailsBtn.innerHTML = '<i class="fas fa-ellipsis-h"></i>';
+    detailsBtn.href = '#';
+    detailsBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        openMatchDetails(game.teamsObj);
+    })
+
+    match.appendChild(detailsBtn);
 
     return match;
 }
