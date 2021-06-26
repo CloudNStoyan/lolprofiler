@@ -24,7 +24,9 @@ let lolprofiler = {
         recentlyWrapper: document.querySelector('.recently-wrapper'),
         selectGameType: document.querySelector('.game-type'),
         filterBtn: document.querySelector('.filter-btn'),
-        matchDetailsContainer: document.querySelector('.match-details-container')
+        matchDetailsContainer: document.querySelector('.match-details-container'),
+        matchDetailsContent: document.querySelector('.match-details-content'),
+        closeMatchDetailsContainerBtn: document.querySelector('.match-details-container .close-btn')
     },
     localStorageKeys: {
         summonerName: "summonerName",
@@ -117,6 +119,13 @@ let lolprofiler = {
             this.controls.profileForm.classList.remove('show');
             this.controls.main.classList.remove("hide-entirely");
         });
+
+        this.controls.closeMatchDetailsContainerBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            this.controls.matchDetailsContainer.classList.remove('open');
+            this.controls.main.classList.remove('hide-entirely');
+        })
 
         this.controls.profileBtn.addEventListener("click", (e) => {
             e.preventDefault();
@@ -402,12 +411,79 @@ function createTeamsElement(teams) {
     return html;
 }
 
+function createExtendedMatchInfo(player) {
+    let summonerSpells = Object.values(lol.ddragon.summoner.data);
+
+    let firstSummonerSpell = summonerSpells.find(spell => spell.key == player.summoner1Id);
+    let secondSummonerSpell = summonerSpells.find(spell => spell.key == player.summoner2Id);
+    let champion = Object.values(lol.ddragon.champion.data).find(champ => champ.key == player.championId);
+
+    return `
+    <div class="player-info">
+        <div class="summoner-info">
+            <div class="champion-image">
+                <img src="${lolprofiler.DDragon.Image.ChampionSquare(champion.image.full)}" onload="isLoaded(this)"/>
+            </div>
+            <div class="summoner-spells">
+                <div class="tooltip-container">
+                    <img class="tooltip" src="${lolprofiler.DDragon.Image.SummonerSpell(firstSummonerSpell.image.full)}" onload="isLoaded(this)"/>
+                    <span class="tooltip-content">${firstSummonerSpell.description}</span>
+                </div>
+                <div class="tooltip-container">
+                    <img class="tooltip" src="${lolprofiler.DDragon.Image.SummonerSpell(secondSummonerSpell.image.full)}" onload="isLoaded(this)"/>
+                    <span class="tooltip-content">${secondSummonerSpell.description}</span>
+                </div>
+            </div>
+            <div class="runes">
+                <div class="tooltip-container">
+                    <div class="tooltip">
+                        <img src="${lolprofiler.DDragon.Image.Rune(stats.keystone.icon)}" onload="isLoaded(this)"/>
+                    </div>
+                    <div class="tooltip-content">
+                        <span>${stats.keystone.name}</span>
+                        <span class="line"></span>
+                        <div class="keystone-description">
+                        ${stats.keystone.shortDesc}
+                        </div>
+                    </div>
+                </div>
+                <div class="tooltip-container">
+                    <div class="tooltip">
+                        <img src="${lolprofiler.DDragon.Image.Rune(stats.secondaryKeystone.icon)}" onload="isLoaded(this)"/>
+                    </div>
+                    <span class="tooltip-content">${stats.secondaryKeystone.name}</span>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="rank">
+                <span class="player-tier"></span>
+                <span class="player-lvl"></span>
+            </div>
+            <div class="player-score">
+                <span class="score"></span>
+                <span class="kda"></span>
+            </div>
+            <div class="damage-container"></div>
+        </div>
+        <div>
+            <span class="level"></span>
+            <span class="creep-score"></span>
+            <span class="percentage-kill"></span>
+        </div>
+        <div class="items">
+
+        </div>
+    </div>
+    `
+}
+
 function openMatchDetails(teams) {
-    let container = lolprofiler.controls.matchDetailsContainer;
-    container.innerHTML = '';
-    container.classList.add('open');
+    lolprofiler.controls.matchDetailsContainer.classList.add('open');
     lolprofiler.controls.main.classList.add("hide-entirely");
 
+    let content = lolprofiler.controls.matchDetailsContent;
+    content.innerHTML = '';
     console.log(teams);
 }
 

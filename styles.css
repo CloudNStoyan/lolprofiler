@@ -781,15 +781,23 @@ img {
 
 .match-details-container {
     position: fixed;
-    top: calc(50% - 120px);
-    left: calc(50% - 220px);
+    top: calc(50% - 270px);
+    left: calc(50% - 520px);
     z-index: 100;
-    width: 400px;
-    height: 200px;
+    width: 1000px;
+    height: 500px;
     padding: 20px;
     background-color: white;
     outline: 5px solid rgba(255, 255, 255, 0.2);
     text-align: center;
     display: flex;
     flex-flow: column nowrap;
+}
+
+.match-details-container .close-btn {
+    color: var(--alert-color);
+    font-size: 24px;
+    position: absolute;
+    top: 5px;
+    right: 20px;
 }
