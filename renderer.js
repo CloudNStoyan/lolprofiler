@@ -420,11 +420,21 @@ function createTeamsElement(teams) {
 function createExtendedMatchInfo(player, team) {
     let summonerSpells = Object.values(lol.ddragon.summoner.data);
 
+    let keystone = lol.ddragon.runesReforged.find(x => x.id == player.perks.styles[0].style).slots[0].runes.find(x => x.id == player.perks.styles[0].selections[0].perk);
+    let secondaryRunePath = lol.ddragon.runesReforged.find(x => x.id == player.perks.styles[1].style);
+
     let firstSummonerSpell = summonerSpells.find(spell => spell.key == player.summoner1Id);
     let secondSummonerSpell = summonerSpells.find(spell => spell.key == player.summoner2Id);
     let champion = Object.values(lol.ddragon.champion.data).find(champ => champ.key == player.championId);
     let teamKills = team.map(x => x.kills).reduce((a, b) => a + b, 0);
-    let items = [player.item0, player.item1, player.item2, player.item6, player.item3, player.item4, player.item5]
+    let items = [player.item0, player.item1, player.item2, player.item6, player.item3, player.item4, player.item5];
+    let maxDamage = 0;
+
+    team.map(p => p.totalDamageDealtToChampions).forEach(damage => {
+        if (damage > maxDamage) {
+            maxDamage = damage
+        }
+    });
 
     return `
     <div class="player-info">
@@ -445,40 +455,47 @@ function createExtendedMatchInfo(player, team) {
             <div class="runes">
                 <div class="tooltip-container">
                     <div class="tooltip">
-                        
+                        <img src="${lolprofiler.DDragon.Image.Rune(keystone.icon)}" onload="isLoaded(this)"/>
                     </div>
                     <div class="tooltip-content">
-                        <span></span>
+                        <span>${keystone.name}</span>
                         <span class="line"></span>
-                        <div class="keystone-description">
-                        
-                        </div>
+                        <div class="keystone-description">${keystone.shortDesc}</div>
                     </div>
                 </div>
                 <div class="tooltip-container">
                     <div class="tooltip">
-                        
+                        <img src="${lolprofiler.DDragon.Image.Rune(secondaryRunePath.icon)}" onload="isLoaded(this)"/>
                     </div>
-                    <span class="tooltip-content"></span>
+                    <span class="tooltip-content">${secondaryRunePath.name}</span>
                 </div>
             </div>
         </div>
         <div class="player-name">${player.summonerName}</div>
-        <div>
+        <div class="stats">
             <div class="rank">
                 <span class="player-tier"></span>
                 <span class="player-lvl">${player.summonerLevel} lvl</span>
             </div>
-            <div class="player-score">
+            <div class="score">
                 <div>${player.kills} / <span class="deaths">${player.deaths}</span> / ${player.assists}</div>
                 <div>${player.deaths == 0 ? 'Perfect KDA' : `${((player.kills + player.assists) / player.deaths).toFixed(2)}:1 KDA`}</div>
             </div>
-            <div class="damage-container"></div>
+            <div class="damage-container tooltip-container">
+                <div class="damage-meter tooltip">
+                    <div class="damage" style="width: ${Math.round((player.totalDamageDealtToChampions / maxDamage) * 100)}%">${Math.round(player.totalDamageDealtToChampions / 1000)}K</div>
+                </div>
+                <div class="tooltip-content">
+                    <span>Total Damage Done</span>
+                    <span class="line"></span>
+                    <span class="small">* to champions</span>
+                </div>
+            </div>
         </div>
         <div class="player-score">
-            <span class="level">${player.champLevel}</span>
-            <span class="creep-score">${player.totalMinionsKilled}</span>
-            <span class="percentage-kill">${Math.round(((player.kills + player.assists) / teamKills) * 100)}</span>
+            <span class="level">LVL ${player.champLevel}</span>
+            <span class="creep-score">${player.totalMinionsKilled} CS</span>
+            <span class="percentage-kill">P/Kill ${Math.round(((player.kills + player.assists) / teamKills) * 100)}%</span>
         </div>
         <div class="items">
             ${createItemsElement(items)}
@@ -503,6 +520,11 @@ function openMatchDetails(teams) {
         });
         content.appendChild(teamWrapper);
     });
+
+    let teamSeparator = document.createElement('div');
+    teamSeparator.className = 'team-separator';
+    
+    content.insertBefore(teamSeparator, content.children[1]);
 }
 
 function handleSummoner(summoner) {
