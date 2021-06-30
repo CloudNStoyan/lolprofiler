@@ -1,5 +1,4 @@
 node_modules
 ddragon
-productionkey.txt
-devkey.txt
+config.json
 start.bat

@@ -163,13 +163,15 @@ function generatePathToDDragon(fileName) {
   return `ddragon/data/${ddragonCache.version}/${fileName}`
 }
 
+let config = readJson('config.json');
+
 function exposeLoL() {
   contextBridge.exposeInMainWorld(
     'lol',
     {
       api: {
-        devKey: readText('devkey.txt'),
-        productionKey: readText('productionkey.txt')
+        devKey: config.development,
+        productionKey: config.production
       },
       ddragon: {
         version: ddragonCache.version,
