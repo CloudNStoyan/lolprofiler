@@ -170,8 +170,8 @@ function exposeLoL() {
     'lol',
     {
       api: {
-        devKey: config.development,
-        productionKey: config.production
+        devKey: config.keys.development,
+        productionKey: config.keys.production
       },
       ddragon: {
         version: ddragonCache.version,
