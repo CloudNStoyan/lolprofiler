@@ -504,19 +504,46 @@ function createExtendedMatchInfo(player, team) {
     `
 }
 
-function openMatchDetails(teams) {
-    console.log(teams)
+function openMatchDetails(gameDetails) {
     lolprofiler.controls.matchDetailsContainer.classList.add('open');
     lolprofiler.controls.main.classList.add("hide-entirely");
 
     let content = lolprofiler.controls.matchDetailsContent;
     content.innerHTML = '';
+
+    let game = gameDetails.rawGameResponse;
+
+    console.log(game)
+
+    let teamIds = {
+        blue: 100,
+        red: 200
+    }
+
+    let teams = [
+        {
+            info: game.info.teams.find(t => t.teamId == teamIds.blue),
+            players: game.info.participants.filter((p) => p.teamId == teamIds.blue)    
+        },
+        {
+            info: game.info.teams.find(t => t.teamId == teamIds.red),
+            players: game.info.participants.filter((p) => p.teamId == teamIds.red)
+        },
+    ]
+
+    console.log(teams)
     
     teams.forEach(team => {
         let teamWrapper = document.createElement('div');
-        teamWrapper.className = 'team';
-        team.forEach(player => {
-            teamWrapper.innerHTML += createExtendedMatchInfo(player, team);
+        teamWrapper.className = `team ${(team.info.teamId == teamIds.blue) ? 'blue' : 'red'} ${team.info.win ? 'win' : 'lose'}`;
+
+        let teamHeader = document.createElement('div');
+        teamHeader.className = 'team-header';
+        teamHeader.innerHTML = `${team.info.win ? 'VICTORY' : 'DEFEAT'}`;
+        teamWrapper.appendChild(teamHeader);
+
+        team.players.forEach(player => {
+            teamWrapper.innerHTML += createExtendedMatchInfo(player, team.players);
         });
         content.appendChild(teamWrapper);
     });
@@ -705,6 +732,7 @@ function getGameInfo(game, summoner) {
         teamsObj: teams,
         gameCreation: game.info.gameCreation,
         gameDuration: game.info.gameDuration,
+        rawGameResponse: game
     }
 
     return gameObj;
@@ -819,7 +847,7 @@ function createGame(game) {
     detailsBtn.addEventListener('click', (e) => {
         e.preventDefault();
 
-        openMatchDetails(game.teamsObj);
+        openMatchDetails(game);
     })
 
     match.appendChild(detailsBtn);

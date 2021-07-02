@@ -803,6 +803,7 @@ img {
 .player-info {
     display: flex;
     flex-flow: row wrap;
+    justify-content: center;
 }
 
 .player-score > span {
@@ -868,6 +869,7 @@ img {
 
 .match-details-content .team {
     flex: 0 0 48%;
+    background-color: #f7f7f7;
 }
 
 .match-details-content .team-separator {
@@ -878,4 +880,17 @@ img {
 
 .player-score {
     width: 80px;
+}
+
+.team.lose .team-header {
+    background-color: var(--color-red);
+}
+
+.team.win .team-header {
+    background-color: var(--color-blue);
+}
+
+.team-header {
+    color: white;
+    margin-bottom: 5px;
 }
