@@ -894,3 +894,26 @@ img {
     color: white;
     margin-bottom: 5px;
 }
+
+.team .team-footer {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+    margin-top: 5px;
+    font-weight: 600;
+}
+
+.team .team-footer .first {
+    position: relative;
+}
+
+.team .team-footer .first:after {
+    content: 'First';
+    font-size: 9px;
+    position: absolute;
+    width: 20px;
+    color: var(--color-red);
+    font-weight: 600;
+    top: -7px;
+    left: 0;
+}

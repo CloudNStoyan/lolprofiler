@@ -546,6 +546,19 @@ function openMatchDetails(gameDetails) {
             teamWrapper.innerHTML += createExtendedMatchInfo(player, team.players);
         });
         content.appendChild(teamWrapper);
+
+        let teamFooter = document.createElement('div');
+        teamFooter.className = 'team-footer';
+        teamFooter.innerHTML = 
+        `
+            <div${(team.info.objectives.baron.first ? ' class="first"' : '')}>Barons: <span>${team.info.objectives.baron.kills}</span></div>
+            <div${(team.info.objectives.champion.first ? ' class="first"' : '')}>Champion Kills: <span>${team.info.objectives.champion.kills}</span></div>
+            <div${(team.info.objectives.dragon.first ? ' class="first"' : '')}>Dragons: <span>${team.info.objectives.dragon.kills}</span></div>
+            <div${(team.info.objectives.inhibitor.first ? ' class="first"' : '')}>Inhibitors: <span>${team.info.objectives.inhibitor.kills}</span></div>
+            <div${(team.info.objectives.riftHerald.first ? ' class="first"' : '')}>Rift Heralds: <span>${team.info.objectives.riftHerald.kills}</span></div>
+            <div${(team.info.objectives.tower.first ? ' class="first"' : '')}>Towers: <span>${team.info.objectives.tower.kills}</span></div>
+        `;
+        teamWrapper.appendChild(teamFooter);
     });
 
     let teamSeparator = document.createElement('div');
