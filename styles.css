@@ -771,7 +771,7 @@ img {
 
 .details-btn {
     font-size: 30px;
-    color: #00C9FF;
+    color: gray;
     margin: auto;
 }
 
@@ -800,6 +800,17 @@ img {
     float: right;
 }
 
+.match-details-container .match-details-header-content {
+    float: left;
+}
+
+.match-details-header-content > span:not(:last-child)::after {
+    content: '•';
+    margin: 0 10px;
+    color: darkgray;
+    font-size: 15px;
+}
+
 .player-info {
     display: flex;
     flex-flow: row wrap;
@@ -821,7 +832,7 @@ img {
 .match-details-content {
     display: flex;
     flex-flow: row wrap;
-    margin-top: 50px;
+    margin-top: 20px;
     font-size: 14px;
     justify-content: space-between;
 }
@@ -868,7 +879,7 @@ img {
 }
 
 .match-details-content .team {
-    flex: 0 0 48%;
+    flex: 0 0 49%;
     background-color: #f7f7f7;
 }
 
@@ -899,8 +910,10 @@ img {
     display: flex;
     flex-flow: row wrap;
     justify-content: space-evenly;
-    margin-top: 5px;
+    padding-top: 15px;
     font-weight: 600;
+    border-top: 2px solid #e9e9e9;
+    margin: 5px;
 }
 
 .team .team-footer .first {

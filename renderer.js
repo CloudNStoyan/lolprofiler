@@ -26,7 +26,8 @@ let lolprofiler = {
         filterBtn: document.querySelector('.filter-btn'),
         matchDetailsContainer: document.querySelector('.match-details-container'),
         matchDetailsContent: document.querySelector('.match-details-content'),
-        closeMatchDetailsContainerBtn: document.querySelector('.match-details-container .close-btn')
+        closeMatchDetailsContainerBtn: document.querySelector('.match-details-container .close-btn'),
+        matchDetailsHeaderContent: document.querySelector('.match-details-header-content')
     },
     localStorageKeys: {
         summonerName: "summonerName",
@@ -511,7 +512,18 @@ function openMatchDetails(gameDetails) {
     let content = lolprofiler.controls.matchDetailsContent;
     content.innerHTML = '';
 
+    let headerContent = lolprofiler.controls.matchDetailsHeaderContent;
+    
     let game = gameDetails.rawGameResponse;
+
+    let queue = lol.constants.queues.find(q => q.id == game.info.queueId);
+    
+    headerContent.innerHTML = 
+    `
+        <span>${queue.tooltip}</span>
+        <span>${Math.floor(((game.info.gameDuration / 1000) / 60))}m ${(Math.floor((game.info.gameDuration / 1000) % 60))}s</span>
+        <span>${dateToCustomString(new Date(game.info.gameCreation), ' ')}</span>
+    `
 
     console.log(game)
 
@@ -902,7 +914,7 @@ function longAgo(difference) {
     return Math.round(seconds) + ' seconds ago'
 }
 
-function dateToCustomString(date) {
+function dateToCustomString(date, separator = '<br>') {
     let time = {
         hours: zeroPadStart(date.getHours()),
         minutes: zeroPadStart(date.getMinutes()),
@@ -912,7 +924,7 @@ function dateToCustomString(date) {
         year: zeroPadStart(date.getFullYear()),
     };
     
-    return `${time.hours}:${time.minutes}:${time.seconds}<br>${time.date}/${time.month}/${time.year}`;
+    return `${time.hours}:${time.minutes}:${time.seconds}${separator}${time.date}/${time.month}/${time.year}`;
 }
 
 function zeroPadStart(number) {
