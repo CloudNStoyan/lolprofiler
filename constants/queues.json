@@ -9,5 +9,6 @@
     {"id": 700, "name": "Clash", "tooltip":"Clash 5v5", "showInSelect": true},
     {"id": 1020, "name": "One for All", "tooltip":"One for All", "showInSelect": false},
     {"id": 430, "name": "Blind", "tooltip":"Normal Blind", "showInSelect": true},
-    {"id": 1300, "name": "Nexus Blitz", "tooltip": "Nexus Blitz", "showInSelect": true}
+    {"id": 1300, "name": "Nexus Blitz", "tooltip": "Nexus Blitz", "showInSelect": true},
+    {"id": 1400, "name": "Ultimates", "tooltip": "Ultimates", "showInSelect": true}
 ]
