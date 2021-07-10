@@ -685,7 +685,13 @@ function handleV5Matches(matches, summoner) {
 
     let games = matches.map(game => getGameInfo(game, summoner));
 
-    games.forEach(game => lolprofiler.controls.matchesWrapper.appendChild(createGame(game)));
+    games.forEach(game => {
+        try {
+            lolprofiler.controls.matchesWrapper.appendChild(createGame(game))
+        } catch (error) {
+            console.error(error)
+        }
+    });
 
     let summary = {
         wins: games.filter(x => x.isWin).length,
