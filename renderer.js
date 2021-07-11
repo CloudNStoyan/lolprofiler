@@ -170,13 +170,15 @@ let lolprofiler = {
         this.controls.filterBtn.addEventListener('click', async (e) => {
             e.preventDefault();
 
+            let summoner = lolprofiler.currentSummoner.summonerObject
+
             let queueId = parseInt(this.controls.selectGameType.value);
 
             if (queueId == -1) {
                 return;
             }
 
-            let matches = await getMatches(lolprofiler.currentSummoner.summonerObject, 0, 10, queueId);
+            let matches = await getMatches(summoner, 0, 10, queueId);
 
             handleV5Matches(matches, summoner);
         })
@@ -228,7 +230,9 @@ function addLoadMoreBtn() {
         let loadedMatches = lolprofiler.currentSummoner.loadedMatches;
         let summoner = lolprofiler.currentSummoner.summonerObject;
 
-        let matches = loadedMatches.concat(await getMatches(summoner, loadedMatches.length));
+        let queueId = parseInt(lolprofiler.controls.selectGameType.value)
+
+        let matches = loadedMatches.concat(await getMatches(summoner, loadedMatches.length, 10, queueId != -1 ? queueId : null));
         handleV5Matches(matches, summoner);
     });
     lolprofiler.controls.matchesWrapper.appendChild(loadMoreBtn);
