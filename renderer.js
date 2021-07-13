@@ -510,6 +510,7 @@ function createExtendedMatchInfo(player, team) {
 }
 
 function openMatchDetails(gameDetails) {
+    
     lolprofiler.controls.matchDetailsContainer.classList.add('open');
     lolprofiler.controls.main.classList.add("hide-entirely");
 
@@ -528,8 +529,8 @@ function openMatchDetails(gameDetails) {
         <span>${Math.floor(((game.info.gameDuration / 1000) / 60))}m ${(Math.floor((game.info.gameDuration / 1000) % 60))}s</span>
         <span>${dateToCustomString(new Date(game.info.gameCreation), ' ')}</span>
     `
-
-    console.log(game)
+    const logChannel = 'matchDetails'
+    logger.log(game, logChannel)
 
     let teamIds = {
         blue: 100,
@@ -547,7 +548,7 @@ function openMatchDetails(gameDetails) {
         },
     ]
 
-    console.log(teams)
+    logger.log(teams, logChannel)
     
     teams.forEach(team => {
         let teamWrapper = document.createElement('div');

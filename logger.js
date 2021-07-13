@@ -1,13 +1,16 @@
 let logger = {
-    config: {
-        log: [logger.tags.match]
-    },
-    tags: {
-        match: 'match'
-    },
-    log(msg, tag) {
-        if (this.config.log.includes(tag)) {
-            console.log(msg)
+    channels: {},
+    log(msg, channel) {
+        if (!this.channels[channel]) {
+            this.channels[channel] = []
         }
+
+        this.channels[channel].push(msg)
+    },
+    show(...channels) {
+        channels.forEach(channel => {
+            let logs = this.channels[channel]
+            logs.forEach(log => console.log(log))
+        });
     }
 }
