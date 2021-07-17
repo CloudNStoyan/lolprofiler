@@ -1,4 +1,5 @@
 let logger = {
+    headerCss: 'color: purple; font-size: 20px',
     channels: {},
     log(msg, channel) {
         if (!this.channels[channel]) {
@@ -14,11 +15,21 @@ let logger = {
         });
     },
     showAll() {
-        let channels = Object.keys(this.channels).map(ch => channels[ch])
-        this.channels.forEach(channel => {
-            let logs = this.channels[channel]
-            console.log(`%c${channel}`, 'color: purple; font-size: 20px')
-            logs.forEach(log => console.log(log))
+        let channelKeys = Object.keys(this.channels)
+
+        if (channelKeys.length == 0) {
+            console.log('%cThere is not anything logged yet!', this.headerCss)
+            return
+        }
+
+        channelKeys.map(key => {
+            return {
+                logs: this.channels[key],
+                name: key
+            }
+        }).forEach(channel => {
+            console.log(`%c${channel.name}`, this.headerCss)
+            channel.logs.forEach(log => console.log(log))
         });
     }
 }
