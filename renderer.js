@@ -41,6 +41,7 @@ let lolprofiler = {
         error: "error"
     },
     currentSummoner: {
+        sortedQueueId: null,
         summonerObject: null,
         loadedMatches: null
     },
@@ -175,10 +176,26 @@ let lolprofiler = {
             let queueId = parseInt(this.controls.selectGameType.value);
 
             if (queueId == -1) {
+                lolprofiler.currentSummoner.loadedMatches = [];
+                lolprofiler.currentSummoner.sortedQueueId = null;
                 return;
             }
 
-            let matches = await getMatches(summoner, 0, 10, queueId);
+            if (lolprofiler.currentSummoner.sortedQueueId != queueId) {
+                lolprofiler.currentSummoner.loadedMatches = [];
+                lolprofiler.currentSummoner.sortedQueueId = queueId;
+            }
+
+            const count = 10;
+            const offset = lolprofiler.currentSummoner.loadedMatches.length + count;
+
+            const loggerChannel = 'filterButton'
+
+            logger.log({'offset': offset, 'count': count, 'queueId': queueId}, loggerChannel)
+
+            let matches = await getMatches(summoner, offset, count, queueId);
+
+            logger.log(matches, loggerChannel)
 
             handleV5Matches(matches, summoner);
         })
@@ -230,9 +247,9 @@ function addLoadMoreBtn() {
         let loadedMatches = lolprofiler.currentSummoner.loadedMatches;
         let summoner = lolprofiler.currentSummoner.summonerObject;
 
-        let queueId = parseInt(lolprofiler.controls.selectGameType.value)
+        let queueId = lolprofiler.currentSummoner.sortedQueueId
 
-        let matches = loadedMatches.concat(await getMatches(summoner, loadedMatches.length, 10, queueId != -1 ? queueId : null));
+        let matches = loadedMatches.concat(await getMatches(summoner, loadedMatches.length, 10, queueId));
         handleV5Matches(matches, summoner);
     });
     lolprofiler.controls.matchesWrapper.appendChild(loadMoreBtn);
