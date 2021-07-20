@@ -930,3 +930,18 @@ img {
     top: -7px;
     left: 0;
 }
+
+.spectate-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1;
+    background-color: red;
+    color: white;
+    padding: 5px;
+    font-size: 8px;
+}
+
+.spectate-badge.ingame {
+    background-color: green;
+}

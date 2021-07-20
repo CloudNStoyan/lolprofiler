@@ -27,7 +27,8 @@ let lolprofiler = {
         matchDetailsContainer: document.querySelector('.match-details-container'),
         matchDetailsContent: document.querySelector('.match-details-content'),
         closeMatchDetailsContainerBtn: document.querySelector('.match-details-container .close-btn'),
-        matchDetailsHeaderContent: document.querySelector('.match-details-header-content')
+        matchDetailsHeaderContent: document.querySelector('.match-details-header-content'),
+        spectateBadge: document.querySelector('.spectate-badge'),
     },
     localStorageKeys: {
         summonerName: "summonerName",
@@ -601,6 +602,18 @@ function openMatchDetails(gameDetails) {
     content.insertBefore(teamSeparator, content.children[1]);
 }
 
+function handleInGame(spectatorInfo) {
+    lolprofiler.controls.spectateBadge.classList.remove('ingame');
+
+    if (!spectatorInfo) {
+        lolprofiler.controls.spectateBadge.innerText = 'NOT INGAME';
+        return;
+    }
+
+    lolprofiler.controls.spectateBadge.innerText = 'INGAME';
+    lolprofiler.controls.spectateBadge.classList.add('ingame');
+}
+
 function handleSummoner(summoner) {
     lolprofiler.controls.profileName.innerText = summoner.name;
     lolprofiler.controls.profileLevel.innerText = summoner.summonerLevel;
@@ -839,6 +852,14 @@ async function fetchProfile(summonerName) {
 
     let matches = await getMatches(summoner)
     handleV5Matches(matches, summoner);
+
+    let spectator = await riotapi.SpectatorV4BySummonerId(summoner.id);
+    
+    if (!spectator.status) {
+        handleInGame(spectator);   
+    } else {
+        handleInGame(null)
+    }
 
     lolprofiler.updateUIState(lolprofiler.uiStates.loaded);
 }

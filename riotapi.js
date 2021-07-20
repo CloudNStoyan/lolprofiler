@@ -37,7 +37,11 @@ let riotapi = {
         let endpoint = `/champion-mastery/v4/champion-masteries/by-summoner/${summonerId}`
         return await this.cachedFetch(endpoint);
     },
-    async cachedFetch(url, useBaseUrl = true, parseResponseAsJson = true) {
+    async SpectatorV4BySummonerId(summonerId) {
+        let endpoint = `/spectator/v4/active-games/by-summoner/${summonerId}`
+        return await this.cachedFetch(endpoint, true, true, false);
+    },
+    async cachedFetch(url, useBaseUrl = true, parseResponseAsJson = true, useCache = true) {
         if (useBaseUrl) {
             url = this.config.baseUrl + url;
         }
