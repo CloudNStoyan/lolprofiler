@@ -38,10 +38,31 @@ let riotapi = {
         return await this.cachedFetch(endpoint);
     },
     async SpectatorV4BySummonerId(summonerId) {
-        let endpoint = `/spectator/v4/active-games/by-summoner/${summonerId}`
-        return await this.cachedFetch(endpoint, true, true, false);
+        let endpoint = `${this.config.baseUrl}/spectator/v4/active-games/by-summoner/${summonerId}`
+        return await this.makeRequest(endpoint, true);
     },
-    async cachedFetch(url, useBaseUrl = true, parseResponseAsJson = true, useCache = true) {
+    async makeRequest(url, parseResponseAsJson) {
+        let requestConfig = {
+            method: 'GET',
+            headers: {
+                'X-Riot-Token': this.config.devKey
+            }
+        }
+
+        let response = await fetch(url, requestConfig);
+
+        if (parseResponseAsJson) {
+            return response.json()
+        }
+
+        return {
+            status: response.status,
+            json: response.json(),
+            url: url,
+            urlSegments: url.split('/')
+        }
+    },
+    async cachedFetch(url, useBaseUrl = true, parseResponseAsJson = true) {
         if (useBaseUrl) {
             url = this.config.baseUrl + url;
         }
@@ -51,15 +72,8 @@ let riotapi = {
         if (cachedResponse) {
             return cachedResponse;
         }
-
-        let config = {
-            method: 'GET',
-            headers: {
-                'X-Riot-Token': this.config.devKey
-            }
-        }
     
-        let response = await fetch(url, config).then(response => parseResponseAsJson ? response.json() : {status: response.status, json: response.json(), url: url, urlSegments: url.split('/')});
+        let response = await this.makeRequest(url, parseResponseAsJson)
 
         if (response.status > 400) {
             return response;
