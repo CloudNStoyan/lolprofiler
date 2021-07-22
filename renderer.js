@@ -145,15 +145,25 @@ let lolprofiler = {
             }
         });
 
+        function searchSummoner() {
+            let name = lolprofiler.controls.nameInput.value;
+
+            if (!name || name.trim().length == 0) {
+                return;
+            }
+
+            fetchProfile(name);
+        }
+
         this.controls.nameInput.addEventListener("keyup", (e) => {
             if (e.keyCode === 13) {
               e.preventDefault();
               
-              fetchProfile(this.controls.nameInput.value);
+              searchSummoner()
             }
         });
 
-        this.controls.searchBtn.addEventListener('click', () => fetchProfile(this.controls.nameInput.value));
+        this.controls.searchBtn.addEventListener('click', searchSummoner);
 
         let queues = lol.constants.queues.filter(q => q.showInSelect);
         
