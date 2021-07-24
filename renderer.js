@@ -816,26 +816,17 @@ function getGameInfo(game, summoner) {
 
 async function handleMatcheResponses(matchResponses) {
     let matches = []
-    for (let i = 0; i < matchResponses.length; i++) {
-        let matchResponse = matchResponses[i];
+    
+    matchResponses.forEach(matchResponse => {
         if (matchResponse.status == 200) {
             let json = await matchResponse.json;
             matches.push(json)   
         } else {
             let matchId = matchResponse.urlSegments[matchResponse.urlSegments.length - 1].split('?')[0];
             APIErrorsHandler.Match(matchResponse.status, matchId);
-
-            //let start = matchResponses.length;
-
-            //if (lolprofiler.currentSummoner.loadedMatches) {
-            //    start += lolprofiler.currentSummoner.loadedMatches.length;
-            //}
-
-            //let match = await getMatches(lolprofiler.currentSummoner.summonerObject, start, 1)[0];
-            //console.log(match)
-            //matches.push(match)
         }
-    }
+    });
+
     return matches;
 }
 
