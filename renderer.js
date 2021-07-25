@@ -654,6 +654,10 @@ function handleQueues(queues) {
     })
 }
 
+function createClickablePlayer(name) {
+    return `<a href="#" class="summoner" onclick="putNameAnimation('${name}')">${name}</a>`
+}
+
 function handleRecently(recentlyPlayedWith) {
     lolprofiler.controls.recentlyWrapper.innerHTML = "";
 
@@ -669,7 +673,7 @@ function handleRecently(recentlyPlayedWith) {
     recentlies.forEach(recently => {
         recentliesHtml += `
         <div class="section-header recently-summoner">
-            <a href="#" class="summoner" onclick="putNameAnimation('${recently.name}')">${recently.name}</a>
+            ${createClickablePlayer(recently.name)}
             <span class="section-line"></span>
             <span class="recently-times">${recently.times} Games</span>
         </div>`
