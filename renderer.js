@@ -419,6 +419,10 @@ function createStatsElement(stats) {
     `
 }
 
+function createClickablePlayerElement(name) {
+    return `<a href="#" class="summoner" onclick="putNameAnimation('${name}')">${name}</a>`
+}
+
 function createTeamsElement(teams) {
     let html = '';
     let champions = Object.values(lol.ddragon.champion.data);
@@ -634,11 +638,7 @@ function handleQueues(queues) {
     lolprofiler.controls.rankWrapper.innerHTML = '';
 
     if (queues.length == 0) {
-        let rankedInfo = document.createElement('div');
-        rankedInfo.className = 'rank-info';
-        lolprofiler.controls.rankWrapper.appendChild(rankedInfo);
-        
-        rankedInfo.innerHTML = '<h1 class="rank-text unranked">UNRANKED</h1>';
+        lolprofiler.controls.rankWrapper.innerHTML = '<div class="rank-info"><h1 class="rank-text unranked">UNRANKED</h1></div>';
     }
                     
     queues.forEach((queue) => {
@@ -652,10 +652,6 @@ function handleQueues(queues) {
         `;
         lolprofiler.controls.rankWrapper.appendChild(rankedInfo);
     })
-}
-
-function createClickablePlayer(name) {
-    return `<a href="#" class="summoner" onclick="putNameAnimation('${name}')">${name}</a>`
 }
 
 function handleRecently(recentlyPlayedWith) {
