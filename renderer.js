@@ -662,6 +662,7 @@ function handleRecently(recentlyPlayedWith) {
         return {"name": k, "times": recentlyPlayedWith[k].times}
     });
 
+    recentlies = sortByProperty(recentlies, 'times')
     recentlies.sort((a, b) => (a.times > b.times) ? -1 : 1)
 
     let recentliesHtml = '';
@@ -964,23 +965,26 @@ function longAgo(difference) {
     return Math.round(seconds) + ' seconds ago'
 }
 
-function dateToCustomString(date, separator = '<br>') {
-    let time = {
-        hours: zeroPadStart(date.getHours()),
-        minutes: zeroPadStart(date.getMinutes()),
-        seconds: zeroPadStart(date.getSeconds()),
-        date: zeroPadStart(date.getDate()),
-        month: zeroPadStart(date.getMonth()),
-        year: zeroPadStart(date.getFullYear()),
-    };
-    
-    return `${time.hours}:${time.minutes}:${time.seconds}${separator}${time.date}/${time.month}/${time.year}`;
+let utils = {
+    sortByProperty(obj, property) {
+        return obj.sort((a, b) => (a[property] > b[property]) ? -1 : 1)
+    },
+    zeroPadStart(number) {
+        return number.toString().padStart(2, '0');
+    },
+    dateToCustomString(date, separator = '<br>') {
+        let time = {
+            hours: zeroPadStart(date.getHours()),
+            minutes: zeroPadStart(date.getMinutes()),
+            seconds: zeroPadStart(date.getSeconds()),
+            date: zeroPadStart(date.getDate()),
+            month: zeroPadStart(date.getMonth()),
+            year: zeroPadStart(date.getFullYear()),
+        };
+        
+        return `${time.hours}:${time.minutes}:${time.seconds}${separator}${time.date}/${time.month}/${time.year}`;
+    }
 }
-
-function zeroPadStart(number) {
-    return number.toString().padStart(2, '0');
-}
-
 function isLoaded(el) {
     el.classList.add('img-loaded');
 }
