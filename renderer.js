@@ -1,3 +1,24 @@
+let utils = {
+    sortByProperty(obj, property) {
+        return obj.sort((a, b) => (a[property] > b[property]) ? -1 : 1)
+    },
+    zeroPadStart(number) {
+        return number.toString().padStart(2, '0');
+    },
+    dateToCustomString(date, separator = '<br>') {
+        let time = {
+            hours: this.zeroPadStart(date.getHours()),
+            minutes: this.zeroPadStart(date.getMinutes()),
+            seconds: this.zeroPadStart(date.getSeconds()),
+            date: this.zeroPadStart(date.getDate()),
+            month: this.zeroPadStart(date.getMonth()),
+            year: this.zeroPadStart(date.getFullYear()),
+        };
+        
+        return `${time.hours}:${time.minutes}:${time.seconds}${separator}${time.date}/${time.month}/${time.year}`;
+    }
+}
+
 let lolprofiler = {
     controls: {
         searchBtn: document.querySelector('#search-btn'),
@@ -343,7 +364,7 @@ function createMatchInfoElement(game) {
     </div>
     <div class="tooltip-container">
         <div class="tooltip">${gameDate}</div>
-        <span class="tooltip-content">${dateToCustomString(new Date(game.gameCreation))}</span>
+        <span class="tooltip-content">${utils.dateToCustomString(new Date(game.gameCreation))}</span>
     </div>
     <div class="seperator"></div>
     <div class="result">${winText}</div>
@@ -559,7 +580,7 @@ function openMatchDetails(gameDetails) {
     `
         <span>${queue.tooltip}</span>
         <span>${Math.floor(((game.info.gameDuration / 1000) / 60))}m ${(Math.floor((game.info.gameDuration / 1000) % 60))}s</span>
-        <span>${dateToCustomString(new Date(game.info.gameCreation), ' ')}</span>
+        <span>${utils.dateToCustomString(new Date(game.info.gameCreation), ' ')}</span>
     `
     const logChannel = 'matchDetails'
     logger.log(game, logChannel)
@@ -662,7 +683,7 @@ function handleRecently(recentlyPlayedWith) {
         return {"name": k, "times": recentlyPlayedWith[k].times}
     });
 
-    recentlies = sortByProperty(recentlies, 'times')
+    recentlies = utils.sortByProperty(recentlies, 'times')
     recentlies.sort((a, b) => (a.times > b.times) ? -1 : 1)
 
     let recentliesHtml = '';
@@ -965,26 +986,6 @@ function longAgo(difference) {
     return Math.round(seconds) + ' seconds ago'
 }
 
-let utils = {
-    sortByProperty(obj, property) {
-        return obj.sort((a, b) => (a[property] > b[property]) ? -1 : 1)
-    },
-    zeroPadStart(number) {
-        return number.toString().padStart(2, '0');
-    },
-    dateToCustomString(date, separator = '<br>') {
-        let time = {
-            hours: zeroPadStart(date.getHours()),
-            minutes: zeroPadStart(date.getMinutes()),
-            seconds: zeroPadStart(date.getSeconds()),
-            date: zeroPadStart(date.getDate()),
-            month: zeroPadStart(date.getMonth()),
-            year: zeroPadStart(date.getFullYear()),
-        };
-        
-        return `${time.hours}:${time.minutes}:${time.seconds}${separator}${time.date}/${time.month}/${time.year}`;
-    }
-}
 function isLoaded(el) {
     el.classList.add('img-loaded');
 }
