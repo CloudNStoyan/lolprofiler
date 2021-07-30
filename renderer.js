@@ -239,11 +239,7 @@ let lolprofiler = {
             for (let i = 0; i < progressBars.length; i++) {
                 let bar = progressBars[i];
                 let barWidth = parseFloat(bar.getAttribute('data-width'));
-                bar.setAttribute('style', `width: ${barWidth}%;`);
-
-                if (barWidth == 0) {
-                    bar.setAttribute('style','display: none;');
-                }
+                bar.setAttribute('style', barWidth > 0 ? `width: ${barWidth}%;` : 'display: none;');
             }
 
         }, 500)
