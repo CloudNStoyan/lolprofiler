@@ -284,12 +284,25 @@ function addLoadMoreBtn() {
 }
 
 async function getMatches(summoner, start = 0, count = 10, queueId = null) {
+    const loggerChannel = 'getMatches';
+
     let matchList = await riotapi.V5MatchlistByPUUID(summoner.puuid, start, count, queueId);
+
+    logger.log(matchList, loggerChannel);
+
     let matchRequests = [];
-    matchList.forEach(matchId => matchRequests.push(riotapi.V5MatchById(matchId)));
+    matchList.forEach(matchId => async function() {
+        let match = await riotapi.V5MatchById(matchId);
+        matchRequests.push(match)
+    });
+
+    logger.log(matchRequests, loggerChannel);
 
     let matchResponses = await Promise.all(matchRequests);
     let matches = await handleMatcheResponses(matchResponses);
+
+    logger.log(matches, loggerChannel);
+    
     return matches;
 }
 
@@ -724,6 +737,10 @@ function handleMastery(championMastery) {
 }
 
 function handleV5Matches(matches, summoner) {
+    const loggerChannel = 'handleV5Matches';
+
+    logger.log(matches, loggerChannel)
+
     lolprofiler.controls.matchesWrapper.innerHTML = '';
 
     matches.sort((a, b) => (a.info.gameCreation > b.info.gameCreation) ? -1 : 1)
@@ -748,6 +765,8 @@ function handleV5Matches(matches, summoner) {
 
     let games = matches.map(game => getGameInfo(game, summoner));
 
+    logger.log(games, loggerChannel)
+
     games.forEach(game => {
         try {
             lolprofiler.controls.matchesWrapper.appendChild(createGame(game))
@@ -767,6 +786,10 @@ function handleV5Matches(matches, summoner) {
     handleSummary(summary);
 
     lolprofiler.currentSummoner.loadedMatches = matches;
+}
+
+function getPlayerKeystone(player) {
+    return lol.ddragon.runesReforged.find(x => x.id == player.perks.styles[0].style).slots[0].runes.find(x => x.id == player.perks.styles[0].selections[0].perk);
 }
 
 function getGameInfo(game, summoner) {
@@ -835,7 +858,7 @@ function getGameInfo(game, summoner) {
 async function handleMatcheResponses(matchResponses) {
     let matches = []
     
-    matchResponses.forEach(matchResponse => {
+    matchResponses.forEach(matchResponse => async function() {
         if (matchResponse.status == 200) {
             let json = await matchResponse.json;
             matches.push(json)   
@@ -870,6 +893,9 @@ async function fetchProfile(summonerName) {
     handleQueues(queues);
 
     let matches = await getMatches(summoner)
+
+    logger.log(matches, 'fetchProfile')
+
     handleV5Matches(matches, summoner);
 
     let spectator = await riotapi.SpectatorV4BySummonerId(summoner.id);
