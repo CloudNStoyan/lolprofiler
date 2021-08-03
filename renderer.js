@@ -487,7 +487,7 @@ function createTeamsElement(teams) {
 function createExtendedMatchInfo(player, team) {
     let summonerSpells = Object.values(lol.ddragon.summoner.data);
 
-    let keystone = lol.ddragon.runesReforged.find(x => x.id == player.perks.styles[0].style).slots[0].runes.find(x => x.id == player.perks.styles[0].selections[0].perk);
+    let keystone = getPlayerKeystone(player);
     let secondaryRunePath = lol.ddragon.runesReforged.find(x => x.id == player.perks.styles[1].style);
 
     let firstSummonerSpell = summonerSpells.find(spell => spell.key == player.summoner1Id);
@@ -809,8 +809,6 @@ function getGameInfo(game, summoner) {
             maxDamage = damage
         }
     })
-
-    let keystone = lol.ddragon.runesReforged.find(x => x.id == participant.perks.styles[0].style).slots[0].runes.find(x => x.id == participant.perks.styles[0].selections[0].perk);
     let secondaryRunePath = lol.ddragon.runesReforged.find(x => x.id == participant.perks.styles[1].style);
 
     let items = [participant.item0, participant.item1, participant.item2, participant.item6, participant.item3, participant.item4, participant.item5];
@@ -828,7 +826,7 @@ function getGameInfo(game, summoner) {
         killPercentage: Math.round(((participant.kills + participant.assists) / teamKills) * 100),
         summonerSpell1: summonerSpells.find(spell => spell.key == participant.summoner1Id),
         summonerSpell2: summonerSpells.find(spell => spell.key == participant.summoner2Id),
-        keystone: keystone,
+        keystone: getPlayerKeystone(participant),
         secondaryKeystone: secondaryRunePath,
         items: items,
         damage: participant.totalDamageDealtToChampions,
