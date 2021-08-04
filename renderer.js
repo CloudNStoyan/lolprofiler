@@ -291,14 +291,17 @@ async function getMatches(summoner, start = 0, count = 10, queueId = null) {
     logger.log(matchList, loggerChannel);
 
     let matchRequests = [];
-    matchList.forEach(matchId => async function() {
-        let match = await riotapi.V5MatchById(matchId);
+    matchList.forEach(matchId => {
+        let match = riotapi.V5MatchById(matchId);
         matchRequests.push(match)
     });
 
     logger.log(matchRequests, loggerChannel);
 
     let matchResponses = await Promise.all(matchRequests);
+
+    logger.log(matchResponses, loggerChannel)
+
     let matches = await handleMatcheResponses(matchResponses);
 
     logger.log(matches, loggerChannel);
@@ -700,7 +703,7 @@ function handleRecently(recentlyPlayedWith) {
     recentlies.forEach(recently => {
         recentliesHtml += `
         <div class="section-header recently-summoner">
-            ${createClickablePlayer(recently.name)}
+            ${createClickablePlayerElement(recently.name)}
             <span class="section-line"></span>
             <span class="recently-times">${recently.times} Games</span>
         </div>`
@@ -855,8 +858,8 @@ function getGameInfo(game, summoner) {
 
 async function handleMatcheResponses(matchResponses) {
     let matches = []
-    
-    matchResponses.forEach(matchResponse => async function() {
+    for (let i = 0; i < matchResponses.length; i++) {
+        let matchResponse = matchResponses[i];
         if (matchResponse.status == 200) {
             let json = await matchResponse.json;
             matches.push(json)   
@@ -864,8 +867,7 @@ async function handleMatcheResponses(matchResponses) {
             let matchId = matchResponse.urlSegments[matchResponse.urlSegments.length - 1].split('?')[0];
             APIErrorsHandler.Match(matchResponse.status, matchId);
         }
-    });
-
+    }
     return matches;
 }
 
