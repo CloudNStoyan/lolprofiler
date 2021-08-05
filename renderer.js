@@ -696,7 +696,6 @@ function handleRecently(recentlyPlayedWith) {
     });
 
     recentlies = utils.sortByProperty(recentlies, 'times')
-    recentlies.sort((a, b) => (a.times > b.times) ? -1 : 1)
 
     let recentliesHtml = '';
 
@@ -795,6 +794,12 @@ function getPlayerKeystone(player) {
     return lol.ddragon.runesReforged.find(x => x.id == player.perks.styles[0].style).slots[0].runes.find(x => x.id == player.perks.styles[0].selections[0].perk);
 }
 
+function getPlayerKillPercentage(player, participants) {
+    let teamKills = participants.filter((p) => p.teamId == participant.teamId).map(x => x.kills).reduce((a, b) => a + b, 0);
+
+    return Math.round(((player.kills + player.assists) / teamKills) * 100)
+}
+
 function getGameInfo(game, summoner) {
     let participant = game.info.participants.find(p => p.puuid == summoner.puuid)
     let team = game.info.teams.find(t => t.teamId == participant.teamId);
@@ -803,7 +808,6 @@ function getGameInfo(game, summoner) {
 
     let queue = lol.ddragon.queues.find(q => q.queueId == game.info.queueId);
 
-    let teamKills = game.info.participants.filter((p) => p.teamId == participant.teamId).map(x => x.kills).reduce((a, b) => a + b, 0);
     let participantsDamage = game.info.participants.map(x => x.totalDamageDealtToChampions);
     let maxDamage = 0;
 
@@ -826,7 +830,7 @@ function getGameInfo(game, summoner) {
     let stats = {
         level: participant.champLevel,
         creepScore: participant.totalMinionsKilled,
-        killPercentage: Math.round(((participant.kills + participant.assists) / teamKills) * 100),
+        killPercentage: getPlayerKillPercentage(participant, game.info.participants),
         summonerSpell1: summonerSpells.find(spell => spell.key == participant.summoner1Id),
         summonerSpell2: summonerSpells.find(spell => spell.key == participant.summoner2Id),
         keystone: getPlayerKeystone(participant),
