@@ -491,7 +491,7 @@ function createExtendedMatchInfo(player, team) {
     let summonerSpells = Object.values(lol.ddragon.summoner.data);
 
     let keystone = getPlayerKeystone(player);
-    let secondaryRunePath = lol.ddragon.runesReforged.find(x => x.id == player.perks.styles[1].style);
+    let secondaryRunePath = getPlayerSecondKeystone(player);
 
     let firstSummonerSpell = summonerSpells.find(spell => spell.key == player.summoner1Id);
     let secondSummonerSpell = summonerSpells.find(spell => spell.key == player.summoner2Id);
@@ -794,14 +794,22 @@ function getPlayerKeystone(player) {
     return lol.ddragon.runesReforged.find(x => x.id == player.perks.styles[0].style).slots[0].runes.find(x => x.id == player.perks.styles[0].selections[0].perk);
 }
 
+function getPlayerSecondKeystone(participant) {
+    lol.ddragon.runesReforged.find(x => x.id == participant.perks.styles[1].style)
+}
+
 function getPlayerKillPercentage(player, participants) {
     let teamKills = participants.filter((p) => p.teamId == participant.teamId).map(x => x.kills).reduce((a, b) => a + b, 0);
 
     return Math.round(((player.kills + player.assists) / teamKills) * 100)
 }
 
+function getParticipantByPuuid(game, puuid) {
+    return game.info.participants.find(p => p.puuid == puuid)
+}
+
 function getGameInfo(game, summoner) {
-    let participant = game.info.participants.find(p => p.puuid == summoner.puuid)
+    let participant = getParticipantByPuuid(game, summoner.puuid)
     let team = game.info.teams.find(t => t.teamId == participant.teamId);
 
     let champion = Object.values(lol.ddragon.champion.data).find(champ => champ.key == participant.championId);
@@ -834,7 +842,7 @@ function getGameInfo(game, summoner) {
         summonerSpell1: summonerSpells.find(spell => spell.key == participant.summoner1Id),
         summonerSpell2: summonerSpells.find(spell => spell.key == participant.summoner2Id),
         keystone: getPlayerKeystone(participant),
-        secondaryKeystone: secondaryRunePath,
+        secondaryKeystone: getPlayerSecondKeystone(participant),
         items: items,
         damage: participant.totalDamageDealtToChampions,
         maxDamage: maxDamage
