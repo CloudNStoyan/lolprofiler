@@ -795,11 +795,11 @@ function getPlayerKeystone(player) {
 }
 
 function getPlayerSecondKeystone(participant) {
-    lol.ddragon.runesReforged.find(x => x.id == participant.perks.styles[1].style)
+    return lol.ddragon.runesReforged.find(x => x.id == participant.perks.styles[1].style)
 }
 
 function getPlayerKillPercentage(player, participants) {
-    let teamKills = participants.filter((p) => p.teamId == participant.teamId).map(x => x.kills).reduce((a, b) => a + b, 0);
+    let teamKills = participants.filter((p) => p.teamId == player.teamId).map(x => x.kills).reduce((a, b) => a + b, 0);
 
     return Math.round(((player.kills + player.assists) / teamKills) * 100)
 }
