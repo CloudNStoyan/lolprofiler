@@ -495,9 +495,9 @@ function createExtendedMatchInfo(player, team) {
 
     let firstSummonerSpell = summonerSpells.find(spell => spell.key == player.summoner1Id);
     let secondSummonerSpell = summonerSpells.find(spell => spell.key == player.summoner2Id);
-    let champion = Object.values(lol.ddragon.champion.data).find(champ => champ.key == player.championId);
+    let champion = getPlayerChampion(player);
     let teamKills = team.map(x => x.kills).reduce((a, b) => a + b, 0);
-    let items = [player.item0, player.item1, player.item2, player.item6, player.item3, player.item4, player.item5];
+    let items = getPlayerItems(items);
     let maxDamage = 0;
 
     team.map(p => p.totalDamageDealtToChampions).forEach(damage => {
@@ -804,15 +804,23 @@ function getPlayerKillPercentage(player, participants) {
     return Math.round(((player.kills + player.assists) / teamKills) * 100)
 }
 
+function getPlayerChampion(participant) {
+    return Object.values(lol.ddragon.champion.data).find(champ => champ.key == participant.championId);
+}
+
 function getParticipantByPuuid(game, puuid) {
     return game.info.participants.find(p => p.puuid == puuid)
+}
+
+function getPlayerItems(player) {
+    return [player.item0, player.item1, player.item2, player.item6, player.item3, player.item4, player.item5]
 }
 
 function getGameInfo(game, summoner) {
     let participant = getParticipantByPuuid(game, summoner.puuid)
     let team = game.info.teams.find(t => t.teamId == participant.teamId);
 
-    let champion = Object.values(lol.ddragon.champion.data).find(champ => champ.key == participant.championId);
+    let champion = getPlayerChampion();
 
     let queue = lol.ddragon.queues.find(q => q.queueId == game.info.queueId);
 
@@ -824,9 +832,8 @@ function getGameInfo(game, summoner) {
             maxDamage = damage
         }
     })
-    let secondaryRunePath = lol.ddragon.runesReforged.find(x => x.id == participant.perks.styles[1].style);
 
-    let items = [participant.item0, participant.item1, participant.item2, participant.item6, participant.item3, participant.item4, participant.item5];
+    let items = getPlayerItems(player);
 
     let teams = [
         game.info.participants.filter((p) => p.teamId == 100),
