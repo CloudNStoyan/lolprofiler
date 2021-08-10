@@ -496,7 +496,6 @@ function createExtendedMatchInfo(player, team) {
     let firstSummonerSpell = summonerSpells.find(spell => spell.key == player.summoner1Id);
     let secondSummonerSpell = summonerSpells.find(spell => spell.key == player.summoner2Id);
     let champion = getPlayerChampion(player);
-    let teamKills = team.map(x => x.kills).reduce((a, b) => a + b, 0);
     let items = getPlayerItems(items);
     let maxDamage = 0;
 
@@ -565,7 +564,7 @@ function createExtendedMatchInfo(player, team) {
         <div class="player-score">
             <span class="level">LVL ${player.champLevel}</span>
             <span class="creep-score">${player.totalMinionsKilled} CS</span>
-            <span class="percentage-kill">P/Kill ${Math.round(((player.kills + player.assists) / teamKills) * 100)}%</span>
+            <span class="percentage-kill">P/Kill ${getPlayerKillPercentage(player, team.participants)}%</span>
         </div>
         <div class="items">
             ${createItemsElement(items)}
@@ -820,7 +819,7 @@ function getGameInfo(game, summoner) {
     let participant = getParticipantByPuuid(game, summoner.puuid)
     let team = game.info.teams.find(t => t.teamId == participant.teamId);
 
-    let champion = getPlayerChampion();
+    let champion = getPlayerChampion(participant);
 
     let queue = lol.ddragon.queues.find(q => q.queueId == game.info.queueId);
 
@@ -833,7 +832,7 @@ function getGameInfo(game, summoner) {
         }
     })
 
-    let items = getPlayerItems(player);
+    let items = getPlayerItems(participant);
 
     let teams = [
         game.info.participants.filter((p) => p.teamId == 100),
