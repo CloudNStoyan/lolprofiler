@@ -16,6 +16,9 @@ let utils = {
         };
         
         return `${time.hours}:${time.minutes}:${time.seconds}${separator}${time.date}/${time.month}/${time.year}`;
+    },
+    dateToGameLength(gameDuration) {
+        return `${Math.floor(((gameDuration / 1000) / 60))}m ${(Math.floor((gameDuration / 1000) % 60))}s`;
     }
 }
 
@@ -590,7 +593,7 @@ function openMatchDetails(gameDetails) {
     headerContent.innerHTML = 
     `
         <span>${queue.tooltip}</span>
-        <span>${Math.floor(((game.info.gameDuration / 1000) / 60))}m ${(Math.floor((game.info.gameDuration / 1000) % 60))}s</span>
+        <span>${utils.dateToGameLength(game.info.gameDuration)}</span>
         <span>${utils.dateToCustomString(new Date(game.info.gameCreation), ' ')}</span>
     `
     const logChannel = 'matchDetails'
@@ -815,15 +818,8 @@ function getPlayerItems(player) {
     return [player.item0, player.item1, player.item2, player.item6, player.item3, player.item4, player.item5]
 }
 
-function getGameInfo(game, summoner) {
-    let participant = getParticipantByPuuid(game, summoner.puuid)
-    let team = game.info.teams.find(t => t.teamId == participant.teamId);
-
-    let champion = getPlayerChampion(participant);
-
-    let queue = lol.ddragon.queues.find(q => q.queueId == game.info.queueId);
-
-    let participantsDamage = game.info.participants.map(x => x.totalDamageDealtToChampions);
+function getBiggestDamage(participants) {
+    let participantsDamage = participants.map(x => x.totalDamageDealtToChampions);
     let maxDamage = 0;
 
     participantsDamage.forEach(damage => {
@@ -832,7 +828,16 @@ function getGameInfo(game, summoner) {
         }
     })
 
-    let items = getPlayerItems(participant);
+    return maxDamage
+}
+
+function getGameInfo(game, summoner) {
+    let participant = getParticipantByPuuid(game, summoner.puuid)
+    let team = game.info.teams.find(t => t.teamId == participant.teamId);
+
+    let champion = getPlayerChampion(participant);
+
+    let queue = lol.ddragon.queues.find(q => q.queueId == game.info.queueId);
 
     let teams = [
         game.info.participants.filter((p) => p.teamId == 100),
@@ -849,9 +854,9 @@ function getGameInfo(game, summoner) {
         summonerSpell2: summonerSpells.find(spell => spell.key == participant.summoner2Id),
         keystone: getPlayerKeystone(participant),
         secondaryKeystone: getPlayerSecondKeystone(participant),
-        items: items,
+        items: getPlayerItems(participant),
         damage: participant.totalDamageDealtToChampions,
-        maxDamage: maxDamage
+        maxDamage: getBiggestDamage(game.info.participants)
     }
 
     let gameObj = {
@@ -862,7 +867,7 @@ function getGameInfo(game, summoner) {
             deaths: participant.deaths,
             assists: participant.assists
         },
-        gameLength: `${Math.floor(((game.info.gameDuration / 1000) / 60))}m ${(Math.floor((game.info.gameDuration / 1000) % 60))}s`,
+        gameLength: utils.dateToGameLength(game.info.gameDuration),
         queue: queue,
         stats: stats,
         teamsObj: teams,
