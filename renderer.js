@@ -895,6 +895,8 @@ async function handleMatcheResponses(matchResponses) {
 }
 
 async function fetchProfile(summonerName) {
+    const loggerChannel = 'fetchProfile'
+
     lolprofiler.updateUIState(lolprofiler.uiStates.load);
 
     let summonerResponse = await riotapi.SummonerByName(summonerName)
@@ -910,14 +912,15 @@ async function fetchProfile(summonerName) {
     handleSummoner(summoner);
 
     let mastery = await riotapi.MasteryBySummonerId(summoner.id);
+    logger.log(mastery, loggerChannel)
     handleMastery(mastery);
 
     let queues = await riotapi.LeagueBySummonerId(summoner.id);
+    logger.log(queues, loggerChannel)
     handleQueues(queues);
 
     let matches = await getMatches(summoner)
-
-    logger.log(matches, 'fetchProfile')
+    logger.log(matches, loggerChannel)
 
     handleV5Matches(matches, summoner);
 
