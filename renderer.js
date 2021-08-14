@@ -22,6 +22,41 @@ let utils = {
     }
 }
 
+let gameInfoQuery = {
+    getPlayerKeystone(player) {
+        return lol.ddragon.runesReforged.find(x => x.id == player.perks.styles[0].style).slots[0].runes.find(x => x.id == player.perks.styles[0].selections[0].perk);
+    },
+    getPlayerSecondKeystone(participant) {
+        return lol.ddragon.runesReforged.find(x => x.id == participant.perks.styles[1].style)
+    },
+    getPlayerKillPercentage(player, participants) {
+        let teamKills = participants.filter((p) => p.teamId == player.teamId).map(x => x.kills).reduce((a, b) => a + b, 0);
+    
+        return Math.round(((player.kills + player.assists) / teamKills) * 100)
+    },
+    getPlayerChampion(participant) {
+        return Object.values(lol.ddragon.champion.data).find(champ => champ.key == participant.championId);
+    },
+    getParticipantByPuuid(game, puuid) {
+        return game.info.participants.find(p => p.puuid == puuid)
+    },
+    getPlayerItems(player) {
+        return [player.item0, player.item1, player.item2, player.item6, player.item3, player.item4, player.item5]
+    },
+    getBiggestDamage(participants) {
+        let participantsDamage = participants.map(x => x.totalDamageDealtToChampions);
+        let maxDamage = 0;
+    
+        participantsDamage.forEach(damage => {
+            if (damage > maxDamage) {
+                maxDamage = damage
+            }
+        })
+    
+        return maxDamage
+    }
+}
+
 let lolprofiler = {
     controls: {
         searchBtn: document.querySelector('#search-btn'),
@@ -493,13 +528,13 @@ function createTeamsElement(teams) {
 function createExtendedMatchInfo(player, team) {
     let summonerSpells = Object.values(lol.ddragon.summoner.data);
 
-    let keystone = getPlayerKeystone(player);
-    let secondaryRunePath = getPlayerSecondKeystone(player);
+    let keystone = gameInfoQuery.getPlayerKeystone(player);
+    let secondaryRunePath = gameInfoQuery.getPlayerSecondKeystone(player);
 
     let firstSummonerSpell = summonerSpells.find(spell => spell.key == player.summoner1Id);
     let secondSummonerSpell = summonerSpells.find(spell => spell.key == player.summoner2Id);
-    let champion = getPlayerChampion(player);
-    let items = getPlayerItems(items);
+    let champion = gameInfoQuery.getPlayerChampion(player);
+    let items = gameInfoQuery.getPlayerItems(items);
     let maxDamage = 0;
 
     team.map(p => p.totalDamageDealtToChampions).forEach(damage => {
@@ -792,50 +827,11 @@ function handleV5Matches(matches, summoner) {
     lolprofiler.currentSummoner.loadedMatches = matches;
 }
 
-function getPlayerKeystone(player) {
-    return lol.ddragon.runesReforged.find(x => x.id == player.perks.styles[0].style).slots[0].runes.find(x => x.id == player.perks.styles[0].selections[0].perk);
-}
-
-function getPlayerSecondKeystone(participant) {
-    return lol.ddragon.runesReforged.find(x => x.id == participant.perks.styles[1].style)
-}
-
-function getPlayerKillPercentage(player, participants) {
-    let teamKills = participants.filter((p) => p.teamId == player.teamId).map(x => x.kills).reduce((a, b) => a + b, 0);
-
-    return Math.round(((player.kills + player.assists) / teamKills) * 100)
-}
-
-function getPlayerChampion(participant) {
-    return Object.values(lol.ddragon.champion.data).find(champ => champ.key == participant.championId);
-}
-
-function getParticipantByPuuid(game, puuid) {
-    return game.info.participants.find(p => p.puuid == puuid)
-}
-
-function getPlayerItems(player) {
-    return [player.item0, player.item1, player.item2, player.item6, player.item3, player.item4, player.item5]
-}
-
-function getBiggestDamage(participants) {
-    let participantsDamage = participants.map(x => x.totalDamageDealtToChampions);
-    let maxDamage = 0;
-
-    participantsDamage.forEach(damage => {
-        if (damage > maxDamage) {
-            maxDamage = damage
-        }
-    })
-
-    return maxDamage
-}
-
 function getGameInfo(game, summoner) {
     let participant = getParticipantByPuuid(game, summoner.puuid)
     let team = game.info.teams.find(t => t.teamId == participant.teamId);
 
-    let champion = getPlayerChampion(participant);
+    let champion = gameInfoQuery.getPlayerChampion(participant);
 
     let queue = lol.ddragon.queues.find(q => q.queueId == game.info.queueId);
 
@@ -849,14 +845,14 @@ function getGameInfo(game, summoner) {
     let stats = {
         level: participant.champLevel,
         creepScore: participant.totalMinionsKilled,
-        killPercentage: getPlayerKillPercentage(participant, game.info.participants),
+        killPercentage: gameInfoQuery.getPlayerKillPercentage(participant, game.info.participants),
         summonerSpell1: summonerSpells.find(spell => spell.key == participant.summoner1Id),
         summonerSpell2: summonerSpells.find(spell => spell.key == participant.summoner2Id),
-        keystone: getPlayerKeystone(participant),
-        secondaryKeystone: getPlayerSecondKeystone(participant),
-        items: getPlayerItems(participant),
+        keystone: gameInfoQuery.getPlayerKeystone(participant),
+        secondaryKeystone: gameInfoQuery.getPlayerSecondKeystone(participant),
+        items: gameInfoQuery.getPlayerItems(participant),
         damage: participant.totalDamageDealtToChampions,
-        maxDamage: getBiggestDamage(game.info.participants)
+        maxDamage: gameInfoQuery.getBiggestDamage(game.info.participants)
     }
 
     let gameObj = {
