@@ -534,7 +534,7 @@ function createExtendedMatchInfo(player, team) {
     let firstSummonerSpell = summonerSpells.find(spell => spell.key == player.summoner1Id);
     let secondSummonerSpell = summonerSpells.find(spell => spell.key == player.summoner2Id);
     let champion = gameInfoQuery.getPlayerChampion(player);
-    let items = gameInfoQuery.getPlayerItems(items);
+    let items = gameInfoQuery.getPlayerItems(player);
     let maxDamage = 0;
 
     team.map(p => p.totalDamageDealtToChampions).forEach(damage => {
@@ -602,7 +602,7 @@ function createExtendedMatchInfo(player, team) {
         <div class="player-score">
             <span class="level">LVL ${player.champLevel}</span>
             <span class="creep-score">${player.totalMinionsKilled} CS</span>
-            <span class="percentage-kill">P/Kill ${getPlayerKillPercentage(player, team.participants)}%</span>
+            <span class="percentage-kill">P/Kill ${gameInfoQuery.getPlayerKillPercentage(player, team)}%</span>
         </div>
         <div class="items">
             ${createItemsElement(items)}
@@ -828,7 +828,7 @@ function handleV5Matches(matches, summoner) {
 }
 
 function getGameInfo(game, summoner) {
-    let participant = getParticipantByPuuid(game, summoner.puuid)
+    let participant = gameInfoQuery.getParticipantByPuuid(game, summoner.puuid)
     let team = game.info.teams.find(t => t.teamId == participant.teamId);
 
     let champion = gameInfoQuery.getPlayerChampion(participant);
