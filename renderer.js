@@ -494,32 +494,32 @@ function createClickablePlayerElement(name) {
     return `<a href="#" class="summoner" onclick="putNameAnimation('${name}')">${name}</a>`
 }
 
+function createParticipantElement(participant, champions) {
+    let champ = champions.find(x => x.key == participant.championId) ?? champions.find(x => x.name == participant.championName);
+
+    if (p.puuid != 'BOT') {
+        return `
+        <a href="#" class="summoner" onclick="putNameAnimation('${participant.summonerName}')">
+            <img class="summoner-champ-icon" src="${lolprofiler.DDragon.Image.ChampionSquare(champ.image.full)}" onload="isLoaded(this)"/>
+            <div class="summoner-name">${participant.summonerName}</div>
+        </a>`
+    }
+
+    return `
+    <a href="#" class="summoner">
+        <img class="summoner-champ-icon" src="${lolprofiler.DDragon.Image.ChampionSquare(champ.image.full)}" onload="isLoaded(this)"/>
+        <div class="summoner-name tooltip-container">${participant.summonerName} <span class="bot-label tooltip">Bot</span>
+        <span class="tooltip-content">This is not a real player.</span></div>
+    </a>
+    `
+}
+
 function createTeamsElement(teams) {
     let html = '';
     let champions = Object.values(lol.ddragon.champion.data);
 
     teams.forEach((teamObj) => {
-        let team = '<div class="team">';
-        teamObj.forEach(p => {
-            let champ = champions.find(x => x.key == p.championId) ?? champions.find(x => x.name == p.championName);
-            if (p.puuid != "BOT") { // is player
-                team += `
-                    <a href="#" class="summoner" onclick="putNameAnimation('${p.summonerName}')">
-                        <img class="summoner-champ-icon" src="${lolprofiler.DDragon.Image.ChampionSquare(champ.image.full)}" onload="isLoaded(this)"/>
-                        <div class="summoner-name">${p.summonerName}</div>
-                    </a>
-                    `
-            } else {
-                team += `
-                    <a href="#" class="summoner">
-                        <img class="summoner-champ-icon" src="${lolprofiler.DDragon.Image.ChampionSquare(champ.image.full)}" onload="isLoaded(this)"/>
-                        <div class="summoner-name tooltip-container">${p.summonerName} <span class="bot-label tooltip">Bot</span><span class="tooltip-content">This is not a real player.</span></div>
-                    </a>
-                    `
-            }
-        })
-
-        html += team + "</div>";
+        html += `<div class="team">${teamObj.Map(p => createParticipantElement(p, champions))}</div>`;
     })
 
     return html;
