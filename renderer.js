@@ -269,6 +269,12 @@ let lolprofiler = {
 
             handleV5Matches(matches, summoner);
         })
+
+        this.controls.spectateBadge.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            
+        })
     },
     loadBars() {
         setTimeout(() => {
