@@ -270,10 +270,10 @@ let lolprofiler = {
             handleV5Matches(matches, summoner);
         })
 
-        this.controls.spectateBadge.addEventListener('click', (e) => {
+        this.controls.spectateBadge.addEventListener('click', async (e) => {
             e.preventDefault();
 
-            
+            await handleSpectator();
         })
     },
     loadBars() {
@@ -706,6 +706,27 @@ function handleInGame(spectatorInfo) {
 
     lolprofiler.controls.spectateBadge.innerText = 'INGAME';
     lolprofiler.controls.spectateBadge.classList.add('ingame');
+}
+
+async function handleSpectator() {
+    let game = await  riotapi.SpectatorV4BySummonerId(lolprofiler.currentSummoner.summonerObject.id);
+
+    lolprofiler.controls.matchDetailsContainer.classList.add('open');
+    lolprofiler.controls.main.classList.add("hide-entirely");
+
+    let content = lolprofiler.controls.matchDetailsContent;
+    content.innerHTML = '';
+
+    let headerContent = lolprofiler.controls.matchDetailsHeaderContent;
+
+    let queue = lol.constants.queues.find(q => q.id == game.gameQueueConfigId);
+    
+    headerContent.innerHTML = 
+    `
+        <span>${queue.tooltip}</span>
+        <span>${utils.dateToGameLength(game.gameLength * 1000)}</span>
+        <span>${utils.dateToCustomString(new Date(game.gameStartTime), ' ')}</span>
+    `
 }
 
 function handleSummoner(summoner) {
