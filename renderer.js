@@ -19,6 +19,9 @@ let utils = {
     },
     dateToGameLength(gameDuration) {
         return `${Math.floor(((gameDuration / 1000) / 60))}m ${(Math.floor((gameDuration / 1000) % 60))}s`;
+    },
+    stringIsEmpty(str) {
+        return !str || str.trim().length == 0
     }
 }
 
@@ -207,7 +210,7 @@ let lolprofiler = {
         function searchSummoner() {
             let name = lolprofiler.controls.nameInput.value;
 
-            if (!name || name.trim().length == 0) {
+            if (utils.stringIsEmpty(name)) {
                 return;
             }
 
