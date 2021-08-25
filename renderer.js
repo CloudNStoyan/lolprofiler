@@ -295,18 +295,7 @@ let lolprofiler = {
 
 lolprofiler.init();
 
-window.addEventListener('load', () => setTimeout(() => {
-    let placeholder = lolprofiler.constants.inputNamePlaceholder;
-    let typingSpeed = 50;
-    
-    for (let i = 0; i < placeholder.length; i++) {
-        let char = placeholder[i];
-        let timeout = typingSpeed * (char != " " ? i : (i - 1));
-        setTimeout(() => {
-            lolprofiler.controls.nameInput.placeholder += char;
-        }, timeout);
-    }
-}, 500));
+window.addEventListener('load', () => setTimeout(() => typeAnimate(lolprofiler.controls.nameInput, lolprofiler.constants.inputNamePlaceholder), 500));
 
 function addLoadMoreBtn() {
     let loadMoreBtn = document.createElement('a');
@@ -1040,6 +1029,18 @@ function putNameAnimation(name) {
         if (i + 1 >= name.length) {
             setTimeout(() => fetchProfile(name), (50 * i) + 50);
         }
+    }
+}
+
+function typeAnimate(input, placeholder) {
+    const typingSpeed = 50;
+    
+    for (let i = 0; i < placeholder.length; i++) {
+        let char = placeholder[i];
+        let timeout = typingSpeed * (char != " " ? i : (i - 1));
+        setTimeout(() => {
+            input.placeholder += char;
+        }, timeout);
     }
 }
 
