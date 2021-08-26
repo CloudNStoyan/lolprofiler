@@ -22,6 +22,25 @@ let utils = {
     },
     stringIsEmpty(str) {
         return !str || str.trim().length == 0
+    },
+    getRecentlyPlayedWith(matches, summoner) {
+        let allSummonerNames = ([].concat.apply([], matches.map(g => g.info.participants))).filter(p => p.puuid != 'BOT').map(p => p.summonerName);
+
+        let recentlyPlayedWith = {};
+
+        allSummonerNames.forEach(name => {
+            if (name == summoner.name) {
+                return;
+            }
+
+            if (recentlyPlayedWith[name]) {
+                recentlyPlayedWith[name].times++
+            } else {
+                recentlyPlayedWith[name] = { times: 1 };
+            }
+        });
+
+        return recentlyPlayedWith;
     }
 }
 
@@ -806,24 +825,8 @@ function handleV5Matches(matches, summoner) {
     lolprofiler.controls.matchesWrapper.innerHTML = '';
 
     matches.sort((a, b) => (a.info.gameCreation > b.info.gameCreation) ? -1 : 1)
-
-    let allSummonerNames = ([].concat.apply([], matches.map(g => g.info.participants))).filter(p => p.puuid != 'BOT').map(p => p.summonerName);
-
-    let recentlyPlayedWith = {};
-
-    allSummonerNames.forEach(name => {
-        if (name == summoner.name) {
-            return;
-        }
-
-        if (recentlyPlayedWith[name]) {
-            recentlyPlayedWith[name].times++
-        } else {
-            recentlyPlayedWith[name] = {times: 1};
-        }
-    });
     
-    handleRecently(recentlyPlayedWith)
+    handleRecently(utils.getRecentlyPlayedWith(matches, summoner))
 
     let games = matches.map(game => getGameInfo(game, summoner));
 
