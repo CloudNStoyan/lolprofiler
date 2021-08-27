@@ -57,7 +57,7 @@ let gameInfoQuery = {
         return Math.round(((player.kills + player.assists) / teamKills) * 100)
     },
     getPlayerChampion(participant) {
-        return Object.values(lol.ddragon.champion.data).find(champ => champ.key == participant.championId);
+        return lolprofiler.ddragonArrayData.champion.find(champ => champ.key == participant.championId);
     },
     getParticipantByPuuid(game, puuid) {
         return game.info.participants.find(p => p.puuid == puuid)
@@ -171,6 +171,10 @@ let lolprofiler = {
         }
     },
     init() {
+        lolprofiler["ddragonArrayData"] = {}
+        lolprofiler.ddragonArrayData["champion"] = Object.values(lol.ddragon.champion.data)
+        lolprofiler.ddragonArrayData["summoners"] = Object.values(lol.ddragon.summoner.data)
+
         toast.config.container = lolprofiler.controls.toastContainer;
 
         this.controls.nameInput.addEventListener('focus', () => this.controls.main.classList.add("hide"));
@@ -364,8 +368,8 @@ async function getMatches(summoner, start = 0, count = 10, queueId = null) {
     return matches;
 }
 
-function createMasteryElement(mastery, champions) {
-    let champ = champions.find(x => x.key == mastery.championId);
+function createMasteryElement(mastery) {
+    let champ = lolprofiler.ddragonArrayData.champion.find(x => x.key == mastery.championId);
 
     let points = `${Math.round(mastery.championPoints / 1000)}K`;
     let championSquareImage = lolprofiler.DDragon.Image.ChampionSquare(champ.image.full);
@@ -511,8 +515,8 @@ function createClickablePlayerElement(name) {
     return `<a href="#" class="summoner" onclick="putNameAnimation('${name}')">${name}</a>`
 }
 
-function createParticipantElement(participant, champions) {
-    let champ = champions.find(x => x.key == participant.championId) ?? champions.find(x => x.name == participant.championName);
+function createParticipantElement(participant) {
+    let champ = lolprofiler.ddragonArrayData.champion.find(x => x.key == participant.championId) ?? champions.find(x => x.name == participant.championName);
 
     if (participant.puuid == 'BOT') {
         return `
@@ -535,25 +539,22 @@ function createTeamsElement(teams) {
     let loggerChannel = 'create_teams_element';
 
     let html = '';
-    let champions = Object.values(lol.ddragon.champion.data);
 
     logger.log(teams, loggerChannel);
 
     teams.forEach((teamObj) => {
-        html += `<div class="team">${teamObj.map(p => createParticipantElement(p, champions)).join('\r\n')}</div>`;
+        html += `<div class="team">${teamObj.map(p => createParticipantElement(p)).join('\r\n')}</div>`;
     })
 
     return html;
 }
 
 function createExtendedMatchInfo(player, team) {
-    let summonerSpells = Object.values(lol.ddragon.summoner.data);
-
     let keystone = gameInfoQuery.getPlayerKeystone(player);
     let secondaryRunePath = gameInfoQuery.getPlayerSecondKeystone(player);
 
-    let firstSummonerSpell = summonerSpells.find(spell => spell.key == player.summoner1Id);
-    let secondSummonerSpell = summonerSpells.find(spell => spell.key == player.summoner2Id);
+    let firstSummonerSpell = lolprofiler.ddragonArrayData.summoners.find(spell => spell.key == player.summoner1Id);
+    let secondSummonerSpell = lolprofiler.ddragonArrayData.summoners.find(spell => spell.key == player.summoner2Id);
     let champion = gameInfoQuery.getPlayerChampion(player);
     let items = gameInfoQuery.getPlayerItems(player);
     let maxDamage = 0;
@@ -809,10 +810,8 @@ function handleMastery(championMastery) {
     championMastery = championMastery.slice(0, 10);
     let championsWrapper = document.createElement('div');
     championsWrapper.className = 'champions-wrapper';
-
-    let champions = Object.values(lol.ddragon.champion.data);
     
-    championMastery.forEach((mastery) => championsWrapper.appendChild(createMasteryElement(mastery, champions)));
+    championMastery.forEach((mastery) => championsWrapper.appendChild(createMasteryElement(mastery)));
 
     lolprofiler.controls.masteryWrapper.appendChild(championsWrapper);
 }
@@ -866,14 +865,12 @@ function getGameInfo(game, summoner) {
         game.info.participants.filter((p) => p.teamId == 200)
     ];
 
-    let summonerSpells = Object.values(lol.ddragon.summoner.data);
-
     let stats = {
         level: participant.champLevel,
         creepScore: participant.totalMinionsKilled,
         killPercentage: gameInfoQuery.getPlayerKillPercentage(participant, game.info.participants),
-        summonerSpell1: summonerSpells.find(spell => spell.key == participant.summoner1Id),
-        summonerSpell2: summonerSpells.find(spell => spell.key == participant.summoner2Id),
+        summonerSpell1: lolprofiler.ddragonArrayData.summoners.find(spell => spell.key == participant.summoner1Id),
+        summonerSpell2: lolprofiler.ddragonArrayData.summoners.find(spell => spell.key == participant.summoner2Id),
         keystone: gameInfoQuery.getPlayerKeystone(participant),
         secondaryKeystone: gameInfoQuery.getPlayerSecondKeystone(participant),
         items: gameInfoQuery.getPlayerItems(participant),
