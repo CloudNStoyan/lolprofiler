@@ -487,12 +487,14 @@ function createSetupElement(champion, stats) {
 }
 
 function createScoreElement(kda, stats) {
+    let damagePercentage = Math.round((stats.damage / stats.maxDamage) * 100);
+    
     return `
     <div>${kda.kills} / <span class="deaths">${kda.deaths}</span> / ${kda.assists}</div>
     <div>${kda.deaths == 0 ? 'Perfect KDA' : `${((kda.kills + kda.assists) / kda.deaths).toFixed(2)}:1 KDA`}</div>
     <div class="tooltip-container">
         <div class="damage-meter tooltip">
-            <div class="damage" style="width: ${Math.round((stats.damage / stats.maxDamage) * 100)}%">${Math.round(stats.damage / 1000)}K</div>
+            <div class="damage" style="width: ${damagePercentage}%">${Math.round(stats.damage / 1000)}K</div>
         </div>
         <div class="tooltip-content">
             <span>Total Damage Done</span>
@@ -565,6 +567,8 @@ function createExtendedMatchInfo(player, team) {
         }
     });
 
+    let damagePercentage = Math.round((player.totalDamageDealtToChampions / maxDamage) * 100);
+
     return `
     <div class="player-info">
         <div class="summoner-info">
@@ -612,7 +616,7 @@ function createExtendedMatchInfo(player, team) {
             </div>
             <div class="damage-container tooltip-container">
                 <div class="damage-meter tooltip">
-                    <div class="damage" style="width: ${Math.round((player.totalDamageDealtToChampions / maxDamage) * 100)}%">${Math.round(player.totalDamageDealtToChampions / 1000)}K</div>
+                    <div class="damage" style="width: ${damagePercentage}%">${Math.round(player.totalDamageDealtToChampions / 1000)}K</div>
                 </div>
                 <div class="tooltip-content">
                     <span>Total Damage Done</span>
