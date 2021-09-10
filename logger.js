@@ -1,6 +1,9 @@
 let logger = {
     headerCss: 'color: purple; font-size: 20px',
     channels: {},
+    init() {
+        console.log('%cLogger Initiated', this.headerCss)
+    },
     log(msg, channel) {
         if (!this.channels[channel]) {
             this.channels[channel] = []
@@ -33,3 +36,5 @@ let logger = {
         });
     }
 }
+
+logger.init()

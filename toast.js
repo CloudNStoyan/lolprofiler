@@ -1,4 +1,4 @@
-let toast = {
+export const core = {
     config: {
         container: document.body
     },
