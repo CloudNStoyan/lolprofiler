@@ -155,9 +155,9 @@ function readJson(filePath) {
   return JSON.parse(fs.readFileSync(path.resolve(__dirname, filePath)))
 }
 
-//function readText(filePath) {
-//  return fs.readFileSync(path.resolve(__dirname, filePath)).toString();
-//}
+function readText(filePath) {
+  return fs.readFileSync(path.resolve(__dirname, filePath)).toString();
+}
 
 function generatePathToDDragon(fileName) {
   return `ddragon/data/${ddragonCache.version}/${fileName}`
