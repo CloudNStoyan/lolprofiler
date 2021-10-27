@@ -1,19 +1,23 @@
 import React from 'react';
 
-function MasteryChamp({ image, points }) {
+function MasteryChamp({ champion, mastery }) {
     return (
         <div className="mastery-champ">
-            <div class="tooltip-container mastery-image-wrapper">
-                <span class="champion-level">{Math.round(points / 1000)}k</span>
-                <img class="tooltip img-loaded" src={image} alt="" />
-                {/* <div class="tooltip-content">
-            <span>${champ.name}</span>
-            <span class="line"></span>
-            <span>Level ${mastery.championLevel}</span>
-            <div class="champ-description">
-            ${champ.blurb}
-            </div>
-        </div> */}
+            <div className="tooltip-container mastery-image-wrapper">
+                <span className="champion-level">{Math.round(mastery.championPoints / 1000)}k</span>
+                <img
+                    className="tooltip img-loaded"
+                    src={`http://ddragon.leagueoflegends.com/cdn/11.21.1/img/champion/${champion.image?.full}`}
+                    alt={champion.name}
+                />
+                <div class="tooltip-content">
+                    <span>{champion.name}</span>
+                    <span class="line"></span>
+                    <span>Level {mastery.championLevel}</span>
+                    <div class="champ-description">
+                        {champion.blurb}
+                    </div>
+                </div>
             </div>
         </div>
     )

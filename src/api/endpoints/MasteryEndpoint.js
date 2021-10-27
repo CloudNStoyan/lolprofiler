@@ -5,7 +5,7 @@ class MasteryEndpoint extends Endpoint {
         super(config)
 
         this.config = config;
-        this.baseUrl = '/lol/champion-mastery/v4'
+        this.baseUrl = 'https://eun1.api.riotgames.com/lol/champion-mastery/v4'
     }
 
     getMasteriesBySummonerId = (encryptedSummonerId) => this.request(`${this.baseUrl}/champion-masteries/by-summoner/${encryptedSummonerId}`);

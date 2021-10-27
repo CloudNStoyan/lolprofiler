@@ -2,121 +2,102 @@ import './App.css';
 import SearchSummoner from './components/SearchSummoner';
 import React, { useState } from 'react';
 import RiotClient from './api/RiotClient';
-import MasteryChamp from './components/MasteryChamp';
+import ProfileInfo from './components/ProfileInfo';
+import SettingsForm from './components/SettingsForm';
 
 function App() {
-  const riotClient = new RiotClient({})
+  const riotClient = new RiotClient({ token: "YOUR API KEY HERE" })
+
   const [containerState, setContainerState] = useState('hide');
-  const [summoner, setSummoner] = useState({});
-  const [masteries, setMasteries] = useState([]);
+  const [profile, setProfile] = useState(null);
+  const [settingsIsOpen, setSettingsIsOpen] = useState(false);
+
+  console.log(riotClient.DDragon.data.champion)
 
   const changeContainerState = async (summonerName) => {
-    const [status, data] = await riotClient.Summoner.getByName(summonerName);
-    console.log(status, data);
-    setSummoner(data);
-    setContainerState('profile-loaded')
+    const newProfile = {};
+    const [summonerStatus, summonerData] = await riotClient.Summoner.getByName(summonerName);
 
-    const [masteriesStatus, masteriesData] = await riotClient.Mastery.getMasteriesBySummonerId(data.id);
-    setMasteries(masteriesData.slice(0, 10));
+    if (summonerStatus.statusCode !== 200) {
+      console.error('Fetching summoner data failed..', summonerStatus, summonerData);
+      return;
+    }
+
+    newProfile.summoner = summonerData;
+
+    const [masteriesStatus, masteriesData] = await riotClient.Mastery.getMasteriesBySummonerId(summonerData.id);
+
+    if (masteriesStatus.statusCode !== 200) {
+      console.error('Fetching masteries data failed..', masteriesStatus, masteriesData);
+      return;
+    }
+
+    newProfile.masteries = masteriesData.slice(0, 10);
+
+    const [matchIdsStatus, matchIdsData] = await riotClient.Match.getSummonerMatches(summonerData.puuid);
+    if (matchIdsStatus.statusCode !== 200) {
+      console.error('Fetching match history list failed..', matchIdsStatus, matchIdsData);
+      return;
+    }
+
+    const matches = await Promise.all(matchIdsData.map(async (matchId) => {
+      const [matchStatus, matchData] = await riotClient.Match.getMatchById(matchId);
+      if (matchStatus.statusCode !== 200) {
+        console.log('Fetching match failed..', matchStatus, matchData);
+        return;
+      }
+
+      return matchData;
+    }));
+
+    newProfile.matches = matches;
+
+    newProfile.wins = matches.map(x => x.info.teams.find(t => x.info.participants.find(p => p.puuid === summonerData.puuid).teamId === t.teamId).win).filter(w => w === true).length;
+    newProfile.totalGames = matches.length;
+
+    setProfile(newProfile);
+    setContainerState('profile-loaded')
+  }
+
+  const loadMoreMatches = async () => {
+    const [matchIdsStatus, matchIdsData] = await riotClient.Match.getSummonerMatches(profile.summoner.puuid, profile.matches.length, 5);
+    if (matchIdsStatus.statusCode !== 200) {
+      console.error('Fetching match history list failed..', matchIdsStatus, matchIdsData);
+      return;
+    }
+
+    const matches = await Promise.all(matchIdsData.map(async (matchId) => {
+      const [matchStatus, matchData] = await riotClient.Match.getMatchById(matchId);
+      if (matchStatus.statusCode !== 200) {
+        console.log('Fetching match failed..', matchStatus, matchData);
+        return;
+      }
+
+      return matchData;
+    }));
+
+    profile.matches = [...profile.matches, ...matches];
+    console.log(profile)
+    setProfile(profile);
   }
 
   return (
     <>
+      <button onClick={() => console.log(profile)}>Test</button>
       <div className={`container ${containerState}`}>
         <div className="header">
           <div className="header-content">
             <SearchSummoner onSearch={changeContainerState} />
             <div className="right-nav">
-              <a className="settings-btn" href="#" alt="Settings"><i className="fas fa-cog" /></a>
+              <button onClick={() => setSettingsIsOpen(true)} className="settings-btn" href="#" alt="Settings"><i className="fas fa-cog" /></button>
             </div>
           </div>
         </div>
-        <div className="aside">
-          <h2 className="profile-name">{summoner.name}</h2>
-          <div className="profile-icon">
-            <a href="#" className="spectate-badge" />
-            <img className="img-loaded" style={{ width: 200, height: 200 }} src={`http://ddragon.leagueoflegends.com/cdn/11.21.1/img/profileicon/${summoner.profileIconId}.png`} alt="" />
-            <div className="profile-footer">
-              <div className="profile-level">{summoner.summonerLevel}</div>
-            </div>
-          </div>
-          <div className="section">
-            <div className="section-header">
-              <span className="section-title">Rank</span>
-              <span className="section-line" />
-            </div>
-            <div className="section-content rank-wrapper">
-            </div>
-          </div>
-          <div className="section">
-            <div className="section-header">
-              <span className="section-title">Recently Played With</span>
-              <span className="section-line" />
-            </div>
-            <div className="section-content recently-wrapper">
-            </div>
-          </div>
-        </div>
-        <div className="main">
-          <div className="profile">
-            <div className="section summary-wrapper">
-              <div className="section-header">
-                <span className="section-title">Summary</span>
-                <span className="section-line" />
-              </div>
-              <div className="section-content summary">
-                <div className="filter-container">
-                  <select className="select game-type" />
-                  <a className="btn filter-btn" href="#">Filter</a>
-                </div>
-                <div className="winratio-container">
-                  <h4 className="winratio-title">Win/Lose ratio</h4>
-                  <div className="summary-progress">
-                    <div className="progress win">
-                      <span />
-                    </div>
-                    <div className="progress lose">
-                      <span />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="section mastery-wrapper">
-              <div className="section-header">
-                <span className="section-title">Champion Mastery</span>
-                <span className="section-line" />
-              </div>
-              <div className="section-content mastery">
-                {masteries.map(mastery => <MasteryChamp points={mastery.championPoints} image={'http://placehold.it/80'} />)}
-              </div>
-            </div>
-            <div className="section recent-games">
-              <div className="section-header">
-                <span className="section-title">Recent Games</span>
-                <span className="section-line" />
-              </div>
-              <div className="section-content matches-wrapper">
-              </div>
-            </div>
-          </div>
-        </div>
+        {profile && <ProfileInfo profile={profile} ddragon={riotClient.DDragon.data} onLoadMore={loadMoreMatches} />}
         <div className="footer">
         </div>
       </div>
-      <div className="settings-form">
-        <div>
-          <h2 className="settings-form-header">Settings</h2>
-          <a className="close-btn" href="#"><i className="fas fa-times" /></a>
-        </div>
-        <div className="settings-form-content">
-          <div className="summoner-form">
-            <label className="form-label">Summoner name</label>
-            <input className="form-input summoner-name-input" type="text" />
-          </div>
-          <a href="#" className="btn save-btn">Save</a>
-        </div>
-      </div>
+      <SettingsForm isOpen={settingsIsOpen} onClose={() => setSettingsIsOpen(false)} />
       <div className="toast-container" />
       <div className="match-details-container">
         <div className="match-details-header">

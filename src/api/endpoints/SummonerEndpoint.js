@@ -4,7 +4,7 @@ class SummonerEndpoint extends Endpoint {
     constructor(config) {
         super(config);
 
-        this.baseUrl = '/lol/summoner/v4/summoners';
+        this.baseUrl = 'https://eun1.api.riotgames.com/lol/summoner/v4/summoners';
     }
 
     getByName = (summonerName) => this.request(`${this.baseUrl}/by-name/${summonerName}`);

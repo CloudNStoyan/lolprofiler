@@ -45,6 +45,9 @@ html, body {
   font-size: 24px;
   color: white;
   padding: 0 5px;
+  border: 0;
+  background-color: transparent;
+  cursor: pointer;
 }
 
 .header {
@@ -692,8 +695,10 @@ select {
 }
 
 .load-more-btn {
-  width: 99%;
+  width: 100%;
   margin-left: 0.5%;
+  border: 0;
+  cursor: pointer;
 }
 
 .mastery-image-wrapper {
@@ -771,12 +776,13 @@ a.btn[disabled] {
   opacity: 0.7;
 }
 
-img:not(.img-loaded) {
-  opacity: 0;
-}
-
 img.img-loaded {
   opacity: 1;
+}
+
+button.summoner {
+  background-color: transparent;
+  border: 0;
 }
 
 img {
