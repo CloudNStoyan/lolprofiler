@@ -2,19 +2,20 @@ import './App.css';
 import SearchSummoner from './components/SearchSummoner';
 import React, { useState } from 'react';
 import RiotClient from './api/RiotClient';
-import ProfileInfo from './components/ProfileInfo';
+import ProfileWrapper from './components/ProfileWrapper';
 import SettingsForm from './components/SettingsForm';
+import Config from './config';
 
 function App() {
-  const riotClient = new RiotClient({ token: "YOUR API KEY HERE" })
+  const riotClient = new RiotClient(Config)
 
   const [containerState, setContainerState] = useState('hide');
   const [profile, setProfile] = useState(null);
   const [settingsIsOpen, setSettingsIsOpen] = useState(false);
+  const [filterQueueId, setFilterQueueId] = useState(0);
 
-  console.log(riotClient.DDragon.data.champion)
-
-  const changeContainerState = async (summonerName) => {
+  const searchSummoner = async (summonerName) => {
+    setContainerState('hide');
     const newProfile = {};
     const [summonerStatus, summonerData] = await riotClient.Summoner.getByName(summonerName);
 
@@ -60,7 +61,7 @@ function App() {
   }
 
   const loadMoreMatches = async () => {
-    const [matchIdsStatus, matchIdsData] = await riotClient.Match.getSummonerMatches(profile.summoner.puuid, profile.matches.length, 5);
+    const [matchIdsStatus, matchIdsData] = await riotClient.Match.getSummonerMatches(profile.summoner.puuid, profile.matches.length, 5, filterQueueId);
     if (matchIdsStatus.statusCode !== 200) {
       console.error('Fetching match history list failed..', matchIdsStatus, matchIdsData);
       return;
@@ -77,28 +78,55 @@ function App() {
     }));
 
     profile.matches = [...profile.matches, ...matches];
+    setProfile(Object.assign({}, profile));
     console.log(profile)
-    setProfile(profile);
+  }
+
+  const filterMatches = async (queueId) => {
+    const [matchIdsStatus, matchIdsData] = await riotClient.Match.getSummonerMatches(profile.summoner.puuid, profile.matches.length, 5, queueId);
+    if (matchIdsStatus.statusCode !== 200) {
+      console.error('Fetching match history list failed..', matchIdsStatus, matchIdsData);
+      return;
+    }
+
+    const matches = await Promise.all(matchIdsData.map(async (matchId) => {
+      const [matchStatus, matchData] = await riotClient.Match.getMatchById(matchId);
+      if (matchStatus.statusCode !== 200) {
+        console.log('Fetching match failed..', matchStatus, matchData);
+        return;
+      }
+
+      return matchData;
+    }));
+
+    profile.matches = matches;
+    setProfile(Object.assign({}, profile));
+
+    setFilterQueueId(queueId)
   }
 
   return (
     <>
-      <button onClick={() => console.log(profile)}>Test</button>
       <div className={`container ${containerState}`}>
         <div className="header">
           <div className="header-content">
-            <SearchSummoner onSearch={changeContainerState} />
+            <SearchSummoner onSearch={searchSummoner} />
             <div className="right-nav">
-              <button onClick={() => setSettingsIsOpen(true)} className="settings-btn" href="#" alt="Settings"><i className="fas fa-cog" /></button>
+              <button onClick={() => setSettingsIsOpen(true)} className="settings-btn" alt="Settings"><i className="fas fa-cog" /></button>
             </div>
           </div>
         </div>
-        {profile && <ProfileInfo profile={profile} ddragon={riotClient.DDragon.data} onLoadMore={loadMoreMatches} />}
+        {profile && <ProfileWrapper
+          profile={profile}
+          ddragon={riotClient.DDragon.data}
+          onLoadMore={loadMoreMatches}
+          onFilterMatches={filterMatches}
+          onSearch={searchSummoner}
+        />}
         <div className="footer">
         </div>
       </div>
       <SettingsForm isOpen={settingsIsOpen} onClose={() => setSettingsIsOpen(false)} />
-      <div className="toast-container" />
       <div className="match-details-container">
         <div className="match-details-header">
           <div className="match-details-header-content" />

@@ -10,11 +10,11 @@ function MasteryChamp({ champion, mastery }) {
                     src={`http://ddragon.leagueoflegends.com/cdn/11.21.1/img/champion/${champion.image?.full}`}
                     alt={champion.name}
                 />
-                <div class="tooltip-content">
+                <div className="tooltip-content">
                     <span>{champion.name}</span>
-                    <span class="line"></span>
+                    <span className="line"></span>
                     <span>Level {mastery.championLevel}</span>
-                    <div class="champ-description">
+                    <div className="champ-description">
                         {champion.blurb}
                     </div>
                 </div>

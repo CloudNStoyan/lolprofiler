@@ -1,6 +1,6 @@
 import React from 'react';
 
-function MatchPlayer({ participant, ddragon }) {
+function MatchPlayer({ participant, ddragon, onSearch }) {
     const champion = ddragon.champion.find(c => Number(c.key) === participant.championId);
 
     if (participant.puuid === 'BOT') {
@@ -21,10 +21,11 @@ function MatchPlayer({ participant, ddragon }) {
     }
 
     return (
-        <button className="summoner">
+        <button style={{ cursor: 'pointer' }} className="summoner" onClick={() => onSearch(participant.summonerName)}>
             <img className="summoner-champ-icon"
                 src={`http://ddragon.leagueoflegends.com/cdn/11.21.1/img/champion/${champion.image?.full}`}
-                alt=""
+                alt={champion.name}
+                title={champion.name}
             />
             <div className="summoner-name">{participant.summonerName}</div>
         </button>

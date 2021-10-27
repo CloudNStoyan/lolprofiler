@@ -3,7 +3,7 @@ import utils from "../utils";
 import ItemInfo from "./ItemInfo";
 import MatchPlayer from "./MatchPlayer";
 
-function MatchInfo({ matchData, summoner, ddragon }) {
+function MatchInfo({ matchData, summoner, ddragon, onSearch }) {
     console.log(matchData, ddragon)
     const queue = utils.constants.queues.find(q => q.id === matchData.info.queueId);
     const participant = matchData.info.participants.find(p => p.puuid === summoner.puuid)
@@ -122,14 +122,14 @@ function MatchInfo({ matchData, summoner, ddragon }) {
                 <div>P/Kill {killPercentage}%</div>
             </div>
             <div className="items">
-                {items.map((item) => <ItemInfo itemData={ddragon.item.data[item]} />)}
+                {items.map((item, index) => <ItemInfo key={index} itemData={ddragon.item.data[item]} />)}
             </div>
             <div className="players">
                 <div className="team">
-                    {matchData.info.participants.filter(p => p.teamId === 100).map(p => <MatchPlayer participant={p} ddragon={ddragon} />)}
+                    {matchData.info.participants.filter(p => p.teamId === 100).map((p, i) => <MatchPlayer onSearch={onSearch} key={i} participant={p} ddragon={ddragon} />)}
                 </div>
                 <div className="team">
-                    {matchData.info.participants.filter(p => p.teamId === 200).map(p => <MatchPlayer participant={p} ddragon={ddragon} />)}
+                    {matchData.info.participants.filter(p => p.teamId === 200).map((p, i) => <MatchPlayer onSearch={onSearch} key={i} participant={p} ddragon={ddragon} />)}
                 </div>
             </div>
         </div>

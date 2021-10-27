@@ -8,7 +8,8 @@ class MatchEndpoint extends Endpoint {
         this.baseUrl = 'https://europe.api.riotgames.com/lol/match/v5/matches'
     }
 
-    getSummonerMatches = (puuid, offset = 0, limit = 5) => this.request(`${this.baseUrl}/by-puuid/${puuid}/ids?start=${offset}&count=${limit}`);
+    getSummonerMatches = (puuid, offset = 0, limit = 5, queueId = null) =>
+        this.request(`${this.baseUrl}/by-puuid/${puuid}/ids?start=${offset}&count=${limit}${queueId ? `&queue=${queueId}` : ''}`);
     getMatchById = (matchId) => this.request(`${this.baseUrl}/${matchId}`);
 }
 

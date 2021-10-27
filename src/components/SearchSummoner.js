@@ -2,9 +2,13 @@ import React, { useState } from 'react';
 
 function SearchSummoner({ onSearch }) {
     const [summonerName, setSummonerName] = useState('');
+    const onSubmit = (e) => {
+        e.preventDefault();
+        onSearch(summonerName);
+    }
 
     return (
-        <div className="search-wrapper">
+        <form className="search-wrapper" onSubmit={onSubmit}>
             <input
                 className="empty"
                 type="text"
@@ -13,9 +17,9 @@ function SearchSummoner({ onSearch }) {
                 value={summonerName}
                 onChange={(e) => setSummonerName(e.target.value)}
             />
-            <button id="search-btn" onClick={() => onSearch(summonerName)}><i className="fas fa-search" /></button>
+            <button id="search-btn"><i className="fas fa-search" /></button>
             <button className="favorite-btn" href="#"><i className="fas fa-star" /></button>
-        </div>
+        </form>
     )
 }
 

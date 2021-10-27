@@ -1,10 +1,23 @@
-import utils from "../utils"
+import utils from "../utils";
+import React, { useState } from 'react';
 
-function FilterMatches() {
+function FilterMatches({ onFilter }) {
+
+    const [selectValue, setSelectValue] = useState(utils.constants.queues.filter(q => q.showInSelect)[0].id);
+
+    const handleChange = (e) => setSelectValue(e.target.value);
+
     return (
-        <select className="select game-type">
-            {utils.constants.queues.filter(q => q.showInSelect).map(q => <option>{q.name}</option>)}
-        </select>
+        <div className="filter-container">
+            <select
+                className="select game-type"
+                onChange={handleChange}
+                value={selectValue}
+            >
+                {utils.constants.queues.filter(q => q.showInSelect).map(q => <option value={q.id} key={q.id}>{q.name}</option>)}
+            </select>
+            <button className="btn filter-btn" href="#" onClick={() => onFilter(selectValue)}>Filter</button>
+        </div>
     )
 }
 

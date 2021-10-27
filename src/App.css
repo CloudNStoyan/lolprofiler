@@ -547,10 +547,8 @@ html, body {
   transform: translateX(300px);
 }
 
-.toast.disappear {
-  height: 0;
-  margin: 0;
-  padding: 0;
+.toast.done {
+  display: none;
 }
 
 .toast .content {
@@ -687,6 +685,12 @@ select {
 .select:hover {
   outline: 5px solid rgba(253, 187, 45, 0.2);
   background-color: rgba(253, 187, 45, 0.8);
+}
+
+button.summoner-name {
+  border: 0;
+  background-color: transparent;
+  cursor: pointer;
 }
 
 .select.game-type {
