@@ -1,0 +1,45 @@
+.match {
+  display: flex;
+  flex-flow: row wrap;
+  margin-top: 5px;
+  text-align: center;
+  padding: 10px;
+  background-color: aliceblue;
+
+  >*:not(:first-child) {
+    margin-left: 10px;
+  }
+}
+
+.match.defeat {
+  border: 5px solid var(--color-red);
+
+  .result {
+    color: var(--color-red);
+  }
+}
+
+.match.victory {
+  border: 5px solid var(--color-blue);
+
+  .result {
+    color: var(--color-blue);
+  }
+}
+
+.match-info {
+  width: 100px;
+}
+
+.result {
+  font-weight: bold;
+  padding: 5px 0;
+}
+
+.match.victory .result {
+  color: var(--color-blue);
+}
+
+.match.defeat .result {
+  color: var(--color-red);
+}

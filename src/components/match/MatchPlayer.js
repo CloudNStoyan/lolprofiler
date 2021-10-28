@@ -13,7 +13,7 @@ function MatchPlayer({ participant, ddragon, onSearch }) {
                 />
                 <div className="summoner-name tooltip-container">
                     {participant.summonerName}
-                    <span class="bot-label tooltip">Bot</span>
+                    <span className="bot-label tooltip">Bot</span>
                     <span className="tooltip-content">This is not a real player.</span>
                 </div>
             </button>

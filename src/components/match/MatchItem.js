@@ -1,6 +1,6 @@
 import React from 'react';
 
-function ItemInfo({ itemData }) {
+function MatchItem({ itemData }) {
     if (itemData) {
         return (
             <div className="tooltip-container">
@@ -20,4 +20,4 @@ function ItemInfo({ itemData }) {
     return <div><img className="no-image" alt="" /></div>
 }
 
-export default ItemInfo;
+export default MatchItem;

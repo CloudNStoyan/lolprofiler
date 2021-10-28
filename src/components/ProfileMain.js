@@ -3,7 +3,7 @@ import SectionContainer from './SectionContainer';
 import FilterMatches from './FilterMatches';
 import MatchesWinrate from './MatchesWinrate';
 import MasteryChamp from './MasteryChamp';
-import MatchInfo from './MatchInfo';
+import MatchWrapper from './match/MatchWrapper';
 
 function ProfileMain({ profile, ddragon, onFilterMatches, onSearch, onLoadMore }) {
     return (
@@ -37,7 +37,7 @@ function ProfileMain({ profile, ddragon, onFilterMatches, onSearch, onLoadMore }
                 >
                     {
                         profile.matches.map(
-                            match => <MatchInfo
+                            match => <MatchWrapper
                                 matchData={match}
                                 summoner={profile.summoner}
                                 ddragon={ddragon}
