@@ -9,7 +9,7 @@ class MatchEndpoint extends Endpoint {
     }
 
     getSummonerMatches = (puuid, offset = 0, limit = 5, queueId = null) =>
-        this.request(`${this.baseUrl}/by-puuid/${puuid}/ids?start=${offset}&count=${limit}${queueId ? `&queue=${queueId}` : ''}`);
+        this.request(`${this.baseUrl}/by-puuid/${puuid}/ids?start=${offset}&count=${limit}${(queueId && Number(queueId) !== -1) ? `&queue=${queueId}` : ''}`);
     getMatchById = (matchId) => this.request(`${this.baseUrl}/${matchId}`);
 }
 

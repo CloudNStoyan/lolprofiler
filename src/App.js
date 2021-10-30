@@ -12,7 +12,7 @@ function App() {
   const [containerState, setContainerState] = useState('hide');
   const [profile, setProfile] = useState(null);
   const [settingsIsOpen, setSettingsIsOpen] = useState(false);
-  const [filterQueueId, setFilterQueueId] = useState(0);
+  const [filterQueueId, setFilterQueueId] = useState('-1');
 
   const searchSummoner = async (summonerName) => {
     setContainerState('hide');
@@ -60,8 +60,14 @@ function App() {
     setContainerState('profile-loaded')
   }
 
-  const loadMoreMatches = async () => {
-    const [matchIdsStatus, matchIdsData] = await riotClient.Match.getSummonerMatches(profile.summoner.puuid, profile.matches.length, 5, filterQueueId);
+  const loadMatches = async (keepPrevious = true, overrideQueueId = null) => {
+    const [matchIdsStatus, matchIdsData] =
+      await riotClient.Match.getSummonerMatches(
+        profile.summoner.puuid,
+        keepPrevious ? profile.matches.length : 0,
+        5,
+        overrideQueueId ? overrideQueueId : filterQueueId
+      );
     if (matchIdsStatus.statusCode !== 200) {
       console.error('Fetching match history list failed..', matchIdsStatus, matchIdsData);
       return;
@@ -77,32 +83,14 @@ function App() {
       return matchData;
     }));
 
-    profile.matches = [...profile.matches, ...matches];
+    profile.matches = keepPrevious ? [...profile.matches, ...matches] : matches;
     setProfile(Object.assign({}, profile));
     console.log(profile)
   }
 
   const filterMatches = async (queueId) => {
-    const [matchIdsStatus, matchIdsData] = await riotClient.Match.getSummonerMatches(profile.summoner.puuid, profile.matches.length, 5, queueId);
-    if (matchIdsStatus.statusCode !== 200) {
-      console.error('Fetching match history list failed..', matchIdsStatus, matchIdsData);
-      return;
-    }
-
-    const matches = await Promise.all(matchIdsData.map(async (matchId) => {
-      const [matchStatus, matchData] = await riotClient.Match.getMatchById(matchId);
-      if (matchStatus.statusCode !== 200) {
-        console.log('Fetching match failed..', matchStatus, matchData);
-        return;
-      }
-
-      return matchData;
-    }));
-
-    profile.matches = matches;
-    setProfile(Object.assign({}, profile));
-
-    setFilterQueueId(queueId)
+    setFilterQueueId(queueId);
+    loadMatches(false, queueId);
   }
 
   return (
@@ -119,7 +107,7 @@ function App() {
         {profile && <ProfileWrapper
           profile={profile}
           ddragon={riotClient.DDragon.data}
-          onLoadMore={loadMoreMatches}
+          onLoadMore={loadMatches}
           onFilterMatches={filterMatches}
           onSearch={searchSummoner}
         />}
