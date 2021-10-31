@@ -1,10 +1,11 @@
+import React, { useState } from 'react';
 import './App.css';
 import SearchSummoner from './components/SearchSummoner';
-import React, { useState } from 'react';
 import RiotClient from './api/RiotClient';
 import ProfileWrapper from './components/ProfileWrapper';
 import SettingsForm from './components/SettingsForm';
 import Config from './config';
+import ToastContainer from './components/ToastContainer'
 
 function App() {
   const riotClient = new RiotClient(Config)
@@ -13,6 +14,8 @@ function App() {
   const [profile, setProfile] = useState(null);
   const [settingsIsOpen, setSettingsIsOpen] = useState(false);
   const [filterQueueId, setFilterQueueId] = useState('-1');
+  const [toasts, setToasts] = useState([]);
+  const [toastSerialId, setToastSerialId] = useState(0);
 
   const searchSummoner = async (summonerName) => {
     setContainerState('hide');
@@ -20,7 +23,7 @@ function App() {
     const [summonerStatus, summonerData] = await riotClient.Summoner.getByName(summonerName);
 
     if (summonerStatus.statusCode !== 200) {
-      console.error('Fetching summoner data failed..', summonerStatus, summonerData);
+      throwError('Fetching summoner data failed..', summonerStatus, summonerData);
       return;
     }
 
@@ -29,7 +32,7 @@ function App() {
     const [masteriesStatus, masteriesData] = await riotClient.Mastery.getMasteriesBySummonerId(summonerData.id);
 
     if (masteriesStatus.statusCode !== 200) {
-      console.error('Fetching masteries data failed..', masteriesStatus, masteriesData);
+      throwError('Fetching masteries data failed..', masteriesStatus, masteriesData);
       return;
     }
 
@@ -37,14 +40,14 @@ function App() {
 
     const [matchIdsStatus, matchIdsData] = await riotClient.Match.getSummonerMatches(summonerData.puuid);
     if (matchIdsStatus.statusCode !== 200) {
-      console.error('Fetching match history list failed..', matchIdsStatus, matchIdsData);
+      throwError('Fetching match history list failed..', matchIdsStatus, matchIdsData);
       return;
     }
 
     const matches = await Promise.all(matchIdsData.map(async (matchId) => {
       const [matchStatus, matchData] = await riotClient.Match.getMatchById(matchId);
       if (matchStatus.statusCode !== 200) {
-        console.log('Fetching match failed..', matchStatus, matchData);
+        throwError('Fetching match failed..', matchStatus, matchData);
         return;
       }
 
@@ -69,14 +72,14 @@ function App() {
         overrideQueueId ? overrideQueueId : filterQueueId
       );
     if (matchIdsStatus.statusCode !== 200) {
-      console.error('Fetching match history list failed..', matchIdsStatus, matchIdsData);
+      throwError('Fetching match history list failed..', matchIdsStatus, matchIdsData);
       return;
     }
 
     const matches = await Promise.all(matchIdsData.map(async (matchId) => {
       const [matchStatus, matchData] = await riotClient.Match.getMatchById(matchId);
       if (matchStatus.statusCode !== 200) {
-        console.log('Fetching match failed..', matchStatus, matchData);
+        throwError('Fetching match failed..', matchStatus, matchData);
         return;
       }
 
@@ -85,12 +88,38 @@ function App() {
 
     profile.matches = keepPrevious ? [...profile.matches, ...matches] : matches;
     setProfile(Object.assign({}, profile));
-    console.log(profile)
   }
 
   const filterMatches = async (queueId) => {
     setFilterQueueId(queueId);
     loadMatches(false, queueId);
+  }
+
+  const createToast = (text) => {
+    setToasts([...toasts, {
+      id: toastSerialId,
+      text: text,
+      isDone: false
+    }]);
+
+    setToastSerialId(toastSerialId + 1);
+  }
+
+  const removeToast = (id) => {
+    const activeToasts = [];
+
+    for (const toast of toasts) {
+      if (toast.id !== id) {
+        activeToasts.push(toast);
+      }
+    }
+
+    setToasts(activeToasts);
+  }
+
+  const throwError = (errorMessage, ...moreArgs) => {
+    console.error(errorMessage, ...moreArgs);
+    createToast(errorMessage);
   }
 
   return (
@@ -115,6 +144,7 @@ function App() {
         </div>
       </div>
       <SettingsForm isOpen={settingsIsOpen} onClose={() => setSettingsIsOpen(false)} />
+      <ToastContainer toasts={toasts} onDone={removeToast} />
       <div className="match-details-container">
         <div className="match-details-header">
           <div className="match-details-header-content" />
