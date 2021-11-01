@@ -1,24 +1,36 @@
 import React, { useState } from 'react';
+import styles from './css/SearchSummoner.module.scss';
 
 function SearchSummoner({ onSearch }) {
     const [summonerName, setSummonerName] = useState('');
-    const onSubmit = (e) => {
+    const [disabled, setDisabled] = useState(false);
+    const onSubmit = async (e) => {
         e.preventDefault();
-        onSearch(summonerName);
+
+        if (disabled) {
+            return;
+        }
+
+        setDisabled(true);
+        await onSearch(summonerName);
+        setDisabled(false);
     }
 
     return (
-        <form className="search-wrapper" onSubmit={onSubmit}>
+        <form className={`${styles["search-wrapper"]} ${disabled ? styles["disabled"] : ''}`} onSubmit={onSubmit}>
             <input
-                className="empty"
                 type="text"
-                id="input-name"
                 spellCheck="false"
                 value={summonerName}
                 onChange={(e) => setSummonerName(e.target.value)}
+                className={styles["search-input"]}
             />
-            <button id="search-btn"><i className="fas fa-search" /></button>
-            <button className="favorite-btn" href="#"><i className="fas fa-star" /></button>
+            <button className={styles["search-btn"]}>
+                <i className="fas fa-search" />
+            </button>
+            <button className={styles["favorite-btn"]}>
+                <i className="fas fa-star" />
+            </button>
         </form>
     )
 }
