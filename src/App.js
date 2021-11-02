@@ -91,6 +91,8 @@ function App() {
     }));
 
     profile.matches = keepPrevious ? [...profile.matches, ...matches] : matches;
+    profile.wins = profile.matches.map(x => x.info.teams.find(t => x.info.participants.find(p => p.puuid === profile.summoner.puuid).teamId === t.teamId).win).filter(w => w === true).length;
+    profile.totalGames = profile.matches.length;
     setProfile(Object.assign({}, profile));
   }
 
