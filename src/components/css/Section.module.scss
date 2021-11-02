@@ -1,0 +1,25 @@
+.wrapper {
+    margin-top: 10px;
+
+    .header {
+        display: flex;
+        flex-flow: row nowrap;
+    }
+
+    .title {
+        display: block;
+        color: gray;
+        text-transform: uppercase;
+        font-size: 12px;
+        flex: 0 0 auto;
+    }
+
+    .line {
+        background-color: #ebebeb;
+        height: 2px;
+        width: 100%;
+        display: block;
+        margin: auto;
+        margin-left: 5px;
+    }
+}

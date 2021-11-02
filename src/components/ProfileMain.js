@@ -4,11 +4,12 @@ import FilterMatches from './FilterMatches';
 import MatchesWinrate from './MatchesWinrate';
 import MasteryChamp from './MasteryChamp';
 import MatchWrapper from './match/MatchWrapper';
+import styles from '../App.module.scss';
 
 function ProfileMain({ profile, ddragon, onFilterMatches, onSearch, onLoadMore }) {
     return (
-        <div className="main">
-            <div className="profile">
+        <div className={styles.main}>
+            <div>
                 <SectionContainer
                     contentClass="summary"
                 >

@@ -1,22 +1,26 @@
 import React, { useState } from 'react';
-import './App.css';
+import './Global.css';
 import SearchSummoner from './components/SearchSummoner';
 import RiotClient from './api/RiotClient';
 import ProfileWrapper from './components/ProfileWrapper';
 import SettingsForm from './components/SettingsForm';
 import Config from './config';
 import ToastContainer from './components/ToastContainer'
+import styles from './App.module.scss';
 
 function App() {
   const riotClient = new RiotClient(Config)
 
+  //#region states
   const [containerState, setContainerState] = useState('hide');
   const [profile, setProfile] = useState(null);
   const [settingsIsOpen, setSettingsIsOpen] = useState(false);
   const [filterQueueId, setFilterQueueId] = useState('-1');
   const [toasts, setToasts] = useState([]);
   const [toastSerialId, setToastSerialId] = useState(0);
+  //#endregion
 
+  //#region Functions
   const searchSummoner = async (summonerName) => {
     setContainerState('hide');
     const newProfile = {};
@@ -122,14 +126,37 @@ function App() {
     createToast(errorMessage);
   }
 
+  const openSettings = () => {
+    setSettingsIsOpen(true);
+    setContainerState('hide-entirely');
+  }
+
+  const closeSettings = () => {
+    setSettingsIsOpen(false);
+    setContainerState(profile ? 'profile-loaded' : 'hide');
+  }
+
+
+  //#endregion
+
   return (
     <>
-      <div className={`container ${containerState}`}>
-        <div className="header">
-          <div className="header-content">
-            <SearchSummoner onSearch={searchSummoner} />
-            <div className="right-nav">
-              <button onClick={() => setSettingsIsOpen(true)} className="settings-btn" alt="Settings"><i className="fas fa-cog" /></button>
+      <div className={`${styles.container} ${styles[containerState]}`}>
+        <div className={styles.header}>
+          <div className={styles["header-content"]}>
+            <SearchSummoner
+              onSearch={searchSummoner}
+              onFocus={() => setContainerState('hide')}
+              onLoseFocus={() => setContainerState(profile ? 'profile-loaded' : 'hide')}
+            />
+            <div className={styles["right-nav"]}>
+              <button
+                className={styles["settings-btn"]}
+                alt="Settings"
+                onClick={openSettings}
+              >
+                <i className="fas fa-cog" />
+              </button>
             </div>
           </div>
         </div>
@@ -140,10 +167,9 @@ function App() {
           onFilterMatches={filterMatches}
           onSearch={searchSummoner}
         />}
-        <div className="footer">
-        </div>
+        <div className={styles.footer}></div>
       </div>
-      <SettingsForm isOpen={settingsIsOpen} onClose={() => setSettingsIsOpen(false)} />
+      <SettingsForm isOpen={settingsIsOpen} onClose={closeSettings} setContainerState={setContainerState} />
       <ToastContainer toasts={toasts} onDone={removeToast} />
       <div className="match-details-container">
         <div className="match-details-header">
