@@ -1,0 +1,20 @@
+.match {
+  display: flex;
+  flex-flow: row wrap;
+  margin-top: 5px;
+  text-align: center;
+  padding: 10px;
+  background-color: aliceblue;
+
+  >*:not(:first-child) {
+    margin-left: 10px;
+  }
+
+  &.defeat {
+    border: 5px solid var(--color-red);
+  }
+
+  &.victory {
+    border: 5px solid var(--color-blue);
+  }
+}

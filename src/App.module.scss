@@ -40,6 +40,19 @@
         grid-area: main;
         margin-left: 20px;
         margin-right: 20px;
+
+        .matches-wrapper {
+            height: 430px;
+            overflow: scroll;
+            overflow-x: hidden;
+            box-shadow: 0 4px 2px -2px lightgrey;
+            padding: 10px;
+        }
+
+        .summary {
+            display: flex;
+            flex-flow: row nowrap;
+        }
     }
 
     .footer {

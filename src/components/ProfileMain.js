@@ -33,7 +33,7 @@ function ProfileMain({ profile, ddragon, onFilterMatches, onSearch, onLoadMore }
                 </SectionContainer>
                 <SectionContainer
                     sectionClass="recent-games"
-                    contentClass="matches-wrapper"
+                    contentClass={styles["matches-wrapper"]}
                     title="Recent Games"
                 >
                     {

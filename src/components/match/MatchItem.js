@@ -1,4 +1,5 @@
 import React from 'react';
+import styles from '../css/MatchItems.module.scss';
 
 function MatchItem({ itemData }) {
     if (itemData) {
@@ -9,7 +10,7 @@ function MatchItem({ itemData }) {
                     <span>{itemData.name}</span>
                     <span className="line"></span>
                     <div
-                        className="item-description"
+                        className={styles["item-description"]}
                         dangerouslySetInnerHTML={{ __html: itemData.description }}
                     />
                 </div>
@@ -17,7 +18,7 @@ function MatchItem({ itemData }) {
         )
     }
 
-    return <div><img className="no-image" alt="" /></div>
+    return <div><img className={styles["no-image"]} alt="" /></div>
 }
 
 export default MatchItem;

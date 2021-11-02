@@ -1,0 +1,14 @@
+.match-info {
+    .result {
+        font-weight: bold;
+        padding: 5px 0;
+
+        &.defeat {
+            color: var(--color-red);
+        }
+
+        &.victory {
+            color: var(--color-blue);
+        }
+    }
+}

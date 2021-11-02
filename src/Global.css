@@ -96,108 +96,6 @@ body {
   text-align: center;
 }
 
-.match {
-  display: flex;
-  flex-flow: row wrap;
-  margin-top: 5px;
-  text-align: center;
-  padding: 10px;
-  background-color: aliceblue;
-}
-
-.match>*:not(:first-child) {
-  margin-left: 10px;
-}
-
-.score .deaths {
-  color: red;
-}
-
-
-.matches-wrapper {
-  height: 430px;
-  overflow: scroll;
-  overflow-x: hidden;
-  box-shadow: 0 4px 2px -2px lightgrey;
-  padding: 10px;
-}
-
-.match-status {
-  color: #fff;
-  padding-left: 10px;
-  font-weight: bold;
-}
-
-.match.victory .match-status {
-  background-color: var(--color-blue);
-}
-
-.match.defeat .match-status {
-  background-color: var(--color-red);
-}
-
-.champion-image,
-.masteries,
-.spell,
-.keystone,
-.rune-path {
-  display: inline-block;
-}
-
-.champion-image img {
-  width: 64px;
-  height: 64px;
-  border: 0;
-  border-radius: 3px;
-}
-
-.summoner-spells img,
-.runes img {
-  width: 30px;
-  height: 30px;
-  display: inline-block;
-  border: 0;
-  border-radius: 3px;
-}
-
-.summoner-spells :last-child {
-  margin-top: 4px;
-}
-
-.additional-info img {
-  display: block;
-}
-
-.summoner-spells,
-.runes {
-  display: inline-block;
-}
-
-.keystone-description {
-  max-width: 300px;
-}
-
-.items {
-  display: flex;
-  flex-flow: row wrap;
-  width: 140px;
-  align-content: start;
-}
-
-.items img {
-  display: block;
-  width: 32px;
-  height: 32px;
-  margin: 1px;
-  border: 0;
-  border-radius: 3px;
-}
-
-.item-description {
-  max-width: 300px;
-}
-
-
 .tooltip-container {
   position: relative;
   cursor: pointer;
@@ -233,16 +131,6 @@ body {
   display: block;
 }
 
-.items img.no-image {
-  border: 1px solid lightgray;
-  opacity: 1;
-}
-
-.score,
-.stats {
-  width: 100px;
-}
-
 .section-content.matches-wrapper::-webkit-scrollbar {
   width: 10px;
 }
@@ -253,39 +141,6 @@ body {
 
 .section-content.matches-wrapper::-webkit-scrollbar-thumb {
   background: #888;
-}
-
-.players {
-  display: flex;
-  flex-flow: row wrap;
-  font-size: 12px;
-  width: 300px;
-}
-
-.team {
-  flex: 0 0 50%;
-}
-
-.summoner {
-  text-decoration: none;
-  color: black;
-  text-align: left;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 100%;
-  display: block;
-  height: 20px;
-}
-
-.summoner-champ-icon {
-  float: left;
-  margin-right: 2px;
-  width: 20px;
-  height: 20px;
-}
-
-.team .summoner:not(:first-child) {
-  margin-top: 2px;
 }
 
 .settings-form:not(.show) {
@@ -384,10 +239,6 @@ body {
   text-align: center;
   font-size: 24px;
   color: #1F2667
-}
-
-.match>div:not(:first-child) {
-  margin-top: 10px;
 }
 
 .btn {
@@ -510,12 +361,6 @@ select {
   background-color: rgba(253, 187, 45, 0.8);
 }
 
-button.summoner-name {
-  border: 0;
-  background-color: transparent;
-  cursor: pointer;
-}
-
 .select.game-type {
   width: 200px;
   margin: 10px;
@@ -559,21 +404,6 @@ button.summoner-name {
   max-width: 300px;
 }
 
-.damage-meter {
-  border: 1px solid var(--color-red);
-  height: 20px;
-  margin-top: 5px;
-}
-
-.damage {
-  height: 100%;
-  width: 50%;
-  background-color: var(--color-darkred);
-  color: white;
-  font-size: 11px;
-  min-width: fit-content;
-}
-
 .recently-times {
   flex: 0 0 80px;
   text-align: center;
@@ -601,10 +431,6 @@ button.summoner-name {
 
 a.btn[disabled] {
   opacity: 0.7;
-}
-
-img.img-loaded {
-  opacity: 1;
 }
 
 button.summoner {

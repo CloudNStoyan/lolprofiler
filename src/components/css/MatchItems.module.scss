@@ -1,0 +1,24 @@
+.items {
+    display: flex;
+    flex-flow: row wrap;
+    width: 140px;
+    align-content: start;
+
+    img {
+        display: block;
+        width: 32px;
+        height: 32px;
+        margin: 1px;
+        border: 0;
+        border-radius: 3px;
+    }
+
+    img.no-image {
+        border: 1px solid lightgray;
+        opacity: 1;
+    }
+
+    .item-description {
+        max-width: 300px;
+    }
+}

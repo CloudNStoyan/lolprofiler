@@ -1,4 +1,5 @@
 import React from 'react';
+import styles from '../css/MatchSetup.module.scss';
 
 function MatchSetup({ participant, ddragon }) {
     const champion = ddragon.champion.find(champ => Number(champ.key) === participant.championId);
@@ -8,17 +9,16 @@ function MatchSetup({ participant, ddragon }) {
     const secondKeystone = ddragon.runesReforged.find(x => x.id === participant.perks.styles[1].style);
 
     return (
-        <div className="setup">
-            <div className="additional-info">
-                <div className="champion-image">
+        <div className={styles.setup}>
+            <div className={styles["additional-info"]}>
+                <div className={styles["champion-image"]}>
                     <img
-                        className="img-loaded"
                         src={`http://ddragon.leagueoflegends.com/cdn/11.21.1/img/champion/${champion.image?.full}`}
                         alt={champion.name}
                     />
                 </div>
-                <div className="masteries">
-                    <div className="summoner-spells">
+                <div className={styles.masteries}>
+                    <div className={styles["summoner-spells"]}>
                         <div className="tooltip-container">
                             <img
                                 className="tooltip"
@@ -35,7 +35,7 @@ function MatchSetup({ participant, ddragon }) {
                             <span className="tooltip-content">{summonerSpell2.description}</span>
                         </div>
                     </div>
-                    <div className="runes">
+                    <div className={styles.runes}>
                         <div className="tooltip-container">
                             <div className="tooltip">
                                 <img
@@ -46,7 +46,7 @@ function MatchSetup({ participant, ddragon }) {
                             <div className="tooltip-content">
                                 <span>{keystone.name}</span>
                                 <span className="line"></span>
-                                <div className="keystone-description">
+                                <div className={styles["keystone-description"]}>
                                     {keystone.shortDesc}
                                 </div>
                             </div>
@@ -65,7 +65,7 @@ function MatchSetup({ participant, ddragon }) {
                     </div>
                 </div>
             </div>
-            <div className="champion-name">{champion.name}</div>
+            <div className={styles["champion-name"]}>{champion.name}</div>
         </div>
     )
 }

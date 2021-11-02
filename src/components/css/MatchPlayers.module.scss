@@ -1,0 +1,36 @@
+.players {
+    display: flex;
+    flex-flow: row wrap;
+    font-size: 12px;
+    width: 300px;
+
+    .team {
+        flex: 0 0 50%;
+
+        .summoner:not(:first-child) {
+            margin-top: 2px;
+        }
+
+        .summoner {
+            text-decoration: none;
+            color: black;
+            text-align: left;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 100%;
+            display: block;
+            height: 20px;
+            cursor: pointer;
+            border: 0;
+            outline: 0;
+            background-color: transparent;
+        }
+
+        .champ-icon {
+            float: left;
+            margin-right: 2px;
+            width: 20px;
+            height: 20px;
+        }
+    }
+}
