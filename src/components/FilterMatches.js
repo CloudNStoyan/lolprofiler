@@ -6,7 +6,9 @@ function FilterMatches({ onFilter }) {
     const [selectValue, setSelectValue] = useState('-1');
 
     const handleChange = (e) => {
-        setSelectValue(e.target.value)
+        const gameType = e.target.value;
+        setSelectValue(gameType);
+        onFilter(gameType);
     }
 
     return (
@@ -16,10 +18,9 @@ function FilterMatches({ onFilter }) {
                 onChange={handleChange}
                 value={selectValue}
             >
-                <option value="-1">All</option>
-                {utils.constants.queues.filter(q => q.showInSelect).map(q => <option value={q.id} key={q.id}>{q.name}</option>)}
+                <option value="-1">Match Type: All</option>
+                {utils.constants.queues.filter(q => q.showInSelect).map(q => <option value={q.id} key={q.id}>Match Type: {q.name}</option>)}
             </select>
-            <button className="btn filter-btn" href="#" onClick={() => onFilter(selectValue)}>Filter</button>
         </div>
     )
 }
