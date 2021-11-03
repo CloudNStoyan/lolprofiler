@@ -42,6 +42,15 @@ function App() {
 
     newProfile.masteries = masteriesData.slice(0, 10);
 
+    const [leagueStatus, leaguesData] = await riotClient.League.getLeagueEntriesBySummonerId(summonerData.id);
+
+    if (leagueStatus.statusCode !== 200) {
+      throwError('Fetching leagues data failed..', leagueStatus, leaguesData);
+      return;
+    }
+
+    newProfile.leagues = leaguesData;
+
     const [matchIdsStatus, matchIdsData] = await riotClient.Match.getSummonerMatches(summonerData.puuid);
     if (matchIdsStatus.statusCode !== 200) {
       throwError('Fetching match history list failed..', matchIdsStatus, matchIdsData);
@@ -165,6 +174,7 @@ function App() {
         {profile && <ProfileWrapper
           profile={profile}
           ddragon={riotClient.DDragon.data}
+          imgDragon={riotClient.DDragon.img}
           onLoadMore={loadMatches}
           onFilterMatches={filterMatches}
           onSearch={searchSummoner}
