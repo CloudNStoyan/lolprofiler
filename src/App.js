@@ -174,7 +174,6 @@ function App() {
         {profile && <ProfileWrapper
           profile={profile}
           ddragon={riotClient.DDragon.data}
-          imgDragon={riotClient.DDragon.img}
           onLoadMore={loadMatches}
           onFilterMatches={filterMatches}
           onSearch={searchSummoner}

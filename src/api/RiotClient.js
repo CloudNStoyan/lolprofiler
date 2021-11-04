@@ -22,11 +22,6 @@ class RiotClient {
                 queues: queues,
                 runesReforged: runesReforged,
                 summoner: Object.values(summoner.data)
-            },
-            img: {
-                tier: (tier) => {
-                    return `https://raw.githubusercontent.com/RiotAPI/Riot-Games-API-Developer-Assets/master/tier-icons/${tier}.png`
-                }
             }
         }
     }
