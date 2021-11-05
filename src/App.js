@@ -7,6 +7,7 @@ import SettingsForm from './components/SettingsForm';
 import Config from './config';
 import ToastContainer from './components/ToastContainer'
 import styles from './App.module.scss';
+import utils from './utils';
 
 function App() {
   const riotClient = new RiotClient(Config)
@@ -71,6 +72,7 @@ function App() {
 
     newProfile.wins = matches.map(x => x.info.teams.find(t => x.info.participants.find(p => p.puuid === summonerData.puuid).teamId === t.teamId).win).filter(w => w === true).length;
     newProfile.totalGames = matches.length;
+    newProfile.recentlyPlayedWith = utils.getRecentlyPlayedWith(matches, summonerData);
 
     setFilterQueueId('-1');
     setProfile(newProfile);
@@ -103,6 +105,7 @@ function App() {
     profile.matches = keepPrevious ? [...profile.matches, ...matches] : matches;
     profile.wins = profile.matches.map(x => x.info.teams.find(t => x.info.participants.find(p => p.puuid === profile.summoner.puuid).teamId === t.teamId).win).filter(w => w === true).length;
     profile.totalGames = profile.matches.length;
+    profile.recentlyPlayedWith = utils.getRecentlyPlayedWith(profile.matches, profile.summoner);
     setProfile(Object.assign({}, profile));
   }
 

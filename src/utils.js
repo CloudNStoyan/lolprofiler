@@ -54,6 +54,33 @@ class utils {
 
         return `${time.hours}:${time.minutes}:${time.seconds}${separator}${time.date}/${time.month}/${time.year}`;
     }
+
+    static getRecentlyPlayedWith(matches, summoner) {
+        let allSummonerNames = ([].concat.apply([], matches.map(g => {
+            const participant = g.info.participants.find(p => p.puuid === summoner.puuid);
+            const participantTeam = g.info.teams.find(team => team.teamId === participant.teamId);
+            return g.info.participants.filter(p => p.teamId === participantTeam.teamId)
+        }))).filter(p => p.puuid !== 'BOT').map(p => p.summonerName);
+
+        let recentlyPlayedWith = [];
+
+        allSummonerNames.forEach(name => {
+            if (name === summoner.name) {
+                return;
+            }
+
+            const player = recentlyPlayedWith.find(p => p.summonerName === name);
+
+            if (player) {
+                player.times++;
+                return;
+            }
+
+            recentlyPlayedWith.push({ summonerName: name, times: 1 })
+        });
+
+        return recentlyPlayedWith;
+    }
 }
 
 export default utils;

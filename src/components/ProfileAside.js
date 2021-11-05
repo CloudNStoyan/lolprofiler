@@ -3,6 +3,7 @@ import ProfileIcon from "./ProfileIcon";
 import SectionContainer from "./SectionContainer";
 import styles from '../App.module.scss';
 import LeagueTier from './LeagueTier';
+import RecentPlayer from './RecentPlayer';
 
 function ProfileAside({ profile }) {
     return (
@@ -12,7 +13,9 @@ function ProfileAside({ profile }) {
             <SectionContainer contentClass="rank-wrapper" title="Rank">
                 {profile.leagues.map(league => <LeagueTier key={league.leagueId} league={league} />)}
             </SectionContainer>
-            <SectionContainer contentClass="recently-wrapper" title="Recently Played With" />
+            <SectionContainer contentClass="recently-wrapper" title="Recently Played With">
+                {profile.recentlyPlayedWith.filter(p => p.times > 1).map(p => <RecentPlayer key={p.summonerName} player={p} />)}
+            </SectionContainer>
         </div>
     )
 }

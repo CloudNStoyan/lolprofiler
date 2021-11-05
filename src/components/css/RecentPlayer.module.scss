@@ -1,0 +1,21 @@
+.recently-summoner {
+    display: flex;
+    flex-flow: row nowrap;
+
+    >button {
+        background-color: transparent;
+        border: 0;
+        border-bottom: 2px solid #3A1B71;
+    }
+
+    .line {
+        flex-grow: 1;
+        background: linear-gradient(90deg, #3A1C71 0%, #FDBB2D 100%);
+        margin-top: 24px;
+        margin-left: 0;
+    }
+
+    .times {
+        border-bottom: 2px solid #FDBB2D;
+    }
+}
