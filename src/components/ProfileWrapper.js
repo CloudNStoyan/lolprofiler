@@ -7,6 +7,7 @@ function ProfileWrapper({ profile, ddragon, onLoadMore, onFilterMatches, onSearc
         <>
             <ProfileAside
                 profile={profile}
+                onSearch={onSearch}
             />
             <ProfileMain
                 profile={profile}
