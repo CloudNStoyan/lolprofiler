@@ -6,14 +6,14 @@ import MasteryChamp from './MasteryChamp';
 import MatchWrapper from './match/MatchWrapper';
 import styles from '../App.module.scss';
 
-function ProfileMain({ profile, ddragon, onFilterMatches, onSearch, onLoadMore }) {
+function ProfileMain({ profile, ddragon, onFilterMatches, onSearch, onLoadMore, filterQueueId, setFilterQueueId }) {
     return (
         <div className={styles.main}>
             <div>
                 <SectionContainer
                     contentClass="summary"
                 >
-                    <FilterMatches onFilter={onFilterMatches} />
+                    <FilterMatches onFilter={onFilterMatches} selectValue={filterQueueId} setSelectValue={setFilterQueueId} />
                     <MatchesWinrate profile={profile} />
                 </SectionContainer>
                 <SectionContainer

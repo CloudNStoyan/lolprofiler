@@ -6,7 +6,7 @@ function LeagueTier({ league }) {
     const imageLink = `https://raw.githubusercontent.com/RiotAPI/Riot-Games-API-Developer-Assets/master/tier-icons/${league.tier.toLowerCase()}_${league.rank.toLowerCase()}.png`;
 
     return (
-        <div>
+        <div className="rank-info">
             <div className="rank-queue">{queueName}</div>
             <img width={100} height={100}
                 src={imageLink}

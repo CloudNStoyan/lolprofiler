@@ -72,6 +72,7 @@ function App() {
     newProfile.wins = matches.map(x => x.info.teams.find(t => x.info.participants.find(p => p.puuid === summonerData.puuid).teamId === t.teamId).win).filter(w => w === true).length;
     newProfile.totalGames = matches.length;
 
+    setFilterQueueId('-1');
     setProfile(newProfile);
     setContainerState('profile-loaded')
   }
@@ -177,6 +178,8 @@ function App() {
           onLoadMore={loadMatches}
           onFilterMatches={filterMatches}
           onSearch={searchSummoner}
+          filterQueueId={filterQueueId}
+          setFilterQueueId={setFilterQueueId}
         />}
         <div className={styles.footer}></div>
       </div>

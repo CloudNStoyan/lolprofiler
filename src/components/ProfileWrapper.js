@@ -2,7 +2,7 @@ import React from 'react';
 import ProfileMain from './ProfileMain';
 import ProfileAside from './ProfileAside';
 
-function ProfileWrapper({ profile, ddragon, onLoadMore, onFilterMatches, onSearch }) {
+function ProfileWrapper({ profile, ddragon, onLoadMore, onFilterMatches, onSearch, filterQueueId, setFilterQueueId }) {
     return (
         <>
             <ProfileAside
@@ -14,6 +14,8 @@ function ProfileWrapper({ profile, ddragon, onLoadMore, onFilterMatches, onSearc
                 onLoadMore={onLoadMore}
                 onFilterMatches={onFilterMatches}
                 onSearch={onSearch}
+                filterQueueId={filterQueueId}
+                setFilterQueueId={setFilterQueueId}
             />
         </>
     );

@@ -1,10 +1,7 @@
 import utils from "../utils";
-import React, { useState } from 'react';
+import React from 'react';
 
-function FilterMatches({ onFilter }) {
-
-    const [selectValue, setSelectValue] = useState('-1');
-
+function FilterMatches({ onFilter, selectValue, setSelectValue }) {
     const handleChange = (e) => {
         const gameType = e.target.value;
         setSelectValue(gameType);
