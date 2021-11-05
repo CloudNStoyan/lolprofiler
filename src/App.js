@@ -20,6 +20,9 @@ function App() {
   const [toasts, setToasts] = useState([]);
   const [toastSerialId, setToastSerialId] = useState(0);
   const [summonerName, setSummonerName] = useState('');
+
+  const localStorageKey = '__favSummonerName';
+  const [favSummonerName, setFavSummonerName] = useState(localStorage.getItem(localStorageKey));
   //#endregion
 
   //#region Functions
@@ -167,6 +170,7 @@ function App() {
               onLoseFocus={() => setContainerState(profile ? 'profile-loaded' : 'hide')}
               summonerName={summonerName}
               setSummonerName={setSummonerName}
+              favSummonerName={favSummonerName}
             />
             <div className={styles["right-nav"]}>
               <button
@@ -190,7 +194,13 @@ function App() {
         />}
         <div className={styles.footer}></div>
       </div>
-      <SettingsForm isOpen={settingsIsOpen} onClose={closeSettings} setContainerState={setContainerState} />
+      <SettingsForm
+        isOpen={settingsIsOpen}
+        onClose={closeSettings}
+        setContainerState={setContainerState}
+        setSummonerName={setFavSummonerName}
+        summonerName={favSummonerName}
+      />
       <ToastContainer toasts={toasts} onDone={removeToast} />
       <div className="match-details-container">
         <div className="match-details-header">

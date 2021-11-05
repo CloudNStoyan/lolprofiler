@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styles from './css/SearchSummoner.module.scss';
 
-function SearchSummoner({ onSearch, onFocus, onLoseFocus, summonerName, setSummonerName }) {
+function SearchSummoner({ onSearch, onFocus, onLoseFocus, summonerName, setSummonerName, favSummonerName }) {
     const [disabled, setDisabled] = useState(false);
     const onSubmit = async (e) => {
         e.preventDefault();
@@ -14,6 +14,8 @@ function SearchSummoner({ onSearch, onFocus, onLoseFocus, summonerName, setSummo
         await onSearch(summonerName);
         setDisabled(false);
     }
+
+    const searchFavorite = () => onSearch(favSummonerName);
 
     return (
         <form className={`${styles["search-wrapper"]} ${disabled ? styles["disabled"] : ''}`} onSubmit={onSubmit}>
@@ -29,7 +31,10 @@ function SearchSummoner({ onSearch, onFocus, onLoseFocus, summonerName, setSummo
             <button className={styles["search-btn"]}>
                 <i className="fas fa-search" />
             </button>
-            <button className={styles["favorite-btn"]}>
+            <button
+                className={styles["favorite-btn"]}
+                onClick={searchFavorite}
+            >
                 <i className="fas fa-star" />
             </button>
         </form>
