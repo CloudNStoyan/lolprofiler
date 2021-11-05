@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import styles from './css/SearchSummoner.module.scss';
 
-function SearchSummoner({ onSearch, onFocus, onLoseFocus }) {
-    const [summonerName, setSummonerName] = useState('');
+function SearchSummoner({ onSearch, onFocus, onLoseFocus, summonerName, setSummonerName }) {
     const [disabled, setDisabled] = useState(false);
     const onSubmit = async (e) => {
         e.preventDefault();

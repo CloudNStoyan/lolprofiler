@@ -19,13 +19,15 @@ function App() {
   const [filterQueueId, setFilterQueueId] = useState('-1');
   const [toasts, setToasts] = useState([]);
   const [toastSerialId, setToastSerialId] = useState(0);
+  const [summonerName, setSummonerName] = useState('');
   //#endregion
 
   //#region Functions
-  const searchSummoner = async (summonerName) => {
+  const searchSummoner = async (name) => {
+    setSummonerName(name)
     setContainerState('hide');
     const newProfile = {};
-    const [summonerStatus, summonerData] = await riotClient.Summoner.getByName(summonerName);
+    const [summonerStatus, summonerData] = await riotClient.Summoner.getByName(name);
 
     if (summonerStatus.statusCode !== 200) {
       throwError('Fetching summoner data failed..', summonerStatus, summonerData);
@@ -163,6 +165,8 @@ function App() {
               onSearch={searchSummoner}
               onFocus={() => setContainerState('hide')}
               onLoseFocus={() => setContainerState(profile ? 'profile-loaded' : 'hide')}
+              summonerName={summonerName}
+              setSummonerName={setSummonerName}
             />
             <div className={styles["right-nav"]}>
               <button
