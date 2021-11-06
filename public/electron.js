@@ -3,6 +3,18 @@ const path = require('path');
 const { app, BrowserWindow } = require('electron');
 const isDev = require('electron-is-dev');
 
+const installExtensions = async () => {
+    const installer = require('electron-devtools-installer')
+    const forceDownload = !!process.env.UPGRADE_EXTENSIONS
+    const extensions = [
+        'REACT_DEVELOPER_TOOLS'
+    ]
+
+    return Promise
+        .all(extensions.map(name => installer.default(installer[name], forceDownload)))
+        .catch(console.log)
+}
+
 function createWindow() {
     // Create the browser window.
     const win = new BrowserWindow({
@@ -30,7 +42,7 @@ function createWindow() {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(createWindow);
+app.whenReady().then(async () => await installExtensions()).then(createWindow);
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
