@@ -7,8 +7,14 @@ function MatchPlayers({ matchData, onSearch, ddragon }) {
     return (
         <div className={styles.players}>
             {teamIds.map(teamId => (
-                <div className={styles.team}>
-                    {matchData.info.participants.filter(p => p.teamId === teamId).map((p, i) => <MatchPlayer onSearch={onSearch} key={teamId + i} participant={p} ddragon={ddragon} />)}
+                <div className={styles.team} key={teamId}>
+                    {matchData.info.participants.filter(p => p.teamId === teamId).map((p, i) =>
+                        <MatchPlayer
+                            onSearch={onSearch}
+                            key={i}
+                            participant={p}
+                            ddragon={ddragon}
+                        />)}
                 </div>
             ))}
         </div>
