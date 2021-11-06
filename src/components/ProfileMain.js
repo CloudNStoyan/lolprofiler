@@ -47,7 +47,7 @@ function ProfileMain({ profile, ddragon, onFilterMatches, onSearch, onLoadMore, 
                             />
                         )
                     }
-                    <button className="btn load-more-btn" onClick={onLoadMore}>Load More</button>
+                    <button className={`btn ${styles['load-more-btn']}`} onClick={onLoadMore}>Load More</button>
                 </SectionContainer>
             </div>
         </div>

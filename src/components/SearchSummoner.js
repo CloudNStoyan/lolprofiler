@@ -25,6 +25,7 @@ function SearchSummoner({ onSearch, onFocus, onLoseFocus, summonerName, setSummo
                 value={summonerName}
                 onChange={(e) => setSummonerName(e.target.value)}
                 className={styles["search-input"]}
+                tabIndex={-1}
                 onFocus={onFocus}
                 onBlur={onLoseFocus}
             />

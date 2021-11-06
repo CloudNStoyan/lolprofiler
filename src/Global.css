@@ -242,6 +242,7 @@ body {
 }
 
 .btn {
+  border: 0;
   outline: 5px solid rgba(34, 193, 195, 0.2);
   text-decoration: none;
   padding: 10px;
@@ -250,6 +251,7 @@ body {
   display: inline-block;
   margin: 10px 5px;
   text-align: center;
+  cursor: pointer;
 }
 
 .btn:hover {
@@ -364,13 +366,6 @@ select {
 .select.game-type {
   width: 200px;
   margin: 10px;
-}
-
-.load-more-btn {
-  width: 100%;
-  margin-left: 0.5%;
-  border: 0;
-  cursor: pointer;
 }
 
 .mastery-image-wrapper {
