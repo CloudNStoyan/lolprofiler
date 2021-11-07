@@ -1,0 +1,23 @@
+.wrapper {
+    position: relative;
+    cursor: pointer;
+
+    .content {
+        position: absolute;
+        background-color: #333;
+        color: lightgray;
+        border: 1px solid #333;
+        border-radius: 5px;
+        z-index: 100;
+        width: max-content;
+        font-size: 16px;
+        padding: 10px;
+
+        .more {
+            font-size: 60%;
+            text-align: right;
+            margin-top: 5px;
+            font-style: italic;
+        }
+    }
+}

@@ -1,5 +1,5 @@
-import React from 'react';
 import styles from '../css/MatchSetup.module.scss';
+import Tooltip from '../tooltip/Tooltip';
 
 function MatchSetup({ participant, ddragon }) {
     const champion = ddragon.champion.find(champ => Number(champ.key) === participant.championId);
@@ -14,54 +14,32 @@ function MatchSetup({ participant, ddragon }) {
                 <div className={styles["champion-image"]}>
                     <img
                         src={`http://ddragon.leagueoflegends.com/cdn/11.21.1/img/champion/${champion.image?.full}`}
-                        alt={champion.name}
                     />
                 </div>
                 <div className={styles.masteries}>
                     <div className={styles["summoner-spells"]}>
-                        <div className="tooltip-container">
+                        <Tooltip className={styles["image-wrapper"]} content={summonerSpell1.name}>
                             <img
-                                className="tooltip"
                                 src={`http://ddragon.leagueoflegends.com/cdn/11.21.1/img/spell/${summonerSpell1.image.full}`}
-                                alt=""
                             />
-                            <span className="tooltip-content">{summonerSpell1.description}</span>
-                        </div>
-                        <div className="tooltip-container">
+                        </Tooltip>
+                        <Tooltip className={styles["image-wrapper"]} content={summonerSpell2.name}>
                             <img
-                                className="tooltip"
-                                src={`http://ddragon.leagueoflegends.com/cdn/11.21.1/img/spell/${summonerSpell2.image.full}`}
-                                alt="" />
-                            <span className="tooltip-content">{summonerSpell2.description}</span>
-                        </div>
+                                src={`http://ddragon.leagueoflegends.com/cdn/11.21.1/img/spell/${summonerSpell2.image.full}`} />
+                        </Tooltip>
                     </div>
                     <div className={styles.runes}>
-                        <div className="tooltip-container">
-                            <div className="tooltip">
-                                <img
-                                    src={`https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/${keystone.icon.toLowerCase()}`}
-                                    alt=""
-                                />
-                            </div>
-                            <div className="tooltip-content">
-                                <span>{keystone.name}</span>
-                                <span className="line"></span>
-                                <div className={styles["keystone-description"]}>
-                                    {keystone.shortDesc}
-                                </div>
-                            </div>
-                        </div>
-                        <div className="tooltip-container">
-                            <div className="tooltip">
-                                <img
-                                    src={`https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/${secondKeystone.icon.toLowerCase()}`}
-                                    alt=""
-                                />
-                            </div>
-                            <div className="tooltip-content">
-                                <span>{secondKeystone.name}</span>
-                            </div>
-                        </div>
+                        <Tooltip className={styles["image-wrapper"]} content={keystone.name}>
+                            <img
+                                src={`https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/${keystone.icon.toLowerCase()}`}
+                            />
+                        </Tooltip>
+                        <Tooltip className={styles["image-wrapper"]} content={secondKeystone.name}>
+                            <img
+                                src={`https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/${secondKeystone.icon.toLowerCase()}`}
+                                alt=""
+                            />
+                        </Tooltip>
                     </div>
                 </div>
             </div>

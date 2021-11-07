@@ -96,41 +96,6 @@ body {
   text-align: center;
 }
 
-.tooltip-container {
-  position: relative;
-  cursor: pointer;
-}
-
-.tooltip-content {
-  display: none;
-  position: absolute;
-  width: 200px;
-  padding: 10px;
-  background-color: #333;
-  color: #fff;
-  border: 0;
-  border-radius: 3px;
-  z-index: 100;
-  text-align: center;
-}
-
-.tooltip-content>span {
-  display: block;
-}
-
-.tooltip-content span.line {
-  height: 2px;
-  background-color: lightgray;
-}
-
-.tooltip-content span.small {
-  font-size: 8px;
-}
-
-.tooltip:hover+.tooltip-content {
-  display: block;
-}
-
 .section-content.matches-wrapper::-webkit-scrollbar {
   width: 10px;
 }
@@ -366,37 +331,6 @@ select {
 .select.game-type {
   width: 200px;
   margin: 10px;
-}
-
-.mastery-image-wrapper {
-  width: 84px;
-  height: 80px;
-  user-select: none;
-}
-
-.mastery-image-wrapper img {
-  width: 80px;
-}
-
-.champions-wrapper {
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: center;
-}
-
-.mastery-image-wrapper .champion-level {
-  position: absolute;
-  bottom: 0;
-  background-color: rgb(255 255 255 / 50%);
-  width: 100%;
-  text-align: center;
-  color: #333;
-  font-weight: bolder;
-  font-size: 14px;
-}
-
-.champ-description {
-  max-width: 300px;
 }
 
 .bot-label {

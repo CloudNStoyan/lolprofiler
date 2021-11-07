@@ -2,50 +2,31 @@
     .additional-info {
         img {
             display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .champion-image {
+            width: 64px;
+            height: 64px;
+        }
+
+        .masteries {
+
+            .image-wrapper {
+                height: 32px;
+                width: 32px;
+                padding: 2px;
+            }
         }
 
         .champion-image,
-        .masteries,
-        .spell,
-        .keystone,
-        .rune-path {
+        .masteries {
             display: inline-block;
         }
 
-        .champion-image img {
-            width: 64px;
-            height: 64px;
-            border: 0;
-            border-radius: 3px;
-        }
-
-        .summoner-spells img,
-        .runes img {
-            width: 30px;
-            height: 30px;
+        .masteries>* {
             display: inline-block;
-            border: 0;
-            border-radius: 3px;
-        }
-
-        .summoner-spells {
-            :last-child {
-                margin-top: 4px;
-            }
-
-            >div {
-                height: 30px;
-            }
-        }
-
-        .summoner-spells,
-        .runes {
-            display: inline-block;
-            margin-left: 2px;
-        }
-
-        .keystone-description {
-            max-width: 300px;
         }
     }
 }

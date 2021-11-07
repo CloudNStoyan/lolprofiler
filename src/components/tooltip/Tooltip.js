@@ -1,24 +1,28 @@
 import React, { useState } from 'react';
+import styles from './Tooltip.module.scss';
 
-function Tooltip({ children }) {
-    const [isHovered, setIsHovered] = useState(false);
-
-    const childrenWithProps = React.Children.map(children, child => {
-        if (React.isValidElement(child) && child.type.name === 'TooltipContent') {
-            return React.cloneElement(child, { isHovered: isHovered });
-        }
-        return child;
-    });
+function Tooltip({ content, moreInfo = false, children, className }) {
+    const [active, setActive] = useState(false);
 
     return (
         <div
-            style={{ position: 'relative', cursor: 'pointer' }}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
+            className={`${className ? className : ''} ${styles.wrapper}`}
+            onMouseEnter={() => setActive(true)}
+            onMouseLeave={() => setActive(false)}
         >
-            {childrenWithProps}
+            {children}
+            {
+                active &&
+                <div
+                    className={styles.content}
+                >
+                    {content}
+                    {moreInfo &&
+                        <div className={styles.more}>Click for more info...</div>
+                    }
+                </div>
+            }
         </div>
-
     )
 }
 

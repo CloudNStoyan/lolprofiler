@@ -1,5 +1,5 @@
-import React from 'react';
 import styles from '../css/MatchScore.module.scss';
+import Tooltip from '../tooltip/Tooltip'
 
 function MatchScore({ participant, participants }) {
     const damage = participant.totalDamageDealtToChampions;
@@ -10,16 +10,11 @@ function MatchScore({ participant, participants }) {
         <div className={styles.score}>
             <div>{participant.kills} / <span className={styles.deaths}>{participant.deaths}</span> / {participant.assists}</div>
             <div>{participant.deaths === 0 ? 'Perfect KDA' : `${((participant.kills + participant.assists) / participant.deaths).toFixed(2)}:1 KDA`}</div>
-            <div className="tooltip-container">
-                <div className={`${styles["damage-meter"]} tooltip`}>
+            <Tooltip content="Total damage done to champions">
+                <div className={styles["damage-meter"]}>
                     <div className={styles.damage} style={{ width: `${damagePercentage}%` }}>{Math.round(damage / 1000)}K</div>
                 </div>
-                <div className="tooltip-content">
-                    <span>Total Damage Done</span>
-                    <span className="line"></span>
-                    <span className="small">* to champions</span>
-                </div>
-            </div>
+            </Tooltip>
         </div>
     )
 }
