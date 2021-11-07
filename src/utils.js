@@ -79,6 +79,8 @@ class utils {
             recentlyPlayedWith.push({ summonerName: name, times: 1 })
         });
 
+        recentlyPlayedWith.sort((a, b) => b.times - a.times);
+
         return recentlyPlayedWith;
     }
 }
