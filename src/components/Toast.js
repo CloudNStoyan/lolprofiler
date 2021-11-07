@@ -25,7 +25,7 @@ function Toast({ id, text, onDone }) {
         }, 1000)
 
         return () => clearTimeout(timeout);
-    });
+    }, [expire, expired, isDone, id, onDone]);
 
     return (
         <div className={`toast ${expired ? 'hide' : ''} ${isDone ? 'done' : ''}`}>
