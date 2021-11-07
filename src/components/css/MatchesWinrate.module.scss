@@ -1,0 +1,35 @@
+.wrapper {
+    flex: 0 0 45%;
+    margin: 0 auto;
+
+    .title {
+        text-align: center;
+        margin: 0;
+    }
+
+    .container {
+        display: flex;
+        flex-flow: row nowrap;
+        margin: 10px 0;
+
+        .progress {
+            width: 0;
+            height: 24px;
+            transition: width 1s ease-out;
+
+            &.win {
+                background-color: var(--color-blue);
+            }
+
+            &.lose {
+                background-color: var(--color-red);
+            }
+
+            span {
+                text-align: center;
+                display: block;
+                color: white;
+            }
+        }
+    }
+}

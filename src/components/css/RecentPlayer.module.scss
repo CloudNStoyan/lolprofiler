@@ -2,12 +2,17 @@
     display: flex;
     flex-flow: row nowrap;
 
-    >button {
+    button {
         background-color: transparent;
         border: 0;
         border-bottom: 2px solid #3A1B71;
         cursor: pointer;
         outline: 0;
+        max-width: 115px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-align: left;
     }
 
     .line {
@@ -19,5 +24,6 @@
 
     .times {
         border-bottom: 2px solid #FDBB2D;
+        padding-right: 5px;
     }
 }

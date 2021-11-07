@@ -1,5 +1,5 @@
 import utils from "../utils";
-import React from 'react';
+import styles from './css/FilterMatches.module.scss';
 
 function FilterMatches({ onFilter, selectValue, setSelectValue }) {
     const handleChange = (e) => {
@@ -9,9 +9,8 @@ function FilterMatches({ onFilter, selectValue, setSelectValue }) {
     }
 
     return (
-        <div className="filter-container">
+        <div className={styles.wrapper}>
             <select
-                className="select game-type"
                 onChange={handleChange}
                 value={selectValue}
             >

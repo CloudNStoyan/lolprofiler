@@ -6,24 +6,33 @@
 
     .team {
         flex: 0 0 50%;
-
-        .summoner:not(:first-child) {
-            margin-top: 2px;
-        }
+        overflow: hidden;
 
         .summoner {
             text-decoration: none;
             color: black;
             text-align: left;
+            overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
             width: 100%;
-            display: block;
             height: 20px;
             cursor: pointer;
             border: 0;
             outline: 0;
             background-color: transparent;
+            display: inline;
+
+            &:not(:first-child) {
+                margin-top: 2px;
+            }
+
+            .bot-label {
+                color: lightgray;
+                font-weight: bold;
+                display: inline-block;
+                font-size: 80%;
+            }
         }
 
         .champ-icon {

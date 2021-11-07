@@ -1,0 +1,14 @@
+@import './Scrollbar.scss';
+
+.wrapper {
+    @extend .scrollbar;
+    height: 430px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    box-shadow: 0 4px 2px -2px lightgrey;
+    padding: 10px;
+
+    .more {
+        width: -webkit-fill-available;
+    }
+}

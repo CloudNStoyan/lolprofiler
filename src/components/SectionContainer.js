@@ -1,4 +1,3 @@
-import React from 'react';
 import styles from './css/Section.module.scss';
 
 function SectionContainer({ children, sectionClass, contentClass, title }) {
@@ -8,7 +7,7 @@ function SectionContainer({ children, sectionClass, contentClass, title }) {
                 <span className={styles.title}>{title}</span>
                 <span className={styles.line} />
             </div>
-            <div className={`section-content ${contentClass ? contentClass : ''}`}>
+            <div className={contentClass ? contentClass : undefined}>
                 {children}
             </div>
         </div>
