@@ -18,10 +18,15 @@ class utils {
     }
 
     static longAgo = (difference) => {
-        let seconds = difference / 1000;
-        let minutes = seconds / 60;
-        let hours = minutes / 60;
-        let days = hours / 24;
+        const seconds = difference / 1000;
+        const minutes = seconds / 60;
+        const hours = minutes / 60;
+        const days = hours / 24;
+        const months = days / 30;
+
+        if (months >= 1) {
+            return Math.round(months) + ' months ago';
+        }
 
         if (days >= 1) {
             return Math.round(days) + ' days ago';
@@ -38,7 +43,13 @@ class utils {
         return Math.round(seconds) + ' seconds ago'
     }
 
-    static dateToGameLength = (gameDuration) => `${Math.floor((gameDuration / 60))}m ${Math.floor((gameDuration % 60))}s`;
+    static dateToGameLength = (gameDuration) => {
+        if (gameDuration > 10000) {
+            gameDuration = gameDuration / 1000;
+        }
+
+        return `${Math.floor((gameDuration / 60))}m ${Math.floor((gameDuration % 60))}s`
+    };
 
     static zeroPadStart = (number) => number.toString().padStart(2, '0');
 
