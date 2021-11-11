@@ -1,9 +1,0 @@
-@import './Scrollbar.scss';
-
-.wrapper {
-    @extend .scrollbar;
-
-    max-height: 170px;
-    overflow: auto;
-    overflow-x: hidden;
-}

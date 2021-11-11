@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './Global.css';
-import SearchSummoner from './components/SearchSummoner';
 import RiotClient from './api/RiotClient';
-import ProfileWrapper from './components/ProfileWrapper';
-import SettingsForm from './components/SettingsForm';
 import Config from './config';
-import ToastContainer from './components/ToastContainer'
-import styles from './App.module.scss';
 import utils from './utils';
+import SearchSummoner from './components/SearchSummoner/SearchSummoner';
+import ProfileWrapper from './components/Profile/ProfileWrapper';
+import SettingsForm from './components/SettingsForm/SettingsForm';
+import ToastContainer from './components/Toast/ToastContainer'
+import styles from './App.module.scss';
 
 function App() {
   const riotClient = new RiotClient(Config)
